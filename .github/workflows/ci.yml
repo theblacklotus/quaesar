@@ -30,31 +30,12 @@ jobs:
     - name: Build project
       run: make -j$(nproc)
 
-  linux_ubuntu_22_04:
-    name: Linux GCC ${{ matrix.gcc-version }}
-    runs-on: ubuntu-22.04
+  linux_matrix:
     strategy:
       matrix:
-        gcc-version: [12]
+        os: [ubuntu-22.04, ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Install GCC ${{ matrix.gcc-version }}
-      run: |
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        sudo apt update
-        sudo apt install -y gcc-${{ matrix.gcc-version }} g++-${{ matrix.gcc-version }}
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{ matrix.gcc-version }} 100 --slave /usr/bin/g++ g++ /usr/bin/g++-${{ matrix.gcc-version }} 
-        sudo update-alternatives --set gcc /usr/bin/gcc-${{ matrix.gcc-version }}
-
-    - name: Check GCC version
-      run: |
-        gcc --version
-        g++ --version
-
-    - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libsdl2-dev
-
-    - name: Build project
-      run: make -j$(nproc)
+    - name: Check available CLANG versions
+      run: sudo apt update && apt-cache search ^clang-[0-9]
 
