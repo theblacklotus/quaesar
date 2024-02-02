@@ -8,7 +8,7 @@ on:
 
 jobs:
   linux_ubuntu_20_04:
-    name: Linux GCC ${{ matrix.gcc-version }}
+    name: (Ubuntu 20.04) Linux GCC ${{ matrix.gcc-version }}.x
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -27,15 +27,36 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y libsdl2-dev
 
-    - name: Build project
+    - name: Build quaesar
       run: make -j$(nproc)
 
-  linux_matrix:
+  linux_clang_ubuntu_20_04:
+    runs-on: ubuntu-20.04
+    name: (Ubuntu 20.04) Linux Clang ${{ matrix.gcc-version }}.x
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-20.04]
-    runs-on: ${{ matrix.os }}
+        clang_version: [8, 9, 10, 11]
+
     steps:
-    - name: Check available CLANG versions
-      run: sudo apt update && apt-cache search ^clang-[0-9]
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Clang ${{ matrix.clang_version }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang-${{ matrix.clang_version }}
+        sudo apt-get install -y clang++-${{ matrix.clang_version }}
+
+    - name: Select Clang ${{ matrix.clang_version }}
+      run: |
+        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${{ matrix.clang_version }} 100
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${{ matrix.clang_version }} 100
+        clang --version # Display the version of clang for debugging
+        clang++ --version # Display the version of clang for debugging
+
+    - name: Build quaesar 
+      env:
+        CC: clang-${{ matrix.clang_version }}
+        CXX: clang++-${{ matrix.clang_version }}
+      run: make -j$(nproc)
 
