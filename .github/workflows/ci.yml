@@ -7,17 +7,29 @@ on:
     branches: [ "master", "dev" ]
 
 jobs:
-  linux_matrix:
+  build:
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-20.04]
-        version: [10]
-    runs-on: ${{ matrix.os }}
+        gcc-version: [7, 8, 9, 10, 11, 12, 13]
     steps:
-    - name: Check available GCC versions
-      run: sudo apt update && apt-cache search ^gcc-[0-9]
     - uses: actions/checkout@v4
+
+    - name: Install GCC ${{ matrix.gcc-version }}
+      run: |
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+        sudo apt update
+        sudo apt install -y gcc-${{ matrix.gcc-version }} g++-${{ matrix.gcc-version }}
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{ matrix.gcc-version }} 
+        sudo update-alternatives --set gcc /usr/bin/gcc-${{ matrix.gcc-version }}
+
+    - name: Check GCC version
+      run: |
+        gcc --version
+        g++ --version
+
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y libsdl2-dev
-    - name: make
+
+    - name: Build project
       run: make -j$(nproc)
