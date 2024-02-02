@@ -1,0 +1,6 @@
+# ./genlinetoscr > linetoscr.cpp 
+
+target = genlinetoscr
+srcs = src/genlinetoscr.cpp
+
+include build/Makefile.inc

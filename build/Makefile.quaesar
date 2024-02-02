@@ -1,0 +1,134 @@
+
+target = quaesar
+
+srcs =  src/aros.rom.cpp \
+		src/akiko.cpp \
+		src/amax.cpp \
+		src/ar.cpp \
+		src/audio.cpp \
+		src/autoconf.cpp \
+		src/blitfunc.cpp \
+		src/blittable.cpp \
+		src/blitter.cpp \
+		src/calc.cpp \
+		src/cd32_fmv_genlock.cpp \
+		src/cdrom.cpp \
+		src/cdtvcr.cpp \
+		src/cfgfile.cpp \
+		src/cia.cpp \
+		src/consolehook.cpp \
+		src/cpudefs.cpp \
+		src/cpuemu_0.cpp \
+		src/cpuemu_11.cpp \
+		src/cpuemu_13.cpp \
+		src/cpuemu_20.cpp \
+		src/cpuemu_21.cpp \
+		src/cpuemu_22.cpp \
+		src/cpuemu_23.cpp \
+		src/cpuemu_24.cpp \
+		src/cpuemu_31.cpp \
+		src/cpuemu_32.cpp \
+		src/cpuemu_33.cpp \
+		src/cpuemu_34.cpp \
+		src/cpuemu_35.cpp \
+		src/cpuemu_40.cpp \
+		src/cpuemu_50.cpp \
+		src/cpummu.cpp \
+		src/cpummu30.cpp \
+		src/cpustbl.cpp \
+		src/crc32.cpp \
+		src/custom.cpp \
+		src/debug.cpp \
+		src/debugmem.cpp \
+		src/def_icons.cpp \
+		src/devices.cpp \
+		src/disasm.cpp \
+		src/disk.cpp \
+		src/diskutil.cpp \
+		src/dlopen.cpp \
+		src/dongle.cpp \
+		src/drawing.cpp \
+		src/driveclick.cpp \
+		src/enforcer.cpp \
+		src/ethernet.cpp \
+		src/events.cpp \
+		src/expansion.cpp \
+		src/fdi2raw.cpp \
+		src/filesys.cpp \
+		src/flashrom.cpp \
+		src/fpp.cpp \
+		src/fpp_native.cpp \
+		src/fpp_softfloat.cpp \
+		src/fsdb.cpp \
+		src/gayle.cpp \
+		src/hardfile.cpp \
+		src/hrtmon.rom.cpp \
+		src/ide.cpp \
+		src/idecontrollers.cpp \
+		src/identify.cpp \
+		src/ini.cpp \
+		src/inputdevice.cpp \
+		src/inputrecord.cpp \
+		src/isofs.cpp \
+		src/keybuf.cpp \
+		src/logging.cpp \
+		src/main.cpp \
+		src/memory.cpp \
+		src/missing.cpp \
+		src/native2amiga.cpp \
+		src/newcpu.cpp \
+		src/newcpu_common.cpp \
+		src/readcpu.cpp \
+		src/rommgr.cpp \
+		src/rtc.cpp \
+		src/sana2.cpp \
+		src/savestate.cpp \
+		src/scp.cpp \
+		src/scsi.cpp \
+		src/scsiemul.cpp \
+		src/scsitape.cpp \
+		src/sndboard.cpp \
+		src/statusline.cpp \
+		src/tabletlibrary.cpp \
+		src/test_card.cpp \
+		src/tinyxml2.cpp \
+		src/traps.cpp \
+		src/uaeexe.cpp \
+		src/uaelib.cpp \
+		src/uaenative.cpp \
+		src/uaeresource.cpp \
+		src/uaeserial.cpp \
+		src/quaesar.cpp \
+	    src/blkdev.cpp \
+	    od-cross/gfx.cpp \
+	    od-cross/gui.cpp \
+	    od-cross/mman.cpp \
+	    od-cross/machdep/m68k.cpp \
+	    od-cross/thread.cpp \
+	    od-cross/unicode.cpp \
+	    od-cross/file_system.cpp \
+	    od-cross/hardfile_host.cpp \
+	    od-cross/filepaths.cpp \
+	    od-cross/sounddep/sound.cpp \
+	    od-cross/time.cpp \
+	    od-cross/dummy.cpp \
+	    od-cross/input.cpp \
+	    src/zfile.cpp \
+	    src/zfile_archive.cpp \
+	    src/vm.cpp \
+	    softfloat/softfloat.cpp \
+	    softfloat/softfloat_fpsp.cpp \
+	    softfloat/softfloat_decimal.cpp \
+
+
+include build/Makefile.inc
+
+CPPFLAGS += -DUAE=1
+CPPFLAGS += -D_cdecl= -DFILEFLAG_WRITE=1 -DOS_NAME=\"linux\"
+CPPFLAGS += -DUSHORT=uint16_t
+CPPFLAGS += -DHWND=uint32_t -DHRESULT=uint32_t -DWPARAM=uint16_t -DLPARAM=uint32_t
+CPPFLAGS += -DFILEFLAG_DIR=1 -D_ftelli64=ftello64 -D_fseeki64=fseeko64
+
+EXTS = sdl2 libpng
+CPPFLAGS += $(foreach ext,$(EXTS), $(shell pkg-config --cflags $(ext)))
+LDLIBS   += $(foreach ext,$(EXTS), $(shell pkg-config --libs   $(ext))) -lz -ldl
