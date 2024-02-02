@@ -59,7 +59,7 @@ jobs:
 
     - name: Build quaesar 
       env:
-        CC: clang-${{ matrix.clang_version }}
-        CXX: clang++-${{ matrix.clang_version }}
+        CC: clang-${{ matrix.clang-version }}
+        CXX: clang++-${{ matrix.clang-version }}
       run: make -j$(nproc)
 
