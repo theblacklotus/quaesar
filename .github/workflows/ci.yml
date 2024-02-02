@@ -11,9 +11,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04, ubuntu-20.04]
-        version: [10, 12, 14]
+        version: [10]
     runs-on: ${{ matrix.os }}
     steps:
+    - name: Check available GCC versions
+      run: sudo apt update && apt-cache search ^gcc-[0-9]
     - uses: actions/checkout@v4
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y libsdl2-dev
