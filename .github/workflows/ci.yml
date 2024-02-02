@@ -8,7 +8,7 @@ on:
 
 jobs:
   linux_ubuntu_20_04:
-    name: (Ubuntu 20.04) Linux GCC ${{ matrix.gcc-version }}.x
+    name: (Ubuntu 20.04) GCC ${{ matrix.gcc-version }}.x
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -32,14 +32,47 @@ jobs:
 
   linux_clang_ubuntu_20_04:
     runs-on: ubuntu-20.04
-    name: (Ubuntu 20.04) Linux Clang ${{ matrix.clang-version }}.x
+    name: (Ubuntu 20.04) Clang ${{ matrix.clang-version }}.x
     strategy:
       matrix:
         clang-version: [8, 9, 10, 11]
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
+
+    - name: Install Clang ${{ matrix.clang-version }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang-${{ matrix.clang-version }}
+        sudo apt-get install -y clang++-${{ matrix.clang-version }}
+
+    - name: Select Clang ${{ matrix.clang-version }}
+      run: |
+        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${{ matrix.clang-version }} 100
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${{ matrix.clang-version }} 100
+        clang --version # Display the version of clang for debugging
+        clang++ --version # Display the version of clang for debugging
+
+    - name: Install dependencies
+      run: sudo apt-get install -y libsdl2-dev
+
+    - name: Build quaesar 
+      env:
+        CC: clang-${{ matrix.clang-version }}
+        CXX: clang++-${{ matrix.clang-version }}
+      run: make -j$(nproc)
+
+  linux_clang_ubuntu_22_04:
+    runs-on: ubuntu-22.04
+    name: (Ubuntu 22.04) Clang ${{ matrix.clang-version }}.x
+    strategy:
+      matrix:
+        clang-version: [12, 13, 14, 15]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Install Clang ${{ matrix.clang-version }}
       run: |
