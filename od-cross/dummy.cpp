@@ -38,6 +38,16 @@
 #include "debug.h"
 #include "ppc/ppcd.h"
 #include "serial.h"
+#include "x86.h"
+#include "ethernet.h"
+#include "dsp3210/dsp_glue.h"
+#include "disk.h"
+#include "cpuboard.h"
+#include "draco.h"
+#include "cd32_fmv.h"
+#include "rommgr.h"
+#include "newcpu.h"
+#include "fpp.h"
 
 int avioutput_enabled = 0;
 bool beamracer_debug = false;
@@ -369,7 +379,7 @@ void getpathpart(char*, int, char const*) {
     UNIMPLEMENTED();
 }
 
-uae_u8* save_log(int, unsigned long*) {
+uae_u8* save_log(int, size_t*) {
     UNIMPLEMENTED();
     return nullptr;
 }
@@ -429,6 +439,7 @@ int fsdb_mode_supported (const a_inode *) {
     return 0;
 }
 
+/*
 int a1060_init(autoconfig_info*) {
     UNIMPLEMENTED();
     return 0;
@@ -449,6 +460,8 @@ int a2386_init(autoconfig_info*) {
     UNIMPLEMENTED();
     return 0;
 }
+*/
+
 void a4000t_add_scsi_unit (int ch, struct uaedev_config_info *ci, struct romconfig *rc) {
     UNIMPLEMENTED();
 }
@@ -498,9 +511,9 @@ int amiga_clipboard_want_data(TrapContext*) {
     return 0;
 }
 
-int ariadne2_init(autoconfig_info*) {
+bool ariadne2_init(autoconfig_info*) {
     UNIMPLEMENTED();
-    return 0;
+    return false;
 }
 
 bool audio_is_pull_event() {
@@ -532,14 +545,13 @@ void bsdsock_fake_int_handler() {
     UNIMPLEMENTED();
 }
 
-int casablanca_map_overlay() {
+void casablanca_map_overlay() {
     UNIMPLEMENTED();
-    return 0;
 }
 
-int cd32_fmv_init(autoconfig_info*) {
+addrbank* cd32_fmv_init(autoconfig_info*) {
     UNIMPLEMENTED();
-    return 0;
+    return nullptr;
 }
 
 void cd32_fmv_set_sync(float, float) {
@@ -628,46 +640,45 @@ bool console_isch() {
     return false;
 }
 
-int cpuboard_32bit(uae_prefs*) {
+bool cpuboard_32bit(uae_prefs*) {
     UNIMPLEMENTED();
-    return 0;
+    return false;
 }
 
-int cpuboard_autoconfig_init(autoconfig_info*) {
+bool cpuboard_autoconfig_init(autoconfig_info*) {
     UNIMPLEMENTED();
-    return 0;
+    return false;
 }
 
-int cpuboard_cleanup() {
+void cpuboard_cleanup() {
     UNIMPLEMENTED();
-    return 0;
 }
 
-int cpuboard_clear() {
+void cpuboard_clear() {
     TRACE();
-    return 0;
 }
 
 void cpuboard_dkb_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
 
-int cpuboard_forced_hardreset() {
+bool cpuboard_forced_hardreset() {
+    UNIMPLEMENTED();
+    return false;
+}
+
+uaecptr cpuboard_get_reset_pc(unsigned int*) {
     UNIMPLEMENTED();
     return 0;
 }
 
-int cpuboard_get_reset_pc(unsigned int*) {
-    UNIMPLEMENTED();
-    return 0;
-}
-int cpuboard_init() {
+void cpuboard_init() {
     TRACE();
-    return 0;
 }
-int cpuboard_maprom() {
+
+bool cpuboard_maprom() {
     UNIMPLEMENTED();
-    return 0;
+    return false;
 }
 
 void cpuboard_overlay_override() {
@@ -714,9 +725,9 @@ void doprinter(uae_u8) {
     UNIMPLEMENTED();
 }
 
-int draco_mouse(int, int, int, int, int) {
+bool draco_mouse(int, int, int, int, int) {
     TRACE();
-    return 0;
+    return false;
 }
 
 void driveclick_fdrawcmd_detect() {
@@ -746,19 +757,18 @@ int driveclick_loadresource(drvsample*, int) {
     return 0;
 }
 
-int dsp_init(autoconfig_info*) {
+bool dsp_init(autoconfig_info*) {
+    UNIMPLEMENTED();
+    return false;
+}
+
+uae_u8 dsp_read() {
     UNIMPLEMENTED();
     return 0;
 }
 
-int dsp_read() {
+void dsp_write(unsigned char) {
     UNIMPLEMENTED();
-    return 0;
-}
-
-int dsp_write(unsigned char) {
-    UNIMPLEMENTED();
-    return 0;
 }
 
 void ematrix_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
@@ -785,10 +795,9 @@ uae_u32 emulib_target_getcpurate(unsigned int, unsigned int*) {
     return 0;
 }
 
-int ethernet_reset() {
+void ethernet_reset() {
     TRACE();
     //UNIMPLEMENTED();
-    return 0;
 }
 
 void fastlane_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
@@ -815,9 +824,12 @@ void fetch_videopath(char*, int) {
     UNIMPLEMENTED();
 }
 
+#ifndef _WIN32
+// TODO: Investigate why this is present in filesys.o
 void filesys_addexternals() {
     //UNIMPLEMENTED();
 }
+#endif
 
 void finish_sound_buffer() {
     UNIMPLEMENTED();
@@ -831,9 +843,9 @@ void fpux_restore(int*) {
     TRACE();
 }
 
-int frame_drawn(int) {
+bool frame_drawn(int) {
     UNIMPLEMENTED();
-    return 0;
+    return false;
 }
 
 void free_ahi_v2() {
@@ -911,9 +923,9 @@ int graphics_setup() {
     return 1;
 }
 
-int gui_ask_disk(int, char*) {
+bool gui_ask_disk(int, char*) {
     UNIMPLEMENTED();
-    return 0;
+    return false;
 }
 
 bool handle_events() {
@@ -921,9 +933,9 @@ bool handle_events() {
     return false;
 }
 
-int hydra_init(autoconfig_info*) {
+bool hydra_init(autoconfig_info*) {
     UNIMPLEMENTED();
-    return 0;
+    return false;
 }
 
 void init_fpucw_x87_80() {
@@ -965,9 +977,9 @@ int is_touch_lightpen() {
     return 0;
 }
 
-int lanrover_init(autoconfig_info*) {
+bool lanrover_init(autoconfig_info*) {
     UNIMPLEMENTED();
-    return 0;
+    return false;
 }
 
 void logging_init() {
@@ -1233,10 +1245,11 @@ void sampler_vsync() {
     TRACE();
 }
 
-int save_screenshot(int, unsigned long*) {
+uae_u8* save_screenshot(int, size_t*) {
     UNIMPLEMENTED();
-    return 0;
+    return nullptr;
 }
+
 void scram5394_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
@@ -1396,19 +1409,20 @@ void target_getdate(int*, int*, int*) {
     TRACE();
 }
 
+#ifndef _WIN32
+// TODO: Investigate why this is present in filesys.o already on win32
 int target_get_volume_name(uaedev_mount_info*, uaedev_config_info*, bool, bool, int) {
     UNIMPLEMENTED();
     return 0;
 }
+#endif
 
-int target_inputdevice_acquire() {
+void target_inputdevice_acquire() {
     UNIMPLEMENTED();
-    return 0;
 }
 
-int target_inputdevice_unacquire() {
+void target_inputdevice_unacquire() {
     UNIMPLEMENTED();
-    return 0;
 }
 
 bool target_isrelativemode() {
@@ -1416,7 +1430,7 @@ bool target_isrelativemode() {
     return false;
 }
 
-int target_load_keyfile(uae_prefs*, char const*, int*, char*) {
+uae_u8* target_load_keyfile(uae_prefs*, char const*, int*, char*) {
     UNIMPLEMENTED();
     return 0;
 }
@@ -1429,9 +1443,8 @@ void target_osk_control(int, int, int, int) {
     UNIMPLEMENTED();
 }
 
-int target_paste_to_keyboard() {
+void target_paste_to_keyboard() {
     UNIMPLEMENTED();
-    return 0;
 }
 
 void target_quit() {
@@ -1481,14 +1494,14 @@ bool typhoon2scsi_init(autoconfig_info*) {
     return false;
 }
 
-int uaenative_get_library_dirs() {
+const TCHAR** uaenative_get_library_dirs() {
     UNIMPLEMENTED();
-    return 0;
+    return nullptr;
 }
 
-int uaenative_get_uaevar() {
+void* uaenative_get_uaevar() {
     UNIMPLEMENTED();
-    return 0;
+    return nullptr;
 }
 
 void uaeser_clearbuffers(void*) {
@@ -1572,14 +1585,13 @@ void x86_bridge_sync_change() {
     //return 0;
 }
 
-int x86_doirq(unsigned char) {
+void x86_doirq(unsigned char) {
     UNIMPLEMENTED();
-    return 0;
 }
 
-int x86_mouse(int, int, int, int, int) {
+bool x86_mouse(int, int, int, int, int) {
     TRACE();
-    return 0;
+    return false;
 }
 
 int x86_rt1000_add_unit(int, uaedev_config_info*, romconfig*) {
@@ -1592,19 +1604,17 @@ int x86_rt1000_init(autoconfig_info*) {
     return 0;
 }
 
-int x86_update_sound(float) {
+void x86_update_sound(float) {
     UNIMPLEMENTED();
-    return 0;
 }
 
-int x86_xt_ide_bios(zfile*, romconfig*) {
+void x86_xt_ide_bios(zfile*, romconfig*) {
     UNIMPLEMENTED();
-    return 0;
 }
 
-int xsurf_init(autoconfig_info*) {
+bool xsurf_init(autoconfig_info*) {
     UNIMPLEMENTED();
-    return 0;
+    return false;
 }
 
 void zeus040_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
@@ -1634,14 +1644,13 @@ TCHAR console_getch() {
     return 0;
 }
 
-int cpuboard_io_special(int, unsigned int*, int, bool) {
+bool cpuboard_io_special(int, unsigned int*, int, bool) {
     UNIMPLEMENTED();
-    return 0;
+    return false;
 }
 
-int cpuboard_map() {
+void cpuboard_map() {
     TRACE();
-    return 0;
 }
 
 int cpuboard_maxmemory(uae_prefs*) {
@@ -1649,9 +1658,8 @@ int cpuboard_maxmemory(uae_prefs*) {
     return 0;
 }
 
-int cpuboard_reset(int) {
+void cpuboard_reset(int) {
     TRACE();
-    return 0;
 }
 
 void cyberstorm_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
@@ -1662,28 +1670,25 @@ void draco_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
 
-int draco_ext_interrupt(bool) {
+void draco_ext_interrupt(bool) {
     UNIMPLEMENTED();
-    return 0;
 }
 
 void driveclick_fdrawcmd_close(int) {
     UNIMPLEMENTED();
 }
 
-int dsp_pause(int) {
+void dsp_pause(int) {
     UNIMPLEMENTED();
-    return 0;
 }
 
-int ethernet_pause(int) {
+void ethernet_pause(int) {
     UNIMPLEMENTED();
-    return 0;
 }
 
-int fp_init_native_80() {
+bool fp_init_native_80() {
     UNIMPLEMENTED();
-    return 0;
+    return false;
 }
 
 int fsdb_exists(char const*) {
@@ -2076,4 +2081,10 @@ void gettimeofday (struct timeval *tv, void *blah)
 }
 #endif
 
+void update_disassembly(uae_u32) {
+    UNIMPLEMENTED();
+}
 
+void update_memdump(uae_u32) {
+    UNIMPLEMENTED();
+}

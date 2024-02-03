@@ -775,7 +775,7 @@ static int get_cdrom_toc (void)
 		if (s->point >= 2 && s->point < 100 && (s->control & 0x0c) != 0x04 && !secondtrack)
 			secondtrack = addr;
 	}
-	cdrom_toc_crc = get_crc32 (cdrom_toc_buffer, cdrom_toc_cd_buffer.points * 13);
+	cdrom_toc_crc = crc32::get_crc32 (cdrom_toc_buffer, cdrom_toc_cd_buffer.points * 13);
 	return 0;
 }
 static bool is_valid_data_sector(int sector)

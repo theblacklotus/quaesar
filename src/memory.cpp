@@ -3897,7 +3897,7 @@ uae_u8 *save_rom(int first, size_t *len, uae_u8 *dstptr)
 	save_u32 (mem_size);
 	save_u32 (mem_type);
 	save_u32 (version);
-	save_u32 (get_crc32 (mem_real_start, mem_size));
+	save_u32 (crc32::get_crc32 (mem_real_start, mem_size));
 	save_string (tmpname);
 	save_string (path);
 	if (saverom) {
