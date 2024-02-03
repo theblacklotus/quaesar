@@ -60,8 +60,15 @@ STATIC_INLINE void do_put_mem_word(uae_u16 *a, uae_u16 v)
 
 #else
 
+#if defined(__APPLE__)
+// Mac OS X / Darwin features
+#include <libkern/OSByteOrder.h>
+#define bswap_16(x) OSSwapInt16(x)
+#define bswap_32(x) OSSwapInt32(x)
+#define bswap_64(x) OSSwapInt64(x)
+#else
 #include <byteswap.h>
-
+#endif
 
 STATIC_INLINE uae_u64 do_get_mem_quad(uae_u64 *a)
 {

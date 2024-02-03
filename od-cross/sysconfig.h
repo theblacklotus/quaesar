@@ -16,7 +16,7 @@
 
 #define DRIVESOUND
 //#define GFXFILTER
-#if defined(_M_ARM64) || defined(_M_ARM64EC)
+#if defined(_M_ARM64) || defined(_M_ARM64EC) || defined(__aarch64__)
 #define __arm__
 #define MSVC_LONG_DOUBLE
 #else
@@ -588,6 +588,10 @@ typedef long uae_atomic;
 /* Define if you have the <unistd.h> header file.  */
 #ifdef __GNUC__
 #define HAVE_UNISTD_H 1
+#endif
+
+#ifdef __APPLE__
+#define HAVE_LIBKERN_OSBYTEORDER_H
 #endif
 
 /* Define if you have the <utime.h> header file.  */

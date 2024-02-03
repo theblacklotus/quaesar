@@ -15,6 +15,8 @@ struct addrbank;
 #include "driveclick.h"
 #include "pci_hw.h"
 #include "blkdev.h"
+#include "uae/time.h"
+#include "fsdb.h"
 
 struct PPCD_CB;
 
@@ -51,7 +53,7 @@ void vsync_clear() {
     UNIMPLEMENTED();
 }
 
-int vsync_isdone(long* dt) {
+int vsync_isdone(frame_time_t* dt) {
     TRACE();
     return 1;
 }
@@ -667,7 +669,7 @@ void cpuboard_rethink() {
 
 a_inode* custom_fsdb_lookup_aino_aname(a_inode_struct*, char const*) {
     UNIMPLEMENTED();
-    nullptr;
+    return nullptr;
 }
 
 a_inode* custom_fsdb_lookup_aino_nname(a_inode_struct*, char const*) {
@@ -1031,7 +1033,7 @@ int my_issamevolume(char const*, char const*, char*) {
     return 0;
 }
 
-uae_s64 my_lseek(my_openfile_s*, long, int) {
+uae_s64 my_lseek(my_openfile_s*, uae_s64, int) {
     UNIMPLEMENTED();
     return 0;
 }

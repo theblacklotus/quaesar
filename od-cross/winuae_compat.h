@@ -17,8 +17,14 @@
 
 #define _tfopen fopen
 #define uae_tfopen fopen
+
+#ifdef __APPLE__ 
+#define _ftelli64 ftell
+#define _fseeki64 fseek
+#else
 #define _ftelli64 ftello64
 #define _fseeki64 fseeko64
+#endif
 
 // convert windows libc names to standard libc function names, and also
 // use char functions instead of wchar string functions.

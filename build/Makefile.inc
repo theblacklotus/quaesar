@@ -1,4 +1,6 @@
-CPPFLAGS += -g -DFSUAE -I . -I include -I od-cross -MMD
+UNAME_S := $(shell uname -s)
+
+CPPFLAGS += -g -DFSUAE -I . -I include -I od-cross -MMD -std=c++17
 
 OUT=out/$(target)
 
