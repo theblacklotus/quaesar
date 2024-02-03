@@ -11,7 +11,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#include "win32.h"
+//#include "win32.h"
 #endif
 
 #include "options.h"

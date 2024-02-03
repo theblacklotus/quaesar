@@ -1,6 +1,11 @@
 #ifndef WINUAE_SYSCONFIG_H
 #define WINUAE_SYSCONFIG_H
 
+#ifdef _WIN32
+#define ftello64 _ftelli64
+#define fseeko64 _fseeki64
+#endif
+
 #ifndef _WIN32
 #include "winuae_compat.h"
 #endif

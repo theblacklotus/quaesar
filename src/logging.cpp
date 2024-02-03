@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#if 0
 void UAECALL uae_log(const char *format, ...)
 {
 	/* Redirect UAE_LOG_VA_ARGS_FULL to use write_log instead */
@@ -9,3 +10,4 @@ void UAECALL uae_log(const char *format, ...)
 	UAE_LOG_VA_ARGS_FULL(format);
 #undef uae_log
 }
+#endif

@@ -30,7 +30,7 @@ def read_file_to_string(file):
 def main():
     header = read_file_to_string("build/vc_proj_header.txt")
     footer = read_file_to_string("build/vc_proj_footer.txt")
-    files = extract_srcs_from_file("Makefile.winuae")
+    files = extract_srcs_from_file("build/Makefile.quaesar")
 
     with open("build/quaesar.vcxproj", 'w') as f:
         f.write(header)

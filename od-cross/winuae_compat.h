@@ -1,7 +1,9 @@
 #ifndef UAE_OD_FS_WINUAE_COMPAT_H
 #define UAE_OD_FS_WINUAE_COMPAT_H
 
+
 #ifdef WINDOWS
+
 
 // Include windef.h now to get RECT and DWORD defined (and not collide with
 // later includes of windows.h

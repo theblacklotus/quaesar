@@ -107,7 +107,7 @@ static void zcache_free (struct zcache *zc)
 {
 	struct zcache *pl = NULL;
 	struct zcache *l  = zcachedata;
-	struct zcache *nxt;
+	struct zcache *nxt = NULL;
 
 	while (l != zc) {
 		if (l == 0)
@@ -198,7 +198,7 @@ static void zfile_free (struct zfile *f)
 	if (f->f)
 		fclose (f->f);
 	if (f->deleteafterclose) {
-		_wunlink (f->name);
+		unlink (f->name);
 		write_log (_T("deleted temporary file '%s'\n"), f->name);
 	}
 	xfree (f->name);
@@ -241,7 +241,7 @@ void zfile_fclose (struct zfile *f)
 		f->archiveparent = NULL;
 	}
 	struct zfile *pl = NULL;
-	struct zfile *nxt;
+	struct zfile *nxt = NULL;
 	struct zfile *l  = zlist;
 	while (l != f) {
 		if (l == 0) {
@@ -1808,6 +1808,7 @@ static struct zfile *zfile_fopen_x (const TCHAR *name, const TCHAR *mode, int ma
 }
 
 #ifdef _WIN32
+#if 0
 static int isinternetfile (const TCHAR *name)
 {
 	if (!_tcsnicmp (name, _T("http://"), 7) || !_tcsnicmp (name, _T("https://"), 8))
@@ -1816,6 +1817,7 @@ static int isinternetfile (const TCHAR *name)
 		return -1;
 	return 0;
 }
+
 #include <wininet.h>
 #include "win32.h"
 #define INETBUFFERLEN 1000000
@@ -1909,14 +1911,18 @@ end:
 }
 #endif
 
+#endif
+
 static struct zfile *zfile_fopenx2 (const TCHAR *name, const TCHAR *mode, int mask, int index)
 {
 	struct zfile *f;
 	TCHAR tmp[MAX_DPATH];
 
 #ifdef _WIN32
+	/*
 	if (isinternetfile (name))
 		return zfile_fopen_internet (name, mode, mask);
+	*/
 #endif
 	f = zfile_fopen_x (name, mode, mask, index);
 	if (f)
