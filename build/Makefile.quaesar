@@ -118,22 +118,7 @@ srcs =  src/aros.rom.cpp \
 	    src/vm.cpp \
 	    softfloat/softfloat.cpp \
 	    softfloat/softfloat_fpsp.cpp \
-	    softfloat/softfloat_decimal.cpp \
-		external/zlib/adler32.c \
-		external/zlib/compress.c \
-		external/zlib/crc32_zlib.c \
-		external/zlib/deflate.c \
-		external/zlib/gzclose.c \
-		external/zlib/gzlib.c \
-		external/zlib/gzread.c \
-		external/zlib/gzwrite.c \
-		external/zlib/infback.c \
-		external/zlib/inffast.c \
-		external/zlib/inflate.c \
-		external/zlib/inftrees.c \
-		external/zlib/trees.c \
-		external/zlib/zutil.c \
-		external/zlib/uncompr.c
+	    softfloat/softfloat_decimal.cpp
 
 include build/Makefile.inc
 
