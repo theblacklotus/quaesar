@@ -121,7 +121,7 @@
 //#define WITH_QEMU_CPU
 #define WITH_TOCCATA
 //#define WITH_PCI
-//#define WITH_X86w
+//#define WITH_X86
 #define WITH_THREADED_CPU
 #define WITH_SOFTFLOAT
 //#define FLOPPYBRIDGE

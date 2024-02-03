@@ -5965,6 +5965,7 @@ const struct expansionromtype expansionroms[] = {
 		_T("amax"), _T("AMAX ROM dongle"), _T("ReadySoft"),
 		NULL, NULL, NULL, NULL, ROMTYPE_AMAX | ROMTYPE_NONE, 0, 0, 0, false
 	},
+#ifdef WITH_X86
 	{
 		_T("x86athdprimary"), _T("AT IDE Primary"), NULL,
 		NULL, x86_at_hd_init_1, NULL, x86_add_at_hd_unit_1, ROMTYPE_X86_AT_HD1 | ROMTYPE_NOT, 0, 0, BOARD_NONAUTOCONFIG_AFTER_Z2, true,
@@ -5988,6 +5989,7 @@ const struct expansionromtype expansionroms[] = {
 		false, 0, x86_rt1000_settings
 
 	},
+#endif
 #ifndef NDEBUG
 	{
 		_T("dev_ide"), _T("DEV IDE"), NULL,
@@ -6001,7 +6003,7 @@ const struct expansionromtype expansionroms[] = {
 #endif
 
 	/* PC Bridgeboards */
-
+#ifdef WITH_X86
 	{
 		_T("a1060"), _T("A1060 Sidecar"), _T("Commodore"),
 		NULL, a1060_init, NULL, NULL, ROMTYPE_A1060 | ROMTYPE_NONE, 0, 0, BOARD_AUTOCONFIG_Z2, true,
@@ -6042,6 +6044,7 @@ const struct expansionromtype expansionroms[] = {
 		0, 0, 0, false, NULL,
 		false, 0, x86at386_bridge_settings
 	},
+#endif
 
 	// only here for rom selection and settings
 	{
