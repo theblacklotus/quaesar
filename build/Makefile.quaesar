@@ -127,7 +127,13 @@ CPPFLAGS += -DUAE=1
 CPPFLAGS += -D_cdecl= -DFILEFLAG_WRITE=1 -DOS_NAME=\"linux\"
 CPPFLAGS += -DUSHORT=uint16_t
 CPPFLAGS += -DHWND=uint32_t -DHRESULT=uint32_t -DWPARAM=uint16_t -DLPARAM=uint32_t
-CPPFLAGS += -DFILEFLAG_DIR=1 -D_ftelli64=ftello64 -D_fseeki64=fseeko64
+
+ifeq ($(UNAME_S),Darwin)
+	# ftell / fseek are 64-bit on macOS since 10.5
+	CPPFLAGS += -DFILEFLAG_DIR=1 -D_ftelli64=ftell -D_fseeki64=fseek -D_fseeko64=fseeko -Dfseeko64=fseeko -Dftello64=ftello
+else
+	CPPFLAGS += -DFILEFLAG_DIR=1 -D_ftelli64=ftello64 -D_fseeki64=fseeko64
+endif
 
 EXTS = sdl2 libpng
 CPPFLAGS += $(foreach ext,$(EXTS), $(shell pkg-config --cflags $(ext)))
