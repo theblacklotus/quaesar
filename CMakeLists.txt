@@ -70,12 +70,6 @@ gen_blitter(../src/blitfunc.cpp f)
 gen_blitter(../src/blitfunc.h h)
 gen_blitter(../src/blittable.cpp t)
 
-# Ensure the main executable is recompiled if the generated code changes
-# set_source_files_properties(src/dummy_main.cpp PROPERTIES OBJECT_DEPENDS cputbl.h)
-# set_source_files_properties(src/dummy_main.cpp PROPERTIES OBJECT_DEPENDS src/cputbl.h)
-# set_source_files_properties(src/dummy_main.cpp PROPERTIES OBJECT_DEPENDS ${BUILD68K_OUTPUT})
-# set_source_files_properties(src/dummy_main.cpp PROPERTIES OBJECT_DEPENDS ${GENCOMP_OUTPUT})
-
 add_executable(quaesar 
     src/aros.rom.cpp
     src/akiko.cpp
