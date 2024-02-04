@@ -163,6 +163,7 @@ void atomic_set(volatile uae_atomic* p, uae_u32 v) {
 
 #endif
 
-void sleep_millis(int ms) {
+int sleep_millis(int ms) {
     SDL_Delay(ms);
+	return 1;
 }

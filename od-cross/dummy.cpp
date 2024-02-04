@@ -1312,11 +1312,6 @@ int sleep_millis_main(int) {
     return 0;
 }
 
-int sleep_millis(int) {
-    UNIMPLEMENTED();
-    return 0;
-}
-
 void sndboard_free_capture() {
     UNIMPLEMENTED();
 }
