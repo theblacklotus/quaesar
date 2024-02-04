@@ -2576,7 +2576,7 @@ uae_u32 zfile_crc32(struct zfile *f)
 	if (!f)
 		return 0;
 	if (f->data)
-		return crc32::get_crc32(f->data, (uae_u32)f->size);
+		return get_crc32(f->data, (uae_u32)f->size);
 	pos = zfile_ftell32(f);
 	zfile_fseek(f, 0, SEEK_END);
 	size = zfile_ftell32(f);
@@ -2587,7 +2587,7 @@ uae_u32 zfile_crc32(struct zfile *f)
 	zfile_fseek(f, 0, SEEK_SET);
 	zfile_fread(p, 1, size, f);
 	zfile_fseek(f, pos, SEEK_SET);
-	crc = crc32::get_crc32(p, size);
+	crc = get_crc32(p, size);
 	xfree (p);
 	return crc;
 }

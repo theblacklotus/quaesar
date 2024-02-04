@@ -4,10 +4,6 @@
 
 #include "crc32.h"
 
-namespace crc32
-{
-
-
 static unsigned long crc_table32[256];
 static unsigned short crc_table16[256];
 static void make_crc_table (void)
@@ -360,6 +356,3 @@ const TCHAR *get_sha1_txt (void *vinput, int len)
 	*p = 0;
 	return outtxt;
 }
-
-}
-

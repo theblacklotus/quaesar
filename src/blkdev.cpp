@@ -356,7 +356,7 @@ static int getunitinfo (int unitnum, int drive, cd_standard_unit csu, int *isaud
 					uae_u32 crc;
 					write_log (_T("CD32 or CDTV"));
 					if (sys_command_cd_read (unitnum, buffer, 21, 1)) {
-						crc = crc32::get_crc32 (buffer, sizeof buffer);
+						crc = get_crc32 (buffer, sizeof buffer);
 						if (crc == 0xe56c340f) {
 							write_log (_T(" [CD32.TM]"));
 							if (csu == CD_STANDARD_UNIT_CD32) {

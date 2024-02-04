@@ -2032,7 +2032,7 @@ FDI *fdi2raw_header(struct zfile *f)
 	}
 
 	if (fdi->header[140] * 256 + fdi->header[141] >= 2 * 256 + 1) {
-		uae_u32 crc = crc32::get_crc32(fdi->header, 508);
+		uae_u32 crc = get_crc32(fdi->header, 508);
 		uae_u32 crc2 = (fdi->header[508] << 24) | (fdi->header[509] << 16) | (fdi->header[510] << 8) | fdi->header[511];
 		if (crc != crc2) {
 			outlog (_T("FDI: header checksum error\n"));

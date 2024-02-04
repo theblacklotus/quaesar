@@ -2100,7 +2100,7 @@ uae_u8 *save_action_replay(size_t *len, uae_u8 *dstptr)
 		dstbak = dst = xmalloc (uae_u8, arram_size + sizeof ar_custom + sizeof ar_ciaa + sizeof ar_ciab + 1024);
 	save_u8 (1 | ((regs.spcflags & SPCFLAG_ACTION_REPLAY) ? 2 : 0) | (ar_hide ? 4 : 0));
 	save_u8 (armodel);
-	save_u32 (crc32::get_crc32 (armemory_rom + 4, arrom_size - 4));
+	save_u32 (get_crc32 (armemory_rom + 4, arrom_size - 4));
 	save_string (currprefs.cartfile);
 	save_u32 (arrom_size);
 	save_u32 (arram_size);

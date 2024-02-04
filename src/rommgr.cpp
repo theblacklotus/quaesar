@@ -1598,7 +1598,7 @@ int decode_cloanto_rom_do (uae_u8 *mem, int size, int real_size)
 			cloanto_rom = 1;
 			return 1;
 		}
-		crc32::get_sha1 (mem, size, sha1);
+		get_sha1 (mem, size, sha1);
 		rd = checkromdata (sha1, size, -1);
 		if (rd) {
 			if (rd->cloanto)
@@ -1680,16 +1680,16 @@ struct romdata *getromdatabydata (uae_u8 *rom, int size)
 		size = tmpsize;
 	}
 #endif
-	crc32::get_sha1 (rom, size, sha1);
+	get_sha1 (rom, size, sha1);
 	ret = checkromdata(sha1, size, -1);
 	if (!ret) {
-		crc32::get_sha1 (rom, size / 2, sha1);
+		get_sha1 (rom, size / 2, sha1);
 		ret = checkromdata (sha1, size / 2, -1);
 		if (!ret) {
 			/* ignore AR2/3 IO-port range until we have full dump */
 			memcpy (tmp, rom, 4);
 			memset (rom, 0, 4);
-			crc32::get_sha1 (rom, size, sha1);
+			get_sha1 (rom, size, sha1);
 			ret = checkromdata (sha1, size, ROMTYPE_AR2);
 			memcpy (rom, tmp, 4);
 		}
@@ -2124,7 +2124,7 @@ struct zfile *read_rom(struct romdata *prd, bool rw)
 			save_rom(buf, size);
 #endif
 
-			if (notcrc32(crc32) || crc32::get_crc32(buf, size) == crc32) {
+			if (notcrc32(crc32) || get_crc32(buf, size) == crc32) {
 				ok = 1;
 			}
 			if (!ok && (rd->type & ROMTYPE_AR)) {
@@ -2132,7 +2132,7 @@ struct zfile *read_rom(struct romdata *prd, bool rw)
 				tmp[0] = buf[0];
 				tmp[1] = buf[1];
 				buf[0] = buf[1] = 0;
-				if (crc32::get_crc32 (buf, size) == crc32)
+				if (get_crc32 (buf, size) == crc32)
 					ok = 1;
 				buf[0] = tmp[0];
 				buf[1] = tmp[1];
@@ -2140,7 +2140,7 @@ struct zfile *read_rom(struct romdata *prd, bool rw)
 			if (!ok) {
 				/* perhaps it is byteswapped without byteswap entry? */
 				byteswap (buf, size);
-				if (crc32::get_crc32 (buf, size) == crc32)
+				if (get_crc32 (buf, size) == crc32)
 					ok = 1;
 				if (!ok)
 					byteswap(buf, size);

@@ -222,7 +222,7 @@ static int drive_write_adf_pc (uae_u16 *mbuf, uae_u16 *mend, uae_u8 *writebuffer
 			for (i = 0; i < 28; i++)
 				mfmdecode (&mbuf, shift);
 
-			if (crc32::get_crc16 (tmp, 8) != crc || cyl != track / 2 || head != (track & 1) || size != 2 || sector < 1 || sector > 20) {
+			if (get_crc16 (tmp, 8) != crc || cyl != track / 2 || head != (track & 1) || size != 2 || sector < 1 || sector > 20) {
 				write_log (_T("PCDOS: track %d, corrupted sector header\n"), track);
 				continue;
 			}
@@ -240,7 +240,7 @@ static int drive_write_adf_pc (uae_u16 *mbuf, uae_u16 *mend, uae_u8 *writebuffer
 		for (i = 0; i < 512; i++)
 			secbuf[i + 4] = mfmdecode (&mbuf, shift);
 		crc = (mfmdecode (&mbuf, shift) << 8) | mfmdecode (&mbuf, shift);
-		if (crc32::get_crc16 (secbuf, 3 + 1 + 512) != crc) {
+		if (get_crc16 (secbuf, 3 + 1 + 512) != crc) {
 			write_log (_T("PCDOS: track %d, sector %d data checksum error\n"),
 				track, sector + 1);
 			continue;

@@ -5014,7 +5014,7 @@ static void memory_map_dump_3(UaeMemoryMap *map, int log)
 					TCHAR *p = txt + _tcslen (txt);
 					uae_u32 crc = 0xffffffff;
 					if (a1->check(((j << 16) | bankoffset), (size * 1024) / mirrored))
-						crc = crc32::get_crc32 (a1->xlateaddr((j << 16) | bankoffset), (size * 1024) / mirrored);
+						crc = get_crc32 (a1->xlateaddr((j << 16) | bankoffset), (size * 1024) / mirrored);
 					struct romdata *rd = getromdatabycrc (crc);
 					_stprintf (p, _T(" (%08X)"), crc);
 					if (rd) {
