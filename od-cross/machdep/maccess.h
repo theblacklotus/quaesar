@@ -57,6 +57,25 @@ STATIC_INLINE void do_put_mem_word(uae_u16 *a, uae_u16 v)
 	_store_be_u16(a, v);
 }
 
+STATIC_INLINE uae_u64 do_byteswap_64(uae_u64 v)
+{
+	return _byteswap_uint64(v);
+}
+
+STATIC_INLINE uae_u32 do_byteswap_32(uae_u32 v)
+{
+	return _byteswap_ulong(v);
+}
+
+STATIC_INLINE uae_u16 do_byteswap_16(uae_u16 v)
+{
+	return _byteswap_ushort(v);
+}
+
+STATIC_INLINE uae_u32 do_get_mem_word_unswapped(uae_u16* a)
+{
+	return *a;
+}
 
 #else
 
@@ -84,7 +103,6 @@ STATIC_INLINE uae_u16 do_get_mem_word(uae_u16 *a)
 {
 	return bswap_16(*a);
 }
-
 
 STATIC_INLINE void do_put_mem_quad(uae_u64 *a, uae_u64 v)
 {
@@ -122,6 +140,7 @@ STATIC_INLINE uae_u32 do_get_mem_word_unswapped(uae_u16 *a)
 }
 
 #endif
+
 
 #define call_mem_get_func(func, addr) ((*func)(addr))
 #define call_mem_put_func(func, addr, v) ((*func)(addr, v))

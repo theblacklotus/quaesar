@@ -38,9 +38,9 @@
 #  include <io.h>
 #endif
 
-#if defined(_WIN32)
-#  define WIDECHAR
-#endif
+//#if defined(_WIN32)
+//#  define WIDECHAR
+//#endif
 
 #ifdef WINAPI_FAMILY
 #  define open _open

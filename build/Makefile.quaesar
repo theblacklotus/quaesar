@@ -118,8 +118,7 @@ srcs =  src/aros.rom.cpp \
 	    src/vm.cpp \
 	    softfloat/softfloat.cpp \
 	    softfloat/softfloat_fpsp.cpp \
-	    softfloat/softfloat_decimal.cpp \
-
+	    softfloat/softfloat_decimal.cpp
 
 include build/Makefile.inc
 

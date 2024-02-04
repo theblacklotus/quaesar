@@ -19,124 +19,124 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="../aros.rom.cpp" />
-    <ClCompile Include="../akiko.cpp" />
-    <ClCompile Include="../amax.cpp" />
-    <ClCompile Include="../ar.cpp" />
-    <ClCompile Include="../audio.cpp" />
-    <ClCompile Include="../autoconf.cpp" />
-    <ClCompile Include="../blitfunc.cpp" />
-    <ClCompile Include="../blittable.cpp" />
-    <ClCompile Include="../blitter.cpp" />
-    <ClCompile Include="../calc.cpp" />
-    <ClCompile Include="../cd32_fmv_genlock.cpp" />
-    <ClCompile Include="../cdrom.cpp" />
-    <ClCompile Include="../cdtvcr.cpp" />
-    <ClCompile Include="../cfgfile.cpp" />
-    <ClCompile Include="../cia.cpp" />
-    <ClCompile Include="../consolehook.cpp" />
-    <ClCompile Include="../cpudefs.cpp" />
-    <ClCompile Include="../cpuemu_0.cpp" />
-    <ClCompile Include="../cpuemu_11.cpp" />
-    <ClCompile Include="../cpuemu_13.cpp" />
-    <ClCompile Include="../cpuemu_20.cpp" />
-    <ClCompile Include="../cpuemu_21.cpp" />
-    <ClCompile Include="../cpuemu_22.cpp" />
-    <ClCompile Include="../cpuemu_23.cpp" />
-    <ClCompile Include="../cpuemu_24.cpp" />
-    <ClCompile Include="../cpuemu_31.cpp" />
-    <ClCompile Include="../cpuemu_32.cpp" />
-    <ClCompile Include="../cpuemu_33.cpp" />
-    <ClCompile Include="../cpuemu_34.cpp" />
-    <ClCompile Include="../cpuemu_35.cpp" />
-    <ClCompile Include="../cpuemu_40.cpp" />
-    <ClCompile Include="../cpuemu_50.cpp" />
-    <ClCompile Include="../cpummu.cpp" />
-    <ClCompile Include="../cpummu30.cpp" />
-    <ClCompile Include="../cpustbl.cpp" />
-    <ClCompile Include="../crc32.cpp" />
-    <ClCompile Include="../custom.cpp" />
-    <ClCompile Include="../debug.cpp" />
-    <ClCompile Include="../debugmem.cpp" />
-    <ClCompile Include="../def_icons.cpp" />
-    <ClCompile Include="../devices.cpp" />
-    <ClCompile Include="../disasm.cpp" />
-    <ClCompile Include="../disk.cpp" />
-    <ClCompile Include="../diskutil.cpp" />
-    <ClCompile Include="../dlopen.cpp" />
-    <ClCompile Include="../dongle.cpp" />
-    <ClCompile Include="../drawing.cpp" />
-    <ClCompile Include="../driveclick.cpp" />
-    <ClCompile Include="../enforcer.cpp" />
-    <ClCompile Include="../ethernet.cpp" />
-    <ClCompile Include="../events.cpp" />
-    <ClCompile Include="../expansion.cpp" />
-    <ClCompile Include="../fdi2raw.cpp" />
-    <ClCompile Include="../filesys.cpp" />
-    <ClCompile Include="../flashrom.cpp" />
-    <ClCompile Include="../fpp.cpp" />
-    <ClCompile Include="../fpp_native.cpp" />
-    <ClCompile Include="../fpp_softfloat.cpp" />
-    <ClCompile Include="../fsdb.cpp" />
-    <ClCompile Include="../gayle.cpp" />
-    <ClCompile Include="../hardfile.cpp" />
-    <ClCompile Include="../hrtmon.rom.cpp" />
-    <ClCompile Include="../ide.cpp" />
-    <ClCompile Include="../idecontrollers.cpp" />
-    <ClCompile Include="../identify.cpp" />
-    <ClCompile Include="../ini.cpp" />
-    <ClCompile Include="../inputdevice.cpp" />
-    <ClCompile Include="../inputrecord.cpp" />
-    <ClCompile Include="../isofs.cpp" />
-    <ClCompile Include="../keybuf.cpp" />
-    <ClCompile Include="../logging.cpp" />
-    <ClCompile Include="../main.cpp" />
-    <ClCompile Include="../memory.cpp" />
-    <ClCompile Include="../missing.cpp" />
-    <ClCompile Include="../native2amiga.cpp" />
-    <ClCompile Include="../newcpu.cpp" />
-    <ClCompile Include="../newcpu_common.cpp" />
-    <ClCompile Include="../readcpu.cpp" />
-    <ClCompile Include="../rommgr.cpp" />
-    <ClCompile Include="../rtc.cpp" />
-    <ClCompile Include="../sana2.cpp" />
-    <ClCompile Include="../savestate.cpp" />
-    <ClCompile Include="../scp.cpp" />
-    <ClCompile Include="../scsi.cpp" />
-    <ClCompile Include="../scsiemul.cpp" />
-    <ClCompile Include="../scsitape.cpp" />
-    <ClCompile Include="../sndboard.cpp" />
-    <ClCompile Include="../statusline.cpp" />
-    <ClCompile Include="../tabletlibrary.cpp" />
-    <ClCompile Include="../test_card.cpp" />
-    <ClCompile Include="../tinyxml2.cpp" />
-    <ClCompile Include="../traps.cpp" />
-    <ClCompile Include="../uaeexe.cpp" />
-    <ClCompile Include="../uaelib.cpp" />
-    <ClCompile Include="../uaenative.cpp" />
-    <ClCompile Include="../uaeresource.cpp" />
-    <ClCompile Include="../uaeserial.cpp" />
-    <ClCompile Include="../winuae.cpp" />
-    <ClCompile Include="../blkdev.cpp" />
-    <ClCompile Include="../od-cross/gfx.cpp" />
-    <ClCompile Include="../od-cross/gui.cpp" />
-    <ClCompile Include="../od-cross/mman.cpp" />
-    <ClCompile Include="../od-cross/machdep/m68k.cpp" />
-    <ClCompile Include="../od-cross/thread.cpp" />
-    <ClCompile Include="../od-cross/unicode.cpp" />
-    <ClCompile Include="../od-cross/file_system.cpp" />
-    <ClCompile Include="../od-cross/hardfile_host.cpp" />
-    <ClCompile Include="../od-cross/filepaths.cpp" />
-    <ClCompile Include="../od-cross/sounddep/sound.cpp" />
-    <ClCompile Include="../od-cross/time.cpp" />
-    <ClCompile Include="../od-cross/dummy.cpp" />
-    <ClCompile Include="../od-cross/input.cpp" />
-    <ClCompile Include="../zfile.cpp" />
-    <ClCompile Include="../zfile_archive.cpp" />
-    <ClCompile Include="../vm.cpp" />
-    <ClCompile Include="../softfloat/softfloat.cpp" />
-    <ClCompile Include="../softfloat/softfloat_fpsp.cpp" />
-    <ClCompile Include="../softfloat/softfloat_decimal.cpp" />
+<ClCompile Include="../src/aros.rom.cpp" />
+<ClCompile Include="../src/akiko.cpp" />
+<ClCompile Include="../src/amax.cpp" />
+<ClCompile Include="../src/ar.cpp" />
+<ClCompile Include="../src/audio.cpp" />
+<ClCompile Include="../src/autoconf.cpp" />
+<ClCompile Include="../src/blitfunc.cpp" />
+<ClCompile Include="../src/blittable.cpp" />
+<ClCompile Include="../src/blitter.cpp" />
+<ClCompile Include="../src/calc.cpp" />
+<ClCompile Include="../src/cd32_fmv_genlock.cpp" />
+<ClCompile Include="../src/cdrom.cpp" />
+<ClCompile Include="../src/cdtvcr.cpp" />
+<ClCompile Include="../src/cfgfile.cpp" />
+<ClCompile Include="../src/cia.cpp" />
+<ClCompile Include="../src/consolehook.cpp" />
+<ClCompile Include="../src/cpudefs.cpp" />
+<ClCompile Include="../src/cpuemu_0.cpp" />
+<ClCompile Include="../src/cpuemu_11.cpp" />
+<ClCompile Include="../src/cpuemu_13.cpp" />
+<ClCompile Include="../src/cpuemu_20.cpp" />
+<ClCompile Include="../src/cpuemu_21.cpp" />
+<ClCompile Include="../src/cpuemu_22.cpp" />
+<ClCompile Include="../src/cpuemu_23.cpp" />
+<ClCompile Include="../src/cpuemu_24.cpp" />
+<ClCompile Include="../src/cpuemu_31.cpp" />
+<ClCompile Include="../src/cpuemu_32.cpp" />
+<ClCompile Include="../src/cpuemu_33.cpp" />
+<ClCompile Include="../src/cpuemu_34.cpp" />
+<ClCompile Include="../src/cpuemu_35.cpp" />
+<ClCompile Include="../src/cpuemu_40.cpp" />
+<ClCompile Include="../src/cpuemu_50.cpp" />
+<ClCompile Include="../src/cpummu.cpp" />
+<ClCompile Include="../src/cpummu30.cpp" />
+<ClCompile Include="../src/cpustbl.cpp" />
+<ClCompile Include="../src/crc32.cpp" />
+<ClCompile Include="../src/custom.cpp" />
+<ClCompile Include="../src/debug.cpp" />
+<ClCompile Include="../src/debugmem.cpp" />
+<ClCompile Include="../src/def_icons.cpp" />
+<ClCompile Include="../src/devices.cpp" />
+<ClCompile Include="../src/disasm.cpp" />
+<ClCompile Include="../src/disk.cpp" />
+<ClCompile Include="../src/diskutil.cpp" />
+<ClCompile Include="../src/dlopen.cpp" />
+<ClCompile Include="../src/dongle.cpp" />
+<ClCompile Include="../src/drawing.cpp" />
+<ClCompile Include="../src/driveclick.cpp" />
+<ClCompile Include="../src/enforcer.cpp" />
+<ClCompile Include="../src/ethernet.cpp" />
+<ClCompile Include="../src/events.cpp" />
+<ClCompile Include="../src/expansion.cpp" />
+<ClCompile Include="../src/fdi2raw.cpp" />
+<ClCompile Include="../src/filesys.cpp" />
+<ClCompile Include="../src/flashrom.cpp" />
+<ClCompile Include="../src/fpp.cpp" />
+<ClCompile Include="../src/fpp_native.cpp" />
+<ClCompile Include="../src/fpp_softfloat.cpp" />
+<ClCompile Include="../src/fsdb.cpp" />
+<ClCompile Include="../src/gayle.cpp" />
+<ClCompile Include="../src/hardfile.cpp" />
+<ClCompile Include="../src/hrtmon.rom.cpp" />
+<ClCompile Include="../src/ide.cpp" />
+<ClCompile Include="../src/idecontrollers.cpp" />
+<ClCompile Include="../src/identify.cpp" />
+<ClCompile Include="../src/ini.cpp" />
+<ClCompile Include="../src/inputdevice.cpp" />
+<ClCompile Include="../src/inputrecord.cpp" />
+<ClCompile Include="../src/isofs.cpp" />
+<ClCompile Include="../src/keybuf.cpp" />
+<ClCompile Include="../src/logging.cpp" />
+<ClCompile Include="../src/main.cpp" />
+<ClCompile Include="../src/memory.cpp" />
+<ClCompile Include="../src/missing.cpp" />
+<ClCompile Include="../src/native2amiga.cpp" />
+<ClCompile Include="../src/newcpu.cpp" />
+<ClCompile Include="../src/newcpu_common.cpp" />
+<ClCompile Include="../src/readcpu.cpp" />
+<ClCompile Include="../src/rommgr.cpp" />
+<ClCompile Include="../src/rtc.cpp" />
+<ClCompile Include="../src/sana2.cpp" />
+<ClCompile Include="../src/savestate.cpp" />
+<ClCompile Include="../src/scp.cpp" />
+<ClCompile Include="../src/scsi.cpp" />
+<ClCompile Include="../src/scsiemul.cpp" />
+<ClCompile Include="../src/scsitape.cpp" />
+<ClCompile Include="../src/sndboard.cpp" />
+<ClCompile Include="../src/statusline.cpp" />
+<ClCompile Include="../src/tabletlibrary.cpp" />
+<ClCompile Include="../src/test_card.cpp" />
+<ClCompile Include="../src/tinyxml2.cpp" />
+<ClCompile Include="../src/traps.cpp" />
+<ClCompile Include="../src/uaeexe.cpp" />
+<ClCompile Include="../src/uaelib.cpp" />
+<ClCompile Include="../src/uaenative.cpp" />
+<ClCompile Include="../src/uaeresource.cpp" />
+<ClCompile Include="../src/uaeserial.cpp" />
+<ClCompile Include="../src/quaesar.cpp" />
+<ClCompile Include="../src/blkdev.cpp" />
+<ClCompile Include="../od-cross/gfx.cpp" />
+<ClCompile Include="../od-cross/gui.cpp" />
+<ClCompile Include="../od-cross/mman.cpp" />
+<ClCompile Include="../od-cross/machdep/m68k.cpp" />
+<ClCompile Include="../od-cross/thread.cpp" />
+<ClCompile Include="../od-cross/unicode.cpp" />
+<ClCompile Include="../od-cross/file_system.cpp" />
+<ClCompile Include="../od-cross/hardfile_host.cpp" />
+<ClCompile Include="../od-cross/filepaths.cpp" />
+<ClCompile Include="../od-cross/sounddep/sound.cpp" />
+<ClCompile Include="../od-cross/time.cpp" />
+<ClCompile Include="../od-cross/dummy.cpp" />
+<ClCompile Include="../od-cross/input.cpp" />
+<ClCompile Include="../src/zfile.cpp" />
+<ClCompile Include="../src/zfile_archive.cpp" />
+<ClCompile Include="../src/vm.cpp" />
+<ClCompile Include="../softfloat/softfloat.cpp" />
+<ClCompile Include="../softfloat/softfloat_fpsp.cpp" />
+<ClCompile Include="../softfloat/softfloat_decimal.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -209,9 +209,10 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_HAS_STD_BYTE=0;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../od-cross;../include;../;../external/zlib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../od-cross;../include;../;../external/zlib;../external/sdl2/include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -225,14 +226,16 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_HAS_STD_BYTE=0;UAE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_HAS_STD_BYTE=0;_CRT_SECURE_NO_WARNINGS;(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../od-cross;../include;../;../external/zlib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../od-cross;../include;../;../external/zlib;../external/sdl2/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
-    <Link>
+ <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Ws2_32.lib;sdl2.lib;zlib.lib;Winmm.lib;Version.lib;Imm32.lib;Setupapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\external\sdl2\x64;..\external\zlib\libs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -244,9 +247,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_HAS_STD_BYTE=0;_CRT_SECURE_NO_WARNINGS;(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../od-cross;../include;../;../external/zlib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../od-cross;../include;../;../external/zlib;../external/sdl2/include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -264,18 +268,22 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_HAS_STD_BYTE=0;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../od-cross;../include;../;../external/zlib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../od-cross;../include;../;../external/zlib;../external/sdl2/include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Ws2_32.lib;sdl2.lib;zlib.lib;Winmm.lib;Version.lib;Imm32.lib;Setupapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\external\sdl2\x64;..\external\zlib\libs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
+

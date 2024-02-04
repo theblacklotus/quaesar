@@ -1,6 +1,11 @@
 #ifndef WINUAE_SYSCONFIG_H
 #define WINUAE_SYSCONFIG_H
 
+#ifdef _WIN32
+#define ftello64 _ftelli64
+#define fseeko64 _fseeki64
+#endif
+
 #ifndef _WIN32
 #include "winuae_compat.h"
 #endif
@@ -116,7 +121,7 @@
 //#define WITH_QEMU_CPU
 #define WITH_TOCCATA
 //#define WITH_PCI
-//#define WITH_X86w
+//#define WITH_X86
 #define WITH_THREADED_CPU
 #define WITH_SOFTFLOAT
 //#define FLOPPYBRIDGE

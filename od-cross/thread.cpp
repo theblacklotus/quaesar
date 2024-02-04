@@ -106,6 +106,35 @@ uae_thread_id uae_thread_get_id(void) {
 }
 
 
+#ifdef _WIN32
+
+uae_atomic atomic_and(volatile uae_atomic *p, uae_u32 v)
+{
+	return _InterlockedAnd(p, v);
+}
+uae_atomic atomic_or(volatile uae_atomic *p, uae_u32 v)
+{
+	return _InterlockedOr(p, v);
+}
+void atomic_set(volatile uae_atomic *p, uae_u32 v)
+{
+}
+uae_atomic atomic_inc(volatile uae_atomic *p)
+{
+	return _InterlockedIncrement(p);
+}
+uae_atomic atomic_dec(volatile uae_atomic *p)
+{
+	return _InterlockedDecrement(p);
+}
+
+uae_u32 atomic_bit_test_and_reset(volatile uae_atomic *p, uae_u32 v)
+{
+	return _interlockedbittestandreset(p, v);
+}
+
+#else
+
 uae_atomic atomic_and(volatile uae_atomic * p, uae_u32 v) {
     return __atomic_and_fetch(p, v, __ATOMIC_SEQ_CST);
 }
@@ -132,6 +161,9 @@ void atomic_set(volatile uae_atomic* p, uae_u32 v) {
     __atomic_store_n(p, v, __ATOMIC_SEQ_CST);
 }
 
-void sleep_millis(int ms) {
+#endif
+
+int sleep_millis(int ms) {
     SDL_Delay(ms);
+	return 1;
 }

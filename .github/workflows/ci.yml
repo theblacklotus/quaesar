@@ -112,3 +112,20 @@ jobs:
     - name: Build quaesar 
       run: make -j$(nproc)
 
+  windows:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2019, windows-2022]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup MSBuild path
+      uses: microsoft/setup-msbuild@v1.0.2
+        
+    - name: Build Solution (Debug, x64)
+      run: msbuild build/quaesar.sln /p:Configuration=Debug /p:Platform="x64"
+
+

@@ -99,6 +99,6 @@ extern void uaerandomizeseed(void);
 /* the following prototypes should probably be moved somewhere else */
 
 int get_guid_target (uae_u8 *out);
-void filesys_addexternals (void);
+extern void filesys_addexternals (void);
 
 #endif /* UAE_UAE_H */
