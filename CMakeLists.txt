@@ -10,8 +10,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SHARED_DEFINES FSUAE) 
 
+# Zlib and disable examples
+
+set(ZLIB_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+add_subdirectory(external/zlib)
+
 find_package(SDL2 REQUIRED)
-find_package(ZLIB REQUIRED)
 
 # Put this global as all code shareds them
 include_directories(include od-cross .)
@@ -198,8 +202,8 @@ target_compile_definitions(quaesar PRIVATE ${SHARED_DEFINES})
 target_compile_options(quaesar PRIVATE -DUAE=1)
 target_compile_options(quaesar PRIVATE -D_cdecl= -DFILEFLAG_WRITE=1 -DOS_NAME=\"linux\")
 target_compile_options(quaesar PRIVATE -DUSHORT=uint16_t -DHWND=uint32_t -DHRESULT=uint32_t -DWPARAM=uint16_t -DLPARAM=uint32_t)
-target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
-target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} ${ZLIB_LIBRARIES})
+target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS} "src/external/zlib")
+target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic)
 target_compile_options(quaesar PRIVATE -DFILEFLAG_DIR=1 -D_ftelli64=ftello64 -D_fseeki64=fseeko64)
 
 
