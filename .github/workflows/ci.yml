@@ -27,6 +27,8 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y libsdl2-dev cmake ninja-build
 
+    # Build with ninja
+
     - name: Build quaesar
       run: mkdir temp && cd temp && cmake .. -G Ninja && ninja 
 
