@@ -12,17 +12,18 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        gcc-version: [11, 12, 13, 14, 15] # 12 doesn't work for some reason
+        gcc-version: [11, 12, 13, 14, 15]
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install GCC ${{ matrix.gcc-version }}
+    - name: Install GCC ${{ matrix.clang-version }}
       run: |
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        sudo apt update
-        sudo apt install -y gcc-${{ matrix.gcc-version }} g++-${{ matrix.gcc-version }}
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{ matrix.gcc-version }} 100 --slave /usr/bin/g++ g++ /usr/bin/g++-${{ matrix.gcc-version }} 
-        sudo update-alternatives --set gcc /usr/bin/gcc-${{ matrix.gcc-version }}
+        sudo apt-get install -y gcc-${{ matrix.clang-version }} g++-${{ matrix.clang-version }}
+
+    - name: Select Clang ${{ matrix.clang-version }}
+      run: |
+        sudo update-alternatives --install /usr/bin/clang gcc /usr/bin/clang-${{ matrix.gcc-version }} 100
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/clang++-${{ matrix.gcc-version }} 100
 
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y libsdl2-dev cmake ninja-build
