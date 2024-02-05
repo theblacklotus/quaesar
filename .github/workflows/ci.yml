@@ -25,10 +25,10 @@ jobs:
         sudo update-alternatives --set gcc /usr/bin/gcc-${{ matrix.gcc-version }}
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libsdl2-dev cmake ninja
+      run: sudo apt-get update && sudo apt-get install -y libsdl2-dev cmake ninja-build
 
     - name: Build quaesar
-      run: mkdir temp && cd temp && cmake .. -G Ninja && ninja-build
+      run: mkdir temp && cd temp && cmake .. -G Ninja && ninja 
 
   linux_clang_ubuntu_20_04:
     runs-on: ubuntu-20.04
