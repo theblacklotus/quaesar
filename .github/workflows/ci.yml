@@ -20,7 +20,7 @@ jobs:
       run: |
         sudo apt-get install -y gcc-${{ matrix.clang-version }} g++-${{ matrix.clang-version }}
 
-    - name: Select Clang ${{ matrix.clang-version }}
+    - name: Select GCC ${{ matrix.clang-version }}
       run: |
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{ matrix.gcc-version }} 100
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-${{ matrix.gcc-version }} 100
