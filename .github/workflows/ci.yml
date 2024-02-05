@@ -35,9 +35,10 @@ jobs:
 
   linux_clang:
     runs-on: ${{ matrix.os }}
-    name: (${{ matrix.os }}) Clang ${{ matrix.os.clang-version }}.x
+    name: (${{ matrix.os }}) Clang ${{ matrix.clang-version }}.x
     strategy:
       matrix:
+        os: [ubuntu-20.04, ubuntu-22.04]
         include:
           - os: ubuntu-20.04
             clang-version: [8, 9, 10, 11]
