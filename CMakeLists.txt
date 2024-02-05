@@ -209,6 +209,10 @@ else()
     target_compile_options(quaesar PRIVATE -DFILEFLAG_DIR=1 -D_ftelli64=ftello64 -D_fseeki64=fseeko64)
 endif()
 
+if (LINUX)
+    target_link_libraries(quaesar PRIVATE dl)
+endif()
+
 target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS} "src/external/zlib")
 target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic)
 
