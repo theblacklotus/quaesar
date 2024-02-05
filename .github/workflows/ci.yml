@@ -30,7 +30,7 @@ jobs:
     - name: Build quaesar
       env:
         CC: gcc-${{ matrix.gcc-version }}
-        CXX: gcc++-${{ matrix.gcc-version }}
+        CXX: g++-${{ matrix.gcc-version }}
       run: mkdir temp && cd temp && cmake .. -G Ninja && ninja 
 
   linux_clang_ubuntu_20_04:
