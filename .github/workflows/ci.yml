@@ -22,8 +22,8 @@ jobs:
 
     - name: Select Clang ${{ matrix.clang-version }}
       run: |
-        sudo update-alternatives --install /usr/bin/clang gcc /usr/bin/clang-${{ matrix.gcc-version }} 100
-        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/clang++-${{ matrix.gcc-version }} 100
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{ matrix.gcc-version }} 100
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-${{ matrix.gcc-version }} 100
 
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y libsdl2-dev cmake ninja-build
