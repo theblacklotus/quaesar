@@ -28,7 +28,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y libsdl2-dev cmake ninja
 
     - name: Build quaesar
-      run: mkdir temp && cd temp && cmake .. -G Ninja && ninja 
+      run: mkdir temp && cd temp && cmake .. -G Ninja && ninja-build
 
   linux_clang_ubuntu_20_04:
     runs-on: ubuntu-20.04
