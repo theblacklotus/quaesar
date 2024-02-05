@@ -35,15 +35,27 @@ jobs:
 
   linux_clang:
     runs-on: ${{ matrix.os }}
-    name: (${{ matrix.os }}) Clang ${{ matrix.clang-version }}.x
+    name: ${{ matrix.os }} Clang ${{ matrix.clang-version }}.x
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04]
         include:
           - os: ubuntu-20.04
-            clang-version: [8, 9, 10, 11]
+            clang-version: 8
+          - os: ubuntu-20.04
+            clang-version: 9
+          - os: ubuntu-20.04
+            clang-version: 10
+          - os: ubuntu-20.04
+            clang-version: 11
           - os: ubuntu-22.04
-            clang-version: [12, 13, 14, 15]
+            clang-version: 12
+          - os: ubuntu-22.04
+            clang-version: 13
+          - os: ubuntu-22.04
+            clang-version: 14
+          - os: ubuntu-22.04
+            clang-version: 15
 
     steps:
     - name: Checkout code
