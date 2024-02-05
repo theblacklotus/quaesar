@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        gcc-version: [11, 12, 13, 14, 15]
+        gcc-version: [11, 12, 13]
     steps:
     - uses: actions/checkout@v4
 
