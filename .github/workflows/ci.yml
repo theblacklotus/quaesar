@@ -61,17 +61,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install Clang ${{ matrix.os.clang-version }}
+    - name: Install Clang ${{ matrix.clang-version }}
       run: |
-        sudo apt-get update
-        sudo apt-get install -y clang-${{ matrix.os.clang-version }} clang++-${{ matrix.os.clang-version }}
+        sudo apt-get install -y clang-${{ matrix.clang-version }} clang++-${{ matrix.clang-version }}
 
-    - name: Select Clang ${{ matrix.os.clang-version }}
+    - name: Select Clang ${{ matrix.clang-version }}
       run: |
-        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${{ matrix.os.clang-version }} 100
-        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${{ matrix.os.clang-version }} 100
-        clang --version
-        clang++ --version
+        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${{ matrix.clang-version }} 100
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${{ matrix.clang-version }} 100
 
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y libsdl2-dev cmake ninja-build
