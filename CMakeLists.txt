@@ -74,20 +74,6 @@ gen_blitter(../src/blitfunc.cpp f)
 gen_blitter(../src/blitfunc.h h)
 gen_blitter(../src/blittable.cpp t)
 
-target_compile_definitions(quaesar PRIVATE ${SHARED_DEFINES})
-
-target_compile_options(quaesar PRIVATE -DUAE=1 -D_cdecl= -DFILEFLAG_WRITE=1 -DOS_NAME=\"linux\")
-target_compile_options(quaesar PRIVATE -DUSHORT=uint16_t -DHWND=uint32_t -DHRESULT=uint32_t -DWPARAM=uint16_t -DLPARAM=uint32_t)
-
-if (APPLE)
-    target_compile_options(quaesar PRIVATE -DFILEFLAG_DIR=1 -DFILEFLAG_DIR=1 -D_ftelli64=ftell -D_fseeki64=fseek -D_fseeko64=fseeko -Dfseeko64=fseeko -Dftello64=ftell)
-else()
-    target_compile_options(quaesar PRIVATE -DFILEFLAG_DIR=1 -D_ftelli64=ftello64 -D_fseeki64=fseeko64)
-endif()
-
-target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS} "src/external/zlib")
-target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic)
-
 add_executable(quaesar 
     src/aros.rom.cpp
     src/akiko.cpp
@@ -211,6 +197,20 @@ add_executable(quaesar
     jit/comptbl.h
     src/blit.h
 )
+
+target_compile_definitions(quaesar PRIVATE ${SHARED_DEFINES})
+
+target_compile_options(quaesar PRIVATE -DUAE=1 -D_cdecl= -DFILEFLAG_WRITE=1 -DOS_NAME=\"linux\")
+target_compile_options(quaesar PRIVATE -DUSHORT=uint16_t -DHWND=uint32_t -DHRESULT=uint32_t -DWPARAM=uint16_t -DLPARAM=uint32_t)
+
+if (APPLE)
+    target_compile_options(quaesar PRIVATE -DFILEFLAG_DIR=1 -DFILEFLAG_DIR=1 -D_ftelli64=ftell -D_fseeki64=fseek -D_fseeko64=fseeko -Dfseeko64=fseeko -Dftello64=ftell)
+else()
+    target_compile_options(quaesar PRIVATE -DFILEFLAG_DIR=1 -D_ftelli64=ftello64 -D_fseeki64=fseeko64)
+endif()
+
+target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS} "src/external/zlib")
+target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic)
 
 
 
