@@ -33,6 +33,12 @@ add_executable(gencomp src/cpudefs.cpp jit/gencomp.cpp src/missing.cpp src/readc
 add_executable(genblitter src/blitops.cpp src/genblitter.cpp)
 
 target_compile_definitions(build68k PRIVATE FSUAE)
+
+if (NOT WIN32)
+    target_compile_definitions(gencomp PRIVATE FSUAE)
+    target_compile_definitions(gencpu PRIVATE FSUAE)
+endif()
+
 # target_compile_definitions(gencomp PRIVATE FSUAE)
 # target_compile_definitions(gencpu PRIVATE FSUAE)
 
@@ -206,6 +212,7 @@ add_executable(quaesar
 if (APPLE OR LINUX)
 	target_compile_options(quaesar PRIVATE -DUAE=1 -D_cdecl= -DFILEFLAG_WRITE=1 -DOS_NAME=\"linux\")
 	target_compile_options(quaesar PRIVATE -DUSHORT=uint16_t -DHWND=uint32_t -DHRESULT=uint32_t -DWPARAM=uint16_t -DLPARAM=uint32_t)
+    target_compile_definitions(quaesar PRIVATE FSUAE)
 endif()
 
 if (WIN32)
