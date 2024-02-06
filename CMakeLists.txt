@@ -214,7 +214,7 @@ if (APPLE OR LINUX)
 	target_compile_options(quaesar PRIVATE -DUSHORT=uint16_t -DHWND=uint32_t -DHRESULT=uint32_t -DWPARAM=uint16_t -DLPARAM=uint32_t)
     target_compile_definitions(quaesar PRIVATE FSUAE)
     target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS})
-    target_link_libraries(quaesar ${SDL2_LIBRARIES})
+    target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES})
 endif()
 
 if (WIN32)
