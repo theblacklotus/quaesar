@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(ZLIB_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/zlib)
 
-if (APPLE or LINUX)
+if (APPLE OR LINUX)
     find_package(SDL2 REQUIRED)
 endif()
 
