@@ -7,35 +7,56 @@ on:
     branches: [ "master", "dev" ]
 
 jobs:
-  linux_ubuntu_20_04:
-    name: (Ubuntu 20.04) GCC ${{ matrix.gcc-version }}.x
-    runs-on: ubuntu-20.04
+  linux_ubuntu_22_04:
+    name: (Ubuntu 22.04) GCC ${{ matrix.gcc-version }}.x
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        gcc-version: [9, 10, 11, 13] # 12 doesn't work for some reason
+        gcc-version: [11, 12, 13]
     steps:
     - uses: actions/checkout@v4
 
     - name: Install GCC ${{ matrix.gcc-version }}
       run: |
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        sudo apt update
-        sudo apt install -y gcc-${{ matrix.gcc-version }} g++-${{ matrix.gcc-version }}
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{ matrix.gcc-version }} 100 --slave /usr/bin/g++ g++ /usr/bin/g++-${{ matrix.gcc-version }} 
-        sudo update-alternatives --set gcc /usr/bin/gcc-${{ matrix.gcc-version }}
+        sudo apt-get install -y gcc-${{ matrix.gcc-version }} g++-${{ matrix.gcc-version }}
+
+    - name: Select GCC ${{ matrix.gcc-version }}
+      run: |
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{ matrix.gcc-version }} 100
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-${{ matrix.gcc-version }} 100
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libsdl2-dev
+      run: sudo apt-get update && sudo apt-get install -y libsdl2-dev cmake ninja-build
 
     - name: Build quaesar
-      run: make -j$(nproc)
+      env:
+        CC: gcc-${{ matrix.gcc-version }}
+        CXX: g++-${{ matrix.gcc-version }}
+      run: mkdir temp && cd temp && cmake .. -G Ninja && ninja 
 
-  linux_clang_ubuntu_20_04:
-    runs-on: ubuntu-20.04
-    name: (Ubuntu 20.04) Clang ${{ matrix.clang-version }}.x
+  linux_clang:
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} Clang ${{ matrix.clang-version }}.x
     strategy:
+      fail-fast: false
       matrix:
-        clang-version: [8, 9, 10, 11]
+        include:
+          - os: ubuntu-20.04
+            clang-version: 8
+          - os: ubuntu-20.04
+            clang-version: 9
+          - os: ubuntu-20.04
+            clang-version: 10
+          - os: ubuntu-20.04
+            clang-version: 11
+          - os: ubuntu-22.04
+            clang-version: 12
+          - os: ubuntu-22.04
+            clang-version: 13
+          - os: ubuntu-22.04
+            clang-version: 14
+          - os: ubuntu-22.04
+            clang-version: 15
 
     steps:
     - name: Checkout code
@@ -43,58 +64,21 @@ jobs:
 
     - name: Install Clang ${{ matrix.clang-version }}
       run: |
-        sudo apt-get update
-        sudo apt-get install -y clang-${{ matrix.clang-version }}
-        sudo apt-get install -y clang++-${{ matrix.clang-version }}
+        sudo apt-get install -y clang-${{ matrix.clang-version }} clang++-${{ matrix.clang-version }}
 
     - name: Select Clang ${{ matrix.clang-version }}
       run: |
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${{ matrix.clang-version }} 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${{ matrix.clang-version }} 100
-        clang --version # Display the version of clang for debugging
-        clang++ --version # Display the version of clang for debugging
 
     - name: Install dependencies
-      run: sudo apt-get install -y libsdl2-dev
+      run: sudo apt-get update && sudo apt-get install -y libsdl2-dev cmake ninja-build
 
-    - name: Build quaesar 
+    - name: Build quaesar
       env:
         CC: clang-${{ matrix.clang-version }}
         CXX: clang++-${{ matrix.clang-version }}
-      run: make -j$(nproc)
-
-  linux_clang_ubuntu_22_04:
-    runs-on: ubuntu-22.04
-    name: (Ubuntu 22.04) Clang ${{ matrix.clang-version }}.x
-    strategy:
-      matrix:
-        clang-version: [12, 13, 14, 15]
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Install Clang ${{ matrix.clang-version }}
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y clang-${{ matrix.clang-version }}
-        sudo apt-get install -y clang++-${{ matrix.clang-version }}
-
-    - name: Select Clang ${{ matrix.clang-version }}
-      run: |
-        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${{ matrix.clang-version }} 100
-        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${{ matrix.clang-version }} 100
-        clang --version # Display the version of clang for debugging
-        clang++ --version # Display the version of clang for debugging
-
-    - name: Install dependencies
-      run: sudo apt-get install -y libsdl2-dev
-
-    - name: Build quaesar 
-      env:
-        CC: clang-${{ matrix.clang-version }}
-        CXX: clang++-${{ matrix.clang-version }}
-      run: make -j$(nproc)
+      run: mkdir temp && cd temp && cmake .. -G Ninja && ninja
 
   macos:
     runs-on: ${{ matrix.os }}
@@ -107,10 +91,10 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install dependencies
-      run: brew install sdl2 
+      run: brew install sdl2 cmake ninja
 
     - name: Build quaesar 
-      run: make -j$(nproc)
+      run: mkdir temp && cd temp && cmake .. -G Ninja && ninja 
 
   windows:
     runs-on: ${{ matrix.os }}

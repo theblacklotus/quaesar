@@ -1727,7 +1727,7 @@ ZEXTERN uLong ZEXPORT adler32_combine(uLong adler1, uLong adler2,
    negative, the result has no meaning or utility.
 */
 
-//ZEXTERN uLong ZEXPORT crc32(uLong crc, const Bytef *buf, uInt len);
+ZEXTERN uLong ZEXPORT crc32(uLong crc, const Bytef *buf, uInt len);
 /*
      Update a running CRC-32 with the bytes buf[0..len-1] and return the
    updated CRC-32. A CRC-32 value is in the range of a 32-bit unsigned integer.
