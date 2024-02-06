@@ -8,14 +8,19 @@ project(quaesar LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(SHARED_DEFINES FSUAE) 
-
 # Zlib and disable examples
 
 set(ZLIB_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/zlib)
 
-find_package(SDL2 REQUIRED)
+if (APPLE OR LINUX)
+    find_package(SDL2 REQUIRED)
+endif()
+
+if (WIN32)
+  add_definitions(-D_HAS_STD_BYTE=0)
+endif()
+
 
 # Put this global as all code shareds them
 include_directories(include od-cross .)
@@ -27,9 +32,15 @@ add_executable(gencpu src/cpudefs.cpp src/gencpu.cpp src/missing.cpp src/readcpu
 add_executable(gencomp src/cpudefs.cpp jit/gencomp.cpp src/missing.cpp src/readcpu.cpp od-cross/unicode.cpp)
 add_executable(genblitter src/blitops.cpp src/genblitter.cpp)
 
-target_compile_definitions(build68k PRIVATE ${SHARED_DEFINES})
-target_compile_definitions(gencomp PRIVATE ${SHARED_DEFINES})
-target_compile_definitions(gencpu PRIVATE ${SHARED_DEFINES})
+target_compile_definitions(build68k PRIVATE FSUAE)
+
+if (NOT WIN32)
+    target_compile_definitions(gencomp PRIVATE FSUAE)
+    target_compile_definitions(gencpu PRIVATE FSUAE)
+endif()
+
+# target_compile_definitions(gencomp PRIVATE FSUAE)
+# target_compile_definitions(gencpu PRIVATE FSUAE)
 
 # Set the output path for the generated code
 set(BUILD68K_OUTPUT ../src/cpudefs.cpp)
@@ -198,23 +209,37 @@ add_executable(quaesar
     src/blit.h
 )
 
-target_compile_definitions(quaesar PRIVATE ${SHARED_DEFINES})
+if (APPLE OR LINUX)
+	target_compile_options(quaesar PRIVATE -DUAE=1 -D_cdecl= -DFILEFLAG_WRITE=1 -DOS_NAME=\"linux\")
+	target_compile_options(quaesar PRIVATE -DUSHORT=uint16_t -DHWND=uint32_t -DHRESULT=uint32_t -DWPARAM=uint16_t -DLPARAM=uint32_t)
+    target_compile_definitions(quaesar PRIVATE FSUAE)
+    target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS})
+    target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES})
+endif()
 
-target_compile_options(quaesar PRIVATE -DUAE=1 -D_cdecl= -DFILEFLAG_WRITE=1 -DOS_NAME=\"linux\")
-target_compile_options(quaesar PRIVATE -DUSHORT=uint16_t -DHWND=uint32_t -DHRESULT=uint32_t -DWPARAM=uint16_t -DLPARAM=uint32_t)
+if (WIN32)
+    target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/include")
+    if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+       target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/x64/sdl2.lib")
+    else()
+       target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/win32/sdl2.lib")
+    endif()
+    target_link_libraries(quaesar PRIVATE Ws2_32.lib Winmm.lib Version.lib Imm32.lib Setupapi.lib)
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT quaesar)
+endif()
 
 if (APPLE)
     target_compile_options(quaesar PRIVATE -DFILEFLAG_DIR=1 -DFILEFLAG_DIR=1 -D_ftelli64=ftell -D_fseeki64=fseek -D_fseeko64=fseeko -Dfseeko64=fseeko -Dftello64=ftell)
-else()
-    target_compile_options(quaesar PRIVATE -DFILEFLAG_DIR=1 -D_ftelli64=ftello64 -D_fseeki64=fseeko64)
 endif()
 
 if (LINUX)
+    target_compile_options(quaesar PRIVATE -DFILEFLAG_DIR=1 -D_ftelli64=ftello64 -D_fseeki64=fseeko64)
     target_link_libraries(quaesar PRIVATE dl)
 endif()
 
-target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS} "src/external/zlib")
+target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/zlib")
 target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic)
+
 
 
 
