@@ -4,7 +4,7 @@
 #include "sysconfig.h"
 #include "sysdeps.h"
 #include "uae/time.h"
-#include <sdl.h>
+#include <SDL.h>
 
 // WTF SDL!
 #undef main
