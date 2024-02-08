@@ -185,6 +185,7 @@ add_executable(quaesar
     src/uaeserial.cpp
     src/quaesar.cpp
     src/blkdev.cpp
+    src/gfxutil.cpp
     od-cross/gfx.cpp
     od-cross/gui.cpp
     od-cross/mman.cpp

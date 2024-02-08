@@ -1,6 +1,8 @@
 #ifndef WINUAE_SYSCONFIG_H
 #define WINUAE_SYSCONFIG_H
 
+//#include <intrin.h>
+
 #ifdef _WIN32
 #define ftello64 _ftelli64
 #define fseeko64 _fseeki64
@@ -618,8 +620,8 @@ typedef long uae_atomic;
     } while (0) 
 
 
-#define TRACE() \
-    do { } while (0) 
+//#define TRACE() do { printf("%s\n", __func__); } while (0) 
+#define TRACE() do { } while (0) 
 
 
 #endif /* WINUAE_SYSCONFIG_H */

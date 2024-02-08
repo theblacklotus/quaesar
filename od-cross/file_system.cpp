@@ -198,8 +198,8 @@ TCHAR* target_expand_environment(const TCHAR* path, TCHAR* out, int maxlen) {
 }
 
 bool my_stat (const TCHAR* name, struct mystat* ms) {
-    UNIMPLEMENTED();
-    return FALSE;
+    //UNIMPLEMENTED();
+    return true;
 }
 
 int my_readdir(struct my_opendir_s* mod, TCHAR* name) {
