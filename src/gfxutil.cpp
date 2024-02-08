@@ -17,8 +17,6 @@
 
 #include <math.h>
 
-#undef gamma
-
 float getvsyncrate(int monid, float hz, int *mult)
 {
 	struct amigadisplay *ad = &adisplays[monid];
@@ -136,7 +134,7 @@ static float video_gamma (float value, float gamma, float bri, float con)
 	return ret;
 }
 
-static uae_u32 gamma[256 * 3][3];
+static uae_u32 gamma_table[256 * 3][3];
 static int lf, hf;
 
 static void video_calc_gammatable(int monid)
@@ -188,7 +186,7 @@ static void video_calc_gammatable(int monid)
 			if (v > max)
 				v = max;
 
-			gamma[i][j] = (uae_u32)(v + 0.5);
+			gamma_table[i][j] = (uae_u32)(v + 0.5);
 		}
 	}
 }
@@ -361,9 +359,9 @@ void alloc_colors_rgb (int rw, int gw, int bw, int rs, int gs, int bs, int aw, i
 		}
 		j += 256;
 
-		rc[i] = doColor(gamma[j][0], rw, rs) | doAlpha(alpha, aw, as);
-		gc[i] = doColor(gamma[j][1], gw, gs) | doAlpha(alpha, aw, as);
-		bc[i] = doColor(gamma[j][2], bw, bs) | doAlpha(alpha, aw, as);
+		rc[i] = doColor(gamma_table[j][0], rw, rs) | doAlpha(alpha, aw, as);
+		gc[i] = doColor(gamma_table[j][1], gw, gs) | doAlpha(alpha, aw, as);
+		bc[i] = doColor(gamma_table[j][2], bw, bs) | doAlpha(alpha, aw, as);
 
 		if (byte_swap) {
 			if (bpp <= 16) {
@@ -403,9 +401,9 @@ void alloc_colors64k(int monid, int rw, int gw, int bw, int rs, int gs, int bs, 
 			g = (g * (255 - 8) / 255) + 8;
 			b = (b * (255 - 8) / 255) + 8;
 		}
-		r = gamma[r + j][0];
-		g = gamma[g + j][1];
-		b = gamma[b + j][2];
+		r = gamma_table[r + j][0];
+		g = gamma_table[g + j][1];
+		b = gamma_table[b + j][2];
 		xcolors[i] = doMask(r, rw, rs) | doMask(g, gw, gs) | doMask(b, bw, bs) | doAlpha(alpha, aw, as);
 		if (byte_swap) {
 			if (bpp <= 16) {
@@ -444,9 +442,9 @@ void alloc_colors64k(int monid, int rw, int gw, int bw, int rs, int gs, int bs, 
 		/* create internal 5:6:5 color tables */
 		for (i = 0; i < 256; i++) {
 			j = i + 256;
-			xredcolors[i] = doColor (gamma[j][0], 5, 11);
-			xgreencolors[i] = doColor (gamma[j][1], 6, 5);
-			xbluecolors[i] = doColor (gamma[j][2], 5, 0);
+			xredcolors[i] = doColor (gamma_table[j][0], 5, 11);
+			xgreencolors[i] = doColor (gamma_table[j][1], 6, 5);
+			xbluecolors[i] = doColor (gamma_table[j][2], 5, 0);
 			if (bpp <= 16) {
 				/* Fill upper 16 bits of each colour value with
 				* a copy of the colour. */
@@ -459,9 +457,9 @@ void alloc_colors64k(int monid, int rw, int gw, int bw, int rs, int gs, int bs, 
 			int r = ((i >> 8) << 4) | (i >> 8);
 			int g = (((i >> 4) & 0xf) << 4) | ((i >> 4) & 0x0f);
 			int b = ((i & 0xf) << 4) | (i & 0x0f);
-			r = gamma[r + 256][0];
-			g = gamma[g + 256][1];
-			b = gamma[b + 256][2];
+			r = gamma_table[r + 256][0];
+			g = gamma_table[g + 256][1];
+			b = gamma_table[b + 256][2];
 
 			if (currprefs.gfx_blackerthanblack) {
 				r = (r * (255 - 8) / 255) + 8;
@@ -487,11 +485,11 @@ void alloc_colors64k(int monid, int rw, int gw, int bw, int rs, int gs, int bs, 
 		for (i = 0; i < 65536; i++) {
 			uae_u32 r, g, b;
 			r = (((i >> 11) & 31) << 3) | lowbits (i, 11, 3);
-			r = gamma[r + 256][0];
+			r = gamma_table[r + 256][0];
 			g = (((i >>  5) & 63) << 2) | lowbits (i,  5, 2);
-			g = gamma[g + 256][1];
+			g = gamma_table[g + 256][1];
 			b = (((i >>  0) & 31) << 3) | lowbits (i,  0, 3);
-			b = gamma[b + 256][2];
+			b = gamma_table[b + 256][2];
 			tyhrgb[i] = get_yh(monid, r, g, b) * 256 * 256;
 			tylrgb[i] = get_yl(monid, r, g, b) * 256 * 256;
 			tcbrgb[i] = ((uae_s8)get_cb(monid, r, g, b)) * 256;
