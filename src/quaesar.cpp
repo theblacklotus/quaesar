@@ -4,13 +4,22 @@
 #include "sysconfig.h"
 #include "sysdeps.h"
 #include "uae/time.h"
+#include <SDL.h>
+
+// WTF SDL!
+#undef main
 
 extern void real_main(int argc, TCHAR** argv);
 extern void keyboard_settrans();
 
 // dummy main
-int main(int argc, TCHAR** argv) {
+int main(int argc, char** argv) {
     syncbase = 1000000;
+	// Initialize SDL
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+		return 1;
+	}
 
     keyboard_settrans();
     real_main(argc, argv);

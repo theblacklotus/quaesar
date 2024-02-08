@@ -48,6 +48,8 @@
 #include "rommgr.h"
 #include "newcpu.h"
 #include "fpp.h"
+#include "xwin.h"
+#include <SDL.h>
 
 int avioutput_enabled = 0;
 bool beamracer_debug = false;
@@ -60,6 +62,9 @@ bool is_dsp_installed = false;
 int tablet_log = 0;
 int log_scsi = 0;
 int uaelib_debug;
+int flashscreen;
+bool gfx_hdr = false;
+uae_u32 redc[3 * 256], grec[3 * 256], bluc[3 * 256];
 
 uae_u8* start_pc_p = nullptr;
 uae_u32 start_pc = 0;
@@ -298,7 +303,7 @@ int input_get_default_joystick (struct uae_input_device *uid, int i, int port, i
 }
 
 bool get_plugin_path (TCHAR *out, int len, const TCHAR *path) {
-    UNIMPLEMENTED();
+    TRACE();
     return false;
 }
 
@@ -310,9 +315,6 @@ void fixtrailing(TCHAR* p) {
     UNIMPLEMENTED();
 }
 
-void unlockscr(struct vidbuffer *vb, int y_start, int y_end) {
-    UNIMPLEMENTED();
-}
 
 int uae_slirp_redir(int is_udp, int host_port, struct in_addr guest_addr, int guest_port) {
     UNIMPLEMENTED();
@@ -338,10 +340,6 @@ void refreshtitle() {
     UNIMPLEMENTED();
 }
 
-bool render_screen(int, int, bool) {
-    TRACE();
-    return true;
-}
 
 bool my_utime(const TCHAR* name, struct mytimeval* tv) {
     UNIMPLEMENTED();
@@ -517,7 +515,7 @@ bool ariadne2_init(autoconfig_info*) {
 }
 
 bool audio_is_pull_event() {
-    TRACE();
+    //TRACE();
     return false;
 }
 
@@ -592,9 +590,14 @@ int check_for_cache_miss() {
     return 0;
 }
 
+static int s_has_changed_setting = 1;
+
 int check_prefs_changed_gfx() {
+    // TODO: Fix
+    int has_changed = s_has_changed_setting;
+    s_has_changed_setting = 0;
     TRACE();
-    return 0;
+    return has_changed;
 }
 
 void clipboard_unsafeperiod() {
@@ -844,8 +847,9 @@ void fpux_restore(int*) {
 }
 
 bool frame_drawn(int) {
-    UNIMPLEMENTED();
-    return false;
+    //UNIMPLEMENTED();
+    TRACE();
+    return true;
 }
 
 void free_ahi_v2() {
@@ -904,10 +908,123 @@ void golemfast_ncr9x_scsi_put(unsigned int, unsigned int, int) {
     UNIMPLEMENTED();
 }
 
+SDL_Window* s_window;
+SDL_Surface* s_window_surface;
+
 int graphics_init(bool) {
+    int amiga_width = 754;
+    int amiga_height = 576;
+    int depth = 32;
+	
+    struct vidbuf_description* avidinfo = &adisplays[0].gfxvidinfo;
+
+	avidinfo->drawbuffer.inwidth = avidinfo->drawbuffer.outwidth = amiga_width;
+	avidinfo->drawbuffer.inheight = avidinfo->drawbuffer.outheight = amiga_height;
+
+    int pitch = amiga_width * depth >> 3;
+
+	avidinfo->drawbuffer.pixbytes = depth >> 3;
+	avidinfo->drawbuffer.bufmem = NULL;
+	avidinfo->drawbuffer.linemem = NULL;
+	avidinfo->drawbuffer.rowbytes = pitch;
+
+    struct vidbuffer* buf = &avidinfo->drawbuffer;
+
+    int width = 1280;
+    int height = 720;
+
+	buf->monitor_id = 0;
+	buf->pixbytes = (depth + 7) / 8;
+	buf->width_allocated = (width + 7) & ~7;
+	buf->height_allocated = height;
+
+	int w = buf->width_allocated;
+	int h = buf->height_allocated;
+	int size = (w * 2) * (h * 2) * buf->pixbytes;
+	buf->rowbytes = w * 2 * buf->pixbytes;
+	buf->realbufmem = xcalloc(uae_u8, size);
+	buf->bufmem_allocated = buf->bufmem = buf->realbufmem + (h / 2) * buf->rowbytes + (w / 2) * buf->pixbytes;
+	buf->bufmemend = buf->realbufmem + size - buf->rowbytes;
+	buf->bufmem_lockable = true;
+
+    // Create a window
+    s_window = SDL_CreateWindow("QUAEsar",
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        width, height, 0);
+
+    if (!s_window) {
+        SDL_Log("Could not create window: %s", SDL_GetError());
+        SDL_Quit();
+        return 0;
+    }
+
+    int bits = 8;
+    int red_shift = 16;
+    int green_shift = 8;
+    int blue_shift = 0;
+
+    alloc_colors64k(0, bits, bits, bits, red_shift, green_shift, blue_shift, bits, 24, 0, 0, false);
+
+    // Get the window surface
+    s_window_surface = SDL_GetWindowSurface(s_window);
+
     TRACE();
     return 1;
 }
+
+bool render_screen(int monid, int, bool) {
+    return true;
+}
+
+
+void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
+    SDL_Event e;
+
+    if (!s_window)
+        return;
+
+    // TODO: Should likley move this somewhere else
+    // Handle events on queue
+    while (SDL_PollEvent(&e) != 0) {
+        // User requests quit
+        if (e.type == SDL_QUIT) {
+            exit(1);
+        }
+    }
+
+    // Lock surface if necessary
+    if (SDL_MUSTLOCK(s_window_surface)) SDL_LockSurface(s_window_surface);
+
+    // Pointer to the pixels
+    Uint32* pixels = (Uint32*)s_window_surface->pixels;
+
+	struct amigadisplay* ad = &adisplays[vb_in->monitor_id];
+	struct vidbuf_description* avidinfo = &adisplays[vb_in->monitor_id].gfxvidinfo;
+	struct vidbuffer* vb = avidinfo->outbuffer;
+
+    if (!vb || !vb->bufmem)
+        return;
+
+	uint8_t* sptr = vb->bufmem;
+	uint8_t* endsptr = vb->bufmemend;
+
+    int amiga_width = vb->outwidth;
+    int amiga_height = vb->outheight;
+
+    // Change pixels
+    for (int y = 0; y < amiga_height; y++) {
+        uint8_t* dest = (uint8_t*)&pixels[y * s_window_surface->w];
+        memcpy(dest, sptr, amiga_width * 4);
+	    sptr += vb->rowbytes;
+    }
+
+    // Unlock surface if necessary
+    if (SDL_MUSTLOCK(s_window_surface)) SDL_UnlockSurface(s_window_surface);
+
+    // Update the surface
+    SDL_UpdateWindowSurface(s_window);
+}
+
 
 void graphics_leave() {
     UNIMPLEMENTED();
@@ -1702,10 +1819,12 @@ uae_u32 getlocaltime() {
     return 0;
 }
 
+/*
 float getvsyncrate(int, float, int*) {
     UNIMPLEMENTED();
     return 50.0f;
 }
+*/
 
 const TCHAR* gfxboard_get_configname(int) {
     UNIMPLEMENTED();
@@ -1848,9 +1967,22 @@ void target_default_options(uae_prefs*, int) {
     //UNIMPLEMENTED();
 }
 
-bool target_graphics_buffer_update(int) {
+static int old_w = -1;
+static int old_h = -1;
+
+bool target_graphics_buffer_update(int monid) {
+    struct vidbuf_description* avidinfo = &adisplays[monid].gfxvidinfo;
+    struct vidbuffer* vb = avidinfo->drawbuffer.tempbufferinuse ? &avidinfo->tempbuffer : &avidinfo->drawbuffer;
+
+    if ((vb->outwidth != old_w) || (old_h != vb->outheight)) {
+        old_w = vb->outwidth;
+        old_h = vb->outheight;
+        return true;
+    }
+
     TRACE();
-    return true;
+
+    return false;
 }
 
 int target_parse_option(uae_prefs*, char const*, char const*, int) {
@@ -1886,7 +2018,7 @@ int uaeser_write(void*, unsigned char*, unsigned int) {
 }
 
 int audio_is_pull() {
-    TRACE();
+    //TRACE();
     return 0;
 }
 
