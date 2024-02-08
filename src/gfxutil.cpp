@@ -17,6 +17,8 @@
 
 #include <math.h>
 
+#undef gamma
+
 float getvsyncrate(int monid, float hz, int *mult)
 {
 	struct amigadisplay *ad = &adisplays[monid];
