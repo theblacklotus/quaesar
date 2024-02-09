@@ -11,6 +11,10 @@ So, what sets Quaesar apart?
  * The primary target is A500 512/512, which is the default configuration with accurate emulation settings.
  *  Still possible to configure options such as memory and CPU from the command line if needed.
 
+## 🔍Status
+
+It's very early days for the emulator. Currently it starts up and can display the kickstart screen, but not much can be done currently. The next steps are to implement basic commandline parsing so kickstart, floppy image, etc can be passed in.
+
 ## ✨ Coming features
 
 * No configuration UI. Running should be as easy as `quaesar file.adf / file.exe`.
