@@ -23,13 +23,13 @@ if (WIN32)
   add_definitions(-D_HAS_STD_BYTE=0)
 endif()
 
-include_directories(include od-cross .)
+include_directories(uae_src/include uae_src src .)
 
 if (ENABLE_CODE_GENERATION)
-    add_executable(build68k src/build68k.cpp)
-    add_executable(gencpu src/cpudefs.cpp src/gencpu.cpp src/missing.cpp src/readcpu.cpp od-cross/unicode.cpp)
-    add_executable(gencomp src/cpudefs.cpp jit/gencomp.cpp src/missing.cpp src/readcpu.cpp od-cross/unicode.cpp)
-    add_executable(genblitter src/blitops.cpp src/genblitter.cpp)
+    add_executable(build68k uae_src/build68k.cpp)
+    add_executable(gencpu uae_src/cpudefs.cpp uae_src/gencpu.cpp uae_src/missing.cpp uae_src/readcpu.cpp src/unicode.cpp)
+    add_executable(gencomp uae_src/cpudefs.cpp uae_src/jit/gencomp.cpp uae_src/missing.cpp uae_src/readcpu.cpp src/unicode.cpp)
+    add_executable(genblitter uae_src/blitops.cpp uae_src/genblitter.cpp)
 
     target_compile_definitions(build68k PRIVATE FSUAE)
 
@@ -39,14 +39,14 @@ if (ENABLE_CODE_GENERATION)
     endif()
 
     # Set the output path for the generated code
-    set(BUILD68K_OUTPUT ../src/cpudefs.cpp)
-    set(GENCPU_OUTPUT ../src/cputbl.h)
-    set(GENCOMP_OUTPUT ../jit/comptbl.h)
+    set(BUILD68K_OUTPUT ../uae_src/cpudefs.cpp)
+    set(GENCPU_OUTPUT ../uae_src/cputbl.h)
+    set(GENCOMP_OUTPUT ../uae_jit/comptbl.h)
 
     add_custom_command(
         OUTPUT ${BUILD68K_OUTPUT}
         COMMAND build68k < table68k > ${BUILD68K_OUTPUT}
-        WORKING_DIRECTORY ../src 
+        WORKING_DIRECTORY ../uae_src 
         DEPENDS build68k
         COMMENT "Generating 68k cpu definitions"
     )
@@ -54,7 +54,7 @@ if (ENABLE_CODE_GENERATION)
     add_custom_command(
         OUTPUT ${GENCOMP_OUTPUT}
         COMMAND gencomp
-        WORKING_DIRECTORY ../
+        WORKING_DIRECTORY ../uae_src
         DEPENDS build68k
         COMMENT "Generating jit/comptbl.h"
     )
@@ -62,7 +62,7 @@ if (ENABLE_CODE_GENERATION)
     add_custom_command(
         OUTPUT ${GENCPU_OUTPUT}
         COMMAND gencpu
-        WORKING_DIRECTORY ../src 
+        WORKING_DIRECTORY ../uae_src 
         DEPENDS gencpu
         COMMENT "Generating CPU code"
     )
@@ -76,135 +76,135 @@ if (ENABLE_CODE_GENERATION)
         )
     endfunction()
 
-    gen_blitter(../src/blit.h i)
-    gen_blitter(../src/blitfunc.cpp f)
-    gen_blitter(../src/blitfunc.h h)
-    gen_blitter(../src/blittable.cpp t)
+    gen_blitter(../uae_src/blit.h i)
+    gen_blitter(../uae_src/blitfunc.cpp f)
+    gen_blitter(../uae_src/blitfunc.h h)
+    gen_blitter(../uae_src/blittable.cpp t)
 endif()
 
 add_executable(quaesar 
-    src/aros.rom.cpp
-    src/akiko.cpp
-    src/amax.cpp
-    src/ar.cpp
-    src/audio.cpp
-    src/autoconf.cpp
-    src/blitfunc.cpp
-    src/blittable.cpp
-    src/blitter.cpp
-    src/calc.cpp
-    src/cd32_fmv_genlock.cpp
-    src/cdrom.cpp
-    src/cdtvcr.cpp
-    src/cfgfile.cpp
-    src/cia.cpp
-    src/consolehook.cpp
-    src/cpudefs.cpp
-    src/cpuemu_0.cpp
-    src/cpuemu_11.cpp
-    src/cpuemu_13.cpp
-    src/cpuemu_20.cpp
-    src/cpuemu_21.cpp
-    src/cpuemu_22.cpp
-    src/cpuemu_23.cpp
-    src/cpuemu_24.cpp
-    src/cpuemu_31.cpp
-    src/cpuemu_32.cpp
-    src/cpuemu_33.cpp
-    src/cpuemu_34.cpp
-    src/cpuemu_35.cpp
-    src/cpuemu_40.cpp
-    src/cpuemu_50.cpp
-    src/cpummu.cpp
-    src/cpummu30.cpp
-    src/cpustbl.cpp
-    src/crc32.cpp
-    src/custom.cpp
-    src/debug.cpp
-    src/debugmem.cpp
-    src/def_icons.cpp
-    src/devices.cpp
-    src/disasm.cpp
-    src/disk.cpp
-    src/diskutil.cpp
-    src/dlopen.cpp
-    src/dongle.cpp
-    src/drawing.cpp
-    src/driveclick.cpp
-    src/enforcer.cpp
-    src/ethernet.cpp
-    src/events.cpp
-    src/expansion.cpp
-    src/fdi2raw.cpp
-    src/filesys.cpp
-    src/flashrom.cpp
-    src/fpp.cpp
-    src/fpp_native.cpp
-    src/fpp_softfloat.cpp
-    src/fsdb.cpp
-    src/gayle.cpp
-    src/hardfile.cpp
-    src/hrtmon.rom.cpp
-    src/ide.cpp
-    src/idecontrollers.cpp
-    src/identify.cpp
-    src/ini.cpp
-    src/inputdevice.cpp
-    src/inputrecord.cpp
-    src/isofs.cpp
-    src/keybuf.cpp
-    src/logging.cpp
-    src/main.cpp
-    src/memory.cpp
-    src/missing.cpp
-    src/native2amiga.cpp
-    src/newcpu.cpp
-    src/newcpu_common.cpp
-    src/readcpu.cpp
-    src/rommgr.cpp
-    src/rtc.cpp
-    src/sana2.cpp
-    src/savestate.cpp
-    src/scp.cpp
-    src/scsi.cpp
-    src/scsiemul.cpp
-    src/scsitape.cpp
-    src/sndboard.cpp
-    src/statusline.cpp
-    src/tabletlibrary.cpp
-    src/test_card.cpp
-    src/tinyxml2.cpp
-    src/traps.cpp
-    src/uaeexe.cpp
-    src/uaelib.cpp
-    src/uaenative.cpp
-    src/uaeresource.cpp
-    src/uaeserial.cpp
-    src/quaesar.cpp
-    src/blkdev.cpp
-    src/gfxutil.cpp
-    od-cross/gfx.cpp
-    od-cross/gui.cpp
-    od-cross/mman.cpp
-    od-cross/machdep/m68k.cpp
-    od-cross/thread.cpp
-    od-cross/unicode.cpp
-    od-cross/file_system.cpp
-    od-cross/hardfile_host.cpp
-    od-cross/filepaths.cpp
-    od-cross/sounddep/sound.cpp
-    od-cross/time.cpp
-    od-cross/dummy.cpp
-    od-cross/input.cpp
-    src/zfile.cpp
-    src/zfile_archive.cpp
-    src/vm.cpp
-    softfloat/softfloat.cpp
-    softfloat/softfloat_fpsp.cpp
-    softfloat/softfloat_decimal.cpp
-    src/cputbl.h 
-    jit/comptbl.h
-    src/blit.h
+    uae_src/aros.rom.cpp
+    uae_src/akiko.cpp
+    uae_src/amax.cpp
+    uae_src/ar.cpp
+    uae_src/audio.cpp
+    uae_src/autoconf.cpp
+    uae_src/blitfunc.cpp
+    uae_src/blittable.cpp
+    uae_src/blitter.cpp
+    uae_src/calc.cpp
+    uae_src/cd32_fmv_genlock.cpp
+    uae_src/cdrom.cpp
+    uae_src/cdtvcr.cpp
+    uae_src/cfgfile.cpp
+    uae_src/cia.cpp
+    uae_src/consolehook.cpp
+    uae_src/cpudefs.cpp
+    uae_src/cpuemu_0.cpp
+    uae_src/cpuemu_11.cpp
+    uae_src/cpuemu_13.cpp
+    uae_src/cpuemu_20.cpp
+    uae_src/cpuemu_21.cpp
+    uae_src/cpuemu_22.cpp
+    uae_src/cpuemu_23.cpp
+    uae_src/cpuemu_24.cpp
+    uae_src/cpuemu_31.cpp
+    uae_src/cpuemu_32.cpp
+    uae_src/cpuemu_33.cpp
+    uae_src/cpuemu_34.cpp
+    uae_src/cpuemu_35.cpp
+    uae_src/cpuemu_40.cpp
+    uae_src/cpuemu_50.cpp
+    uae_src/cpummu.cpp
+    uae_src/cpummu30.cpp
+    uae_src/cpustbl.cpp
+    uae_src/crc32.cpp
+    uae_src/custom.cpp
+    uae_src/debug.cpp
+    uae_src/debugmem.cpp
+    uae_src/def_icons.cpp
+    uae_src/devices.cpp
+    uae_src/disasm.cpp
+    uae_src/disk.cpp
+    uae_src/diskutil.cpp
+    uae_src/dlopen.cpp
+    uae_src/dongle.cpp
+    uae_src/drawing.cpp
+    uae_src/driveclick.cpp
+    uae_src/enforcer.cpp
+    uae_src/ethernet.cpp
+    uae_src/events.cpp
+    uae_src/expansion.cpp
+    uae_src/fdi2raw.cpp
+    uae_src/filesys.cpp
+    uae_src/flashrom.cpp
+    uae_src/fpp.cpp
+    uae_src/fpp_native.cpp
+    uae_src/fpp_softfloat.cpp
+    uae_src/fsdb.cpp
+    uae_src/gayle.cpp
+    uae_src/hardfile.cpp
+    uae_src/hrtmon.rom.cpp
+    uae_src/ide.cpp
+    uae_src/idecontrollers.cpp
+    uae_src/identify.cpp
+    uae_src/ini.cpp
+    uae_src/inputdevice.cpp
+    uae_src/inputrecord.cpp
+    uae_src/isofs.cpp
+    uae_src/keybuf.cpp
+    uae_src/logging.cpp
+    uae_src/main.cpp
+    uae_src/memory.cpp
+    uae_src/missing.cpp
+    uae_src/native2amiga.cpp
+    uae_src/newcpu.cpp
+    uae_src/newcpu_common.cpp
+    uae_src/readcpu.cpp
+    uae_src/rommgr.cpp
+    uae_src/rtc.cpp
+    uae_src/sana2.cpp
+    uae_src/savestate.cpp
+    uae_src/scp.cpp
+    uae_src/scsi.cpp
+    uae_src/scsiemul.cpp
+    uae_src/scsitape.cpp
+    uae_src/sndboard.cpp
+    uae_src/statusline.cpp
+    uae_src/tabletlibrary.cpp
+    uae_src/test_card.cpp
+    uae_src/tinyxml2.cpp
+    uae_src/traps.cpp
+    uae_src/uaeexe.cpp
+    uae_src/uaelib.cpp
+    uae_src/uaenative.cpp
+    uae_src/uaeresource.cpp
+    uae_src/uaeserial.cpp
+    uae_src/quaesar.cpp
+    uae_src/blkdev.cpp
+    uae_src/gfxutil.cpp
+    uae_src/zfile.cpp
+    uae_src/zfile_archive.cpp
+    uae_src/vm.cpp
+    uae_src/softfloat/softfloat.cpp
+    uae_src/softfloat/softfloat_fpsp.cpp
+    uae_src/softfloat/softfloat_decimal.cpp
+    uae_src/cputbl.h 
+    uae_src/jit/comptbl.h
+    uae_src/blit.h
+    src/gfx.cpp
+    src/gui.cpp
+    src/mman.cpp
+    src/machdep/m68k.cpp
+    src/thread.cpp
+    src/unicode.cpp
+    src/file_system.cpp
+    src/hardfile_host.cpp
+    src/filepaths.cpp
+    src/sounddep/sound.cpp
+    src/time.cpp
+    src/dummy.cpp
+    src/input.cpp
 )
 
 if (APPLE OR LINUX)
