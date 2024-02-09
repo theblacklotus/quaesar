@@ -1135,10 +1135,12 @@ static int real_main2 (int argc, TCHAR **argv)
 	SDL_Init (SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE);
 #endif
 	set_config_changed ();
+	/*
 	if (restart_config[0]) {
 		default_prefs (&currprefs, true, 0);
 		fixup_prefs (&currprefs, true);
 	}
+	*/
 
 	if (! graphics_setup ()) {
 		exit (1);
@@ -1146,10 +1148,12 @@ static int real_main2 (int argc, TCHAR **argv)
 
 	event_init();
 
+	/*
 	if (restart_config[0])
 		parse_cmdline_and_init_file (argc, argv);
 	else
 		copy_prefs(&changed_prefs, &currprefs);
+	*/
 
 	if (!machdep_init ()) {
 		restart_program = 0;
@@ -1275,8 +1279,8 @@ void real_main (int argc, TCHAR **argv)
 {
 	restart_program = 1;
 
-	fetch_configurationpath (restart_config, sizeof (restart_config) / sizeof (TCHAR));
-	_tcscat (restart_config, OPTIONSFILENAME);
+	//fetch_configurationpath (restart_config, sizeof (restart_config) / sizeof (TCHAR));
+	//_tcscat (restart_config, OPTIONSFILENAME);
 	default_config = 1;
 
 	while (restart_program) {

@@ -25,8 +25,13 @@ int main(int argc, char** argv) {
     app.add_option("input", options.input, "Executable or image file (adf, dms)")->check(CLI::ExistingFile);
     app.add_option("-k,--kickstart", options.kickstart, "Path to the kickstart ROM")->check(CLI::ExistingFile);
     CLI11_PARSE(app, argc, argv);
+    
+    keyboard_settrans();
 
-    strcpy(changed_prefs.romfile, options.kickstart.c_str());
+	default_prefs(&currprefs, true, 0);
+	fixup_prefs(&currprefs, true);
+
+    strcpy(currprefs.romfile, options.kickstart.c_str());
 
     printf("input: %s\n", options.input.c_str());
 
@@ -36,7 +41,6 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-    keyboard_settrans();
     real_main(argc, argv);
 
 	return 0;
