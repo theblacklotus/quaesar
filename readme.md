@@ -1,4 +1,4 @@
-# Quaesar /ˈkweɪ.zɑr/ ![ci](https://github.com/theblacklotus/quaesar/actions/workflows/ci.yml/badge.svg)
+# 💾Quaesar /ˈkweɪ.zɑr/ ![ci](https://github.com/theblacklotus/quaesar/actions/workflows/ci.yml/badge.svg)
 
 <img src="https://raw.githubusercontent.com/theblacklotus/quaesar/readme-update/bin/quaesar.png">
 
