@@ -1,6 +1,8 @@
 # Minimum CMake version requirement
 cmake_minimum_required(VERSION 3.10)
 
+option(ENABLE_CODE_GENERATION "Enable code generation" OFF)
+
 # Project name and languages used
 project(quaesar LANGUAGES CXX)
 
@@ -21,69 +23,64 @@ if (WIN32)
   add_definitions(-D_HAS_STD_BYTE=0)
 endif()
 
-
-# Put this global as all code shareds them
 include_directories(include od-cross .)
 
-# Code generators 
-# add_executable(genblitter src/genblitter.cpp src/missing.cpp od-cross/unicode.cpp)
-add_executable(build68k src/build68k.cpp)
-add_executable(gencpu src/cpudefs.cpp src/gencpu.cpp src/missing.cpp src/readcpu.cpp od-cross/unicode.cpp)
-add_executable(gencomp src/cpudefs.cpp jit/gencomp.cpp src/missing.cpp src/readcpu.cpp od-cross/unicode.cpp)
-add_executable(genblitter src/blitops.cpp src/genblitter.cpp)
+if (ENABLE_CODE_GENERATION)
+    add_executable(build68k src/build68k.cpp)
+    add_executable(gencpu src/cpudefs.cpp src/gencpu.cpp src/missing.cpp src/readcpu.cpp od-cross/unicode.cpp)
+    add_executable(gencomp src/cpudefs.cpp jit/gencomp.cpp src/missing.cpp src/readcpu.cpp od-cross/unicode.cpp)
+    add_executable(genblitter src/blitops.cpp src/genblitter.cpp)
 
-target_compile_definitions(build68k PRIVATE FSUAE)
+    target_compile_definitions(build68k PRIVATE FSUAE)
 
-if (NOT WIN32)
-    target_compile_definitions(gencomp PRIVATE FSUAE)
-    target_compile_definitions(gencpu PRIVATE FSUAE)
-endif()
+    if (NOT WIN32)
+        target_compile_definitions(gencomp PRIVATE FSUAE)
+        target_compile_definitions(gencpu PRIVATE FSUAE)
+    endif()
 
-# target_compile_definitions(gencomp PRIVATE FSUAE)
-# target_compile_definitions(gencpu PRIVATE FSUAE)
+    # Set the output path for the generated code
+    set(BUILD68K_OUTPUT ../src/cpudefs.cpp)
+    set(GENCPU_OUTPUT ../src/cputbl.h)
+    set(GENCOMP_OUTPUT ../jit/comptbl.h)
 
-# Set the output path for the generated code
-set(BUILD68K_OUTPUT ../src/cpudefs.cpp)
-set(GENCPU_OUTPUT ../src/cputbl.h)
-set(GENCOMP_OUTPUT ../jit/comptbl.h)
-
-add_custom_command(
-    OUTPUT ${BUILD68K_OUTPUT}
-    COMMAND build68k < table68k > ${BUILD68K_OUTPUT}
-    WORKING_DIRECTORY ../src 
-    DEPENDS build68k
-    COMMENT "Generating 68k cpu definitions"
-)
-
-add_custom_command(
-     OUTPUT ${GENCOMP_OUTPUT}
-     COMMAND gencomp
-     WORKING_DIRECTORY ../
-     DEPENDS build68k
-     COMMENT "Generating jit/comptbl.h"
-)
-
-add_custom_command(
-    OUTPUT ${GENCPU_OUTPUT}
-    COMMAND gencpu
-    WORKING_DIRECTORY ../src 
-    DEPENDS gencpu
-    COMMENT "Generating CPU code"
-)
-
-function(gen_blitter output letter)
     add_custom_command(
-        OUTPUT ${output}
-        COMMAND genblitter ${letter} > ${output}
-        DEPENDS genblitter
-        COMMENT "Generating blitter code for ${letter}"
+        OUTPUT ${BUILD68K_OUTPUT}
+        COMMAND build68k < table68k > ${BUILD68K_OUTPUT}
+        WORKING_DIRECTORY ../src 
+        DEPENDS build68k
+        COMMENT "Generating 68k cpu definitions"
     )
-endfunction()
 
-gen_blitter(../src/blit.h i)
-gen_blitter(../src/blitfunc.cpp f)
-gen_blitter(../src/blitfunc.h h)
-gen_blitter(../src/blittable.cpp t)
+    add_custom_command(
+        OUTPUT ${GENCOMP_OUTPUT}
+        COMMAND gencomp
+        WORKING_DIRECTORY ../
+        DEPENDS build68k
+        COMMENT "Generating jit/comptbl.h"
+    )
+
+    add_custom_command(
+        OUTPUT ${GENCPU_OUTPUT}
+        COMMAND gencpu
+        WORKING_DIRECTORY ../src 
+        DEPENDS gencpu
+        COMMENT "Generating CPU code"
+    )
+
+    function(gen_blitter output letter)
+        add_custom_command(
+            OUTPUT ${output}
+            COMMAND genblitter ${letter} > ${output}
+            DEPENDS genblitter
+            COMMENT "Generating blitter code for ${letter}"
+        )
+    endfunction()
+
+    gen_blitter(../src/blit.h i)
+    gen_blitter(../src/blitfunc.cpp f)
+    gen_blitter(../src/blitfunc.h h)
+    gen_blitter(../src/blittable.cpp t)
+endif()
 
 add_executable(quaesar 
     src/aros.rom.cpp
@@ -240,8 +237,3 @@ endif()
 
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/zlib")
 target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic)
-
-
-
-
-
