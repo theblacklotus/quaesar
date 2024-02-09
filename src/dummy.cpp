@@ -930,8 +930,8 @@ int graphics_init(bool) {
 
     struct vidbuffer* buf = &avidinfo->drawbuffer;
 
-    int width = 1280;
-    int height = 720;
+    int width = 754;
+    int height = 576;
 
 	buf->monitor_id = 0;
 	buf->pixbytes = (depth + 7) / 8;
@@ -948,7 +948,7 @@ int graphics_init(bool) {
 	buf->bufmem_lockable = true;
 
     // Create a window
-    s_window = SDL_CreateWindow("QUAEsar",
+    s_window = SDL_CreateWindow("Quaesar",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         width, height, 0);
 
