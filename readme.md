@@ -29,7 +29,7 @@ Quaesar uses [CMake](https://cmake.org) to configure the build step. See each pl
 Visual Studio (with the Windows SDK) needs to be installed and the Community edition works fine. Currently Visual Studio 2019 and 2022 is being tested, but older versions may work also.
 
 1. Run or double click `scripts\open_vs_solution.cmd`
-2. Build the solution and start it as any one program.
+2. Build the solution and start it as with any other program. 
 
 ### Linux 
 
@@ -49,6 +49,7 @@ To build (using make)
 
 ```
 mkdir output && cd output && cmake .. && make -j$(nproc)
+```
 
 ### macOS
 
