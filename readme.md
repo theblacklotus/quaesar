@@ -1,5 +1,7 @@
 # Quaesar /ˈkweɪ.zɑr/ [![ci](https://github.com/theblacklotus/quaesar/actions/workflows/ci.yml/badge.svg)]
 
+<img src="https://raw.githubusercontent.com/theblacklotus/quaesar/readme-update/bin/quaesar.png">
+
 Quaesar is an emulator based on [WinUAE](https://github.com/tonioni/WinUAE), aimed primarily at demosceners and demo developers. First off, Quaesar does not intend to replace WinUAE; it should be viewed as an alternative within a very specific niche.
 
 So, what sets Quaesar apart?
