@@ -1,4 +1,4 @@
-# Quaesar /ˈkweɪ.zɑr/ [![ci](https://github.com/theblacklotus/quaesar/actions/workflows/ci.yml/badge.svg)]
+# Quaesar /ˈkweɪ.zɑr/ ![ci](https://github.com/theblacklotus/quaesar/actions/workflows/ci.yml/badge.svg)
 
 <img src="https://raw.githubusercontent.com/theblacklotus/quaesar/readme-update/bin/quaesar.png">
 
@@ -36,7 +36,7 @@ Visual Studio (with the Windows SDK) needs to be installed and the Community edi
 Linux version depends on CMake and SDL2. Each distro has various ways on installing, but this is how Ubuntu/Debian would do it. Ninja build here is optional, but recommended.
 
 ```
-install -y libsdl2-dev cmake ninja-build
+apt-get install libsdl2-dev cmake ninja-build
 ```
 
 To build (using Ninja)
