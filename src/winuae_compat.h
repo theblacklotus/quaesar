@@ -1,9 +1,7 @@
 #ifndef UAE_OD_FS_WINUAE_COMPAT_H
 #define UAE_OD_FS_WINUAE_COMPAT_H
 
-
 #ifdef WINDOWS
-
 
 // Include windef.h now to get RECT and DWORD defined (and not collide with
 // later includes of windows.h
@@ -20,7 +18,7 @@
 #define _tfopen fopen
 #define uae_tfopen fopen
 
-#ifdef __APPLE__ 
+#ifdef __APPLE__
 #define _ftelli64 ftell
 #define _fseeki64 fseek
 #else
@@ -38,8 +36,8 @@
 
 #define _wunlink unlink
 
-//#define _timezone timezone
-//#define _daylight daylight
+// #define _timezone timezone
+// #define _daylight daylight
 #ifdef WINDOWS
 
 #else
@@ -66,7 +64,7 @@ extern int _daylight;
 #define ULONG unsigned long
 #endif
 
-//typedef unsigned int UAE_DWORD;
+// typedef unsigned int UAE_DWORD;
 typedef unsigned int DWORD;
 
 typedef struct tagRECT {
@@ -76,12 +74,12 @@ typedef struct tagRECT {
     int bottom;
 } RECT, *PRECT, *PPRECT;
 
-//#ifndef WINDOWS
-//#define DWORD UAE_DWORD
-//#define RECT UAE_RECT
-//#endif
+// #ifndef WINDOWS
+// #define DWORD UAE_DWORD
+// #define RECT UAE_RECT
+// #endif
 #endif
 
 // #define STATIC_INLINE static inline
 
-#endif // UAE_OD_FS_WINUAE_COMPAT_H
+#endif  // UAE_OD_FS_WINUAE_COMPAT_H

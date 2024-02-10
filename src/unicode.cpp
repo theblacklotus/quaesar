@@ -6,28 +6,24 @@
 
 #include "options.h"
 
-char *ua (const char *s)
-{
-	return strdup(s);
+char* ua(const char* s) {
+    return strdup(s);
 }
 
-char *au (const char *s)
-{
-	return strdup(s);
+char* au(const char* s) {
+    return strdup(s);
 }
 
-char *ua_copy (char *dst, int maxlen, const TCHAR *src)
-{
-	strncpy(dst, src, maxlen);
-	dst[maxlen-1] = 0;
-	return dst;
+char* ua_copy(char* dst, int maxlen, const TCHAR* src) {
+    strncpy(dst, src, maxlen);
+    dst[maxlen - 1] = 0;
+    return dst;
 }
 
-TCHAR *au_copy (TCHAR *dst, int maxlen, const char *src)
-{
-	strncpy(dst, src, maxlen);
-	dst[maxlen-1] = 0;
-	return dst;
+TCHAR* au_copy(TCHAR* dst, int maxlen, const char* src) {
+    strncpy(dst, src, maxlen);
+    dst[maxlen - 1] = 0;
+    return dst;
 }
 
 #if 0
@@ -373,11 +369,9 @@ void to_upper(TCHAR *s, int len)
 
 #endif
 
-int uaestrlen(const char* s)
-{
-	return (int)strlen(s);
+int uaestrlen(const char* s) {
+    return (int)strlen(s);
 }
-int uaetcslen(const TCHAR* s)
-{
-	return (int)_tcslen(s);
+int uaetcslen(const TCHAR* s) {
+    return (int)_tcslen(s);
 }

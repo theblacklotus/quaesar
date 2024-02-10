@@ -1,7 +1,7 @@
 #ifndef WINUAE_SYSCONFIG_H
 #define WINUAE_SYSCONFIG_H
 
-//#include <intrin.h>
+// #include <intrin.h>
 
 #ifdef _WIN32
 #define ftello64 _ftelli64
@@ -12,23 +12,23 @@
 #include "winuae_compat.h"
 #endif
 
-#pragma warning (disable : 4761)
-#pragma warning (disable : 4996)
-#pragma warning (disable : 4018)
+#pragma warning(disable : 4761)
+#pragma warning(disable : 4996)
+#pragma warning(disable : 4018)
 
-#define DIRECTINPUT_VERSION  0x0800
+#define DIRECTINPUT_VERSION 0x0800
 #define DIRECT3D_VERSION 0x0900
 #define SUPPORT_THREADS
 #define MAX_DPATH 1000
 
 #define DRIVESOUND
-//#define GFXFILTER
+// #define GFXFILTER
 #if defined(_M_ARM64) || defined(_M_ARM64EC) || defined(__aarch64__)
 #define __arm__
 #define MSVC_LONG_DOUBLE
 #else
 // #define X86_MSVC_ASSEMBLY
-//#define OPTIMIZED_FLAGS
+// #define OPTIMIZED_FLAGS
 #define MSVC_LONG_DOUBLE
 #ifndef __i386__
 #define __i386__
@@ -41,96 +41,95 @@
 #ifndef UAE_MINI
 
 #if !defined(_M_ARM64) && !defined(_M_ARM64EC)
-//#define JIT /* JIT compiler support */
-//#define USE_JIT_FPU
+// #define JIT /* JIT compiler support */
+// #define USE_JIT_FPU
 #endif
 
 #define DEBUGGER
-//#define GDBSERVER
+// #define GDBSERVER
 #define FILESYS /* filesys emulation */
 #define UAE_FILESYS_THREADS
 #define AUTOCONFIG /* autoconfig support, fast ram, harddrives etc.. */
-//#define NOFLAGS_SUPPORT_GENCPU
+// #define NOFLAGS_SUPPORT_GENCPU
 #define NOFLAGS_SUPPORT_GENCOMP
-//#define HAVE_GET_WORD_UNSWAPPED
+// #define HAVE_GET_WORD_UNSWAPPED
 #define NATMEM_OFFSET natmem_offset
 #define USE_NORMAL_CALLING_CONVENTION 0
 #define USE_X86_FPUCW 1
-//#define WINDDK /* Windows DDK available, keyboard leds and harddrive support */
-//#define CATWEASEL /* Catweasel MK2/3 support */
-#define AHI /* AHI sound emulation */
-#define ENFORCER /* UAE Enforcer */
+// #define WINDDK /* Windows DDK available, keyboard leds and harddrive support */
+// #define CATWEASEL /* Catweasel MK2/3 support */
+#define AHI        /* AHI sound emulation */
+#define ENFORCER   /* UAE Enforcer */
 #define ECS_DENISE /* ECS DENISE new features */
-#define AGA /* AGA chipset emulation (ECS_DENISE must be enabled) */
-#define CD32 /* CD32 emulation */
-#define CDTV /* CDTV emulation */
-//#define D3D /* D3D display filter support */
-#define PARALLEL_PORT /* parallel port emulation */
+#define AGA        /* AGA chipset emulation (ECS_DENISE must be enabled) */
+#define CD32       /* CD32 emulation */
+#define CDTV       /* CDTV emulation */
+// #define D3D /* D3D display filter support */
+#define PARALLEL_PORT   /* parallel port emulation */
 #define PARALLEL_DIRECT /* direct parallel port emulation */
-//#define SERIAL_PORT /* serial port emulation */
+// #define SERIAL_PORT /* serial port emulation */
 #define SERIAL_ENET /* serial port UDP transport */
-//#define SCSIEMU /* uaescsi.device emulation */
-//#define UAESERIAL /* uaeserial.device emulation */
+// #define SCSIEMU /* uaescsi.device emulation */
+// #define UAESERIAL /* uaeserial.device emulation */
 #define FPUEMU /* FPU emulation */
 #define FPU_UAE
-#define MMUEMU /* Aranym 68040 MMU */
-#define FULLMMU /* Aranym 68040 MMU */
-#define CPUEMU_0 /* generic 680x0 emulation */
-#define CPUEMU_11 /* 68000/68010 prefetch emulation */
-#define CPUEMU_13 /* 68000/68010 cycle-exact cpu&blitter */
-#define CPUEMU_20 /* 68020 prefetch */
-#define CPUEMU_21 /* 68020 "cycle-exact" + blitter */
-#define CPUEMU_22 /* 68030 prefetch */
-#define CPUEMU_23 /* 68030 "cycle-exact" + blitter */
-#define CPUEMU_24 /* 68060 "cycle-exact" + blitter */
-#define CPUEMU_25 /* 68040 "cycle-exact" + blitter */
-#define CPUEMU_31 /* Aranym 68040 MMU */
-#define CPUEMU_32 /* Previous 68030 MMU */
-#define CPUEMU_33 /* 68060 MMU */
-#define CPUEMU_34 /* 68030 MMU + cache */
-#define CPUEMU_35 /* 68030 MMU + cache + CE */
-#define CPUEMU_40 /* generic 680x0 with JIT direct memory access */
-#define CPUEMU_50 /* generic 680x0 with indirect memory access */
+#define MMUEMU        /* Aranym 68040 MMU */
+#define FULLMMU       /* Aranym 68040 MMU */
+#define CPUEMU_0      /* generic 680x0 emulation */
+#define CPUEMU_11     /* 68000/68010 prefetch emulation */
+#define CPUEMU_13     /* 68000/68010 cycle-exact cpu&blitter */
+#define CPUEMU_20     /* 68020 prefetch */
+#define CPUEMU_21     /* 68020 "cycle-exact" + blitter */
+#define CPUEMU_22     /* 68030 prefetch */
+#define CPUEMU_23     /* 68030 "cycle-exact" + blitter */
+#define CPUEMU_24     /* 68060 "cycle-exact" + blitter */
+#define CPUEMU_25     /* 68040 "cycle-exact" + blitter */
+#define CPUEMU_31     /* Aranym 68040 MMU */
+#define CPUEMU_32     /* Previous 68030 MMU */
+#define CPUEMU_33     /* 68060 MMU */
+#define CPUEMU_34     /* 68030 MMU + cache */
+#define CPUEMU_35     /* 68030 MMU + cache + CE */
+#define CPUEMU_40     /* generic 680x0 with JIT direct memory access */
+#define CPUEMU_50     /* generic 680x0 with indirect memory access */
 #define ACTION_REPLAY /* Action Replay 1/2/3 support */
-//#define PICASSO96 /* Picasso96 display card emulation */
-//#define UAEGFX_INTERNAL /* built-in libs:picasso96/uaegfx.card */
-//#define BSDSOCKET /* bsdsocket.library emulation */
-// #define CAPS /* CAPS-image support */
-//#define SCP /* SuperCardPro */
-#define FDI2RAW /* FDI 1.0 and 2.x image support */
+// #define PICASSO96 /* Picasso96 display card emulation */
+// #define UAEGFX_INTERNAL /* built-in libs:picasso96/uaegfx.card */
+// #define BSDSOCKET /* bsdsocket.library emulation */
+//  #define CAPS /* CAPS-image support */
+// #define SCP /* SuperCardPro */
+#define FDI2RAW   /* FDI 1.0 and 2.x image support */
 #define AVIOUTPUT /* Avioutput support */
-//#define PROWIZARD /* Pro-Wizard module ripper */
-//#define ARCADIA /* Arcadia arcade system */
-//#define ARCHIVEACCESS /* ArchiveAccess decompression library */
-//#define LOGITECHLCD /* Logitech G15 LCD */
+// #define PROWIZARD /* Pro-Wizard module ripper */
+// #define ARCADIA /* Arcadia arcade system */
+// #define ARCHIVEACCESS /* ArchiveAccess decompression library */
+// #define LOGITECHLCD /* Logitech G15 LCD */
 #define SAVESTATE /* State file support */
-//#define A2091 /* A590/A2091 SCSI */
-//#define A2065 /* A2065 Ethernet card */
-//#define GFXBOARD /* Hardware graphics board */
-//#define NCR /* A4000T/A4091, 53C710/53C770 SCSI */
-//#define NCR9X /* 53C9X SCSI */
-//#define SANA2 /* SANA2 network driver */
-//#define AMAX /* A-Max ROM adapater emulation */
-//#define RETROPLATFORM /* Cloanto RetroPlayer support */
-//#define WITH_CHD
-// #define WITH_LUA /* lua scripting */
+// #define A2091 /* A590/A2091 SCSI */
+// #define A2065 /* A2065 Ethernet card */
+// #define GFXBOARD /* Hardware graphics board */
+// #define NCR /* A4000T/A4091, 53C710/53C770 SCSI */
+// #define NCR9X /* 53C9X SCSI */
+// #define SANA2 /* SANA2 network driver */
+// #define AMAX /* A-Max ROM adapater emulation */
+// #define RETROPLATFORM /* Cloanto RetroPlayer support */
+// #define WITH_CHD
+//  #define WITH_LUA /* lua scripting */
 #define WITH_UAENATIVE
 #define WITH_SLIRP
 #define WITH_BUILTIN_SLIRP
 #define WITH_TABLETLIBRARY
 // #define WITH_UAENET_PCAP
-//#define WITH_PPC
-//#define WITH_QEMU_CPU
+// #define WITH_PPC
+// #define WITH_QEMU_CPU
 #define WITH_TOCCATA
-//#define WITH_PCI
-//#define WITH_X86
+// #define WITH_PCI
+// #define WITH_X86
 #define WITH_THREADED_CPU
 #define WITH_SOFTFLOAT
-//#define FLOPPYBRIDGE
-//#define WITH_MIDIEMU
+// #define FLOPPYBRIDGE
+// #define WITH_MIDIEMU
 #define WITH_DSP
-//#define WITH_DRACO
-
+// #define WITH_DRACO
 
 #else
 
@@ -148,19 +147,18 @@
 #define CPUEMU_13
 #define CPUEMU_11
 
-
 #endif
 
 #define WITH_SCSI_IOCTL
 #define WITH_SCSI_SPTI
 
-//#define A_ZIP
-//#define A_RAR
-//#define A_7Z
-//#define A_LHA
-//#define A_LZX
-//#define A_DMS
-//#define A_WRP
+// #define A_ZIP
+// #define A_RAR
+// #define A_7Z
+// #define A_LHA
+// #define A_LZX
+// #define A_DMS
+// #define A_WRP
 
 #ifndef PATH_MAX
 #define PATH_MAX MAX_DPATH
@@ -175,8 +173,8 @@
 
 #ifdef _DEBUG
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <stdlib.h>
 #endif
 
 #include <stdint.h>
@@ -346,7 +344,7 @@ typedef long uae_atomic;
 #define SIZEOF_LONG 8
 
 /* The number of bytes in a long long.  */
-//#define SIZEOF_LONG_LONG 8
+// #define SIZEOF_LONG_LONG 8
 
 /* The number of bytes in a short.  */
 #define SIZEOF_SHORT 2
@@ -356,7 +354,7 @@ typedef long uae_atomic;
 
 #define HAVE_ISNAN
 #undef HAVE_ISINF
-//#define isnan _isnan
+// #define isnan _isnan
 
 #ifndef LT_MODULE_EXT
 #define LT_MODULE_EXT _T(".dll")
@@ -585,7 +583,7 @@ typedef long uae_atomic;
 
 /* Define if you have the <sys/utime.h> header file.  */
 #ifndef _WIN32
-//#define HAVE_SYS_UTIME_H 1
+// #define HAVE_SYS_UTIME_H 1
 #define HAVE_UTIME_H 1
 #endif
 
@@ -605,7 +603,7 @@ typedef long uae_atomic;
 /* #undef HAVE_UTIME_H */
 
 /* Define if you have the <windows.h> header file.  */
-//#define HAVE_WINDOWS_H 1
+// #define HAVE_WINDOWS_H 1
 
 #define FSDB_DIR_SEPARATOR '\\'
 #define FSDB_DIR_SEPARATOR_S _T("\\")
@@ -613,15 +611,15 @@ typedef long uae_atomic;
 /* Define to 1 if `S_un' is a member of `struct in_addr'. */
 // #define HAVE_STRUCT_IN_ADDR_S_UN 1
 
-#define UNIMPLEMENTED() \
-    do { \
+#define UNIMPLEMENTED()                                                            \
+    do {                                                                           \
         fprintf(stderr, "Function '%s' is unimplemented. Exiting...\n", __func__); \
-        exit(EXIT_FAILURE); \
-    } while (0) 
+        exit(EXIT_FAILURE);                                                        \
+    } while (0)
 
-
-//#define TRACE() do { printf("%s\n", __func__); } while (0) 
-#define TRACE() do { } while (0) 
-
+// #define TRACE() do { printf("%s\n", __func__); } while (0)
+#define TRACE() \
+    do {        \
+    } while (0)
 
 #endif /* WINUAE_SYSCONFIG_H */

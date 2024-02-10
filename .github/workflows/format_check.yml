@@ -1,0 +1,31 @@
+name: Clang Format Check
+
+on: [push, pull_request]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Fetch all history for all tags and branches
+
+    - name: Install clang-format
+      run: sudo apt-get install -y clang-format
+
+    - name: Check code formatting
+      run: |
+        cd src
+        # Find all C/C++ files, format them and check for differences
+        find . -regex '.*\.\(cpp\|hpp\|c\|h\)' | while read file; do
+          clang-format -style=file "$file" | diff -u "$file" -
+          if [ $? -ne 0 ]; then
+            echo "::error file=$file::File is not formatted correctly"
+            FORMAT_STATUS=1
+          fi
+        done
+        # Fail the job if any files were not formatted correctly
+        if [ $FORMAT_STATUS -ne 0 ]; then
+          exit 1
+        fi

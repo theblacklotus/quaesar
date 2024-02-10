@@ -1,10 +1,10 @@
- /*
-  * UAE - The Un*x Amiga Emulator
-  *
-  * Target specific stuff, Win32 version
-  *
-  * Copyright 1997 Mathias Ortmann
-  */
+/*
+ * UAE - The Un*x Amiga Emulator
+ *
+ * Target specific stuff, Win32 version
+ *
+ * Copyright 1997 Mathias Ortmann
+ */
 
 #ifdef _WIN32_WCE
 #define TARGET_NAME "WinCE"
@@ -20,4 +20,3 @@
 #define NO_MAIN_IN_MAIN_C
 
 #define OPTIONSFILENAME _T("default.uae")
-

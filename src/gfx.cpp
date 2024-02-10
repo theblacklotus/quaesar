@@ -1,12 +1,15 @@
-#include <stdio.h>
-#include <stdarg.h>
 #include <errno.h>
+#include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
+
+// clang-format off
 #include "sysconfig.h"
 #include "sysdeps.h"
 #include "options.h"
 #include "inputdevice.h"
 #include "uae/slirp.h"
+// clang-format on
 
 // needed by custom.cpp
 int vsync_activeheight, vsync_totalheight;
@@ -27,14 +30,15 @@ int target_get_display_scanline(int displayindex) {
     return 0;
 }
 
-void target_spin(int cycles) { }
+void target_spin(int cycles) {
+}
 
-void gui_message(const char *format, ...) {
-	va_list parms;
+void gui_message(const char* format, ...) {
+    va_list parms;
 
-	va_start (parms, format);
-	vprintf (format, parms);
-	va_end (parms);
+    va_start(parms, format);
+    vprintf(format, parms);
+    va_end(parms);
 }
 
 int lockscr() {
@@ -50,4 +54,3 @@ int lockscr(struct vidbuffer*, bool, bool, bool) {
     TRACE();
     return 1;
 }
-
