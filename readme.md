@@ -13,7 +13,7 @@ So, what sets Quaesar apart?
 
 ## 🔍 Status
 
-It's very early days for the emulator. Currently it starts up and can display the kickstart screen, but not much can be done currently. The next steps are to implement basic commandline parsing so kickstart, floppy image, etc, can be passed in.
+It's very early days for the emulator. Currently it's possible to do `quaesar <floppy_image.adf> --kickstart path/to/optional/kickstart.rom` (no sound yet)
 
 ## ✨ Coming features
 
