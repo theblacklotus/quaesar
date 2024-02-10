@@ -301,7 +301,7 @@ static bool hsync_debug, vsync_debug, hblank_debug, vblank_debug;
 static int hcenter_debug;
 static uae_u8 vb_state;
 
-uae_sem_t gui_sem;
+uae_sem_t gui_sem = 0;
 
 void set_inhibit_frame(int monid, int bit)
 {
@@ -5434,7 +5434,7 @@ void drawing_init (void)
 
 	gen_direct_drawing_table();
 
-	uae_sem_init (&gui_sem, 0, 1);
+	//uae_sem_init (&gui_sem, 0, 1);
 #ifdef PICASSO96
 	if (!isrestore ()) {
 		ad->picasso_on = 0;

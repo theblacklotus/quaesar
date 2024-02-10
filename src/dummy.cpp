@@ -241,8 +241,15 @@ struct inputdevice_functions inputdevicefunc_joystick = {
 };
 
 const TCHAR* my_getfilepart(const TCHAR* filename) {
-    UNIMPLEMENTED();
-    return nullptr;
+	const TCHAR *p;
+
+	p = strrchr(filename, '\\');
+	if (p)
+		return p + 1;
+	p = strrchr(filename, '/');
+	if (p)
+		return p + 1;
+	return filename;
 }
 
 void fetch_statefilepath(TCHAR* out, int size) {
@@ -820,7 +827,7 @@ void fetch_rompath(char*, int) {
 }
 
 void fetch_saveimagepath(char*, int, int) {
-    UNIMPLEMENTED();
+    TRACE();
 }
 
 void fetch_videopath(char*, int) {
@@ -910,6 +917,8 @@ void golemfast_ncr9x_scsi_put(unsigned int, unsigned int, int) {
 
 SDL_Window* s_window;
 SDL_Surface* s_window_surface;
+SDL_Texture* s_texture = nullptr;
+SDL_Renderer* s_renderer = nullptr;
 
 int graphics_init(bool) {
     int amiga_width = 754;
@@ -950,10 +959,29 @@ int graphics_init(bool) {
     // Create a window
     s_window = SDL_CreateWindow("Quaesar",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        width, height, 0);
+                                width, height, SDL_WINDOW_RESIZABLE);
 
     if (!s_window) {
         SDL_Log("Could not create window: %s", SDL_GetError());
+        SDL_Quit();
+        return 0;
+    }
+
+    s_renderer = SDL_CreateRenderer(s_window, -1, SDL_RENDERER_ACCELERATED);
+
+    if (!s_renderer) {
+        SDL_Log("Could not create renderer: %s", SDL_GetError());
+        SDL_DestroyWindow(s_window);
+        SDL_Quit();
+        return 0;
+    }
+
+    s_texture = SDL_CreateTexture(s_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, amiga_width, amiga_height);
+
+    if (!s_texture) {
+        SDL_Log("Could not create texture: %s", SDL_GetError());
+        SDL_DestroyRenderer(s_renderer);
+        SDL_DestroyWindow(s_window);
         SDL_Quit();
         return 0;
     }
@@ -987,42 +1015,76 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
     // Handle events on queue
     while (SDL_PollEvent(&e) != 0) {
         // User requests quit
-        if (e.type == SDL_QUIT) {
-            exit(1);
+        switch (e.type) {
+            case SDL_QUIT: // User closes the window
+	            quit_program == UAE_QUIT;
+                // TODO: Fix me
+                exit(0);
+                break;
+            case SDL_KEYDOWN: // User presses a key
+                if (e.key.keysym.sym == SDLK_ESCAPE) { // If the key is ESC
+	                quit_program == UAE_QUIT;
+                    exit(0);
+                    // TODO: Fix me
+                }
+                break;
+            default: break;
         }
     }
 
-    // Lock surface if necessary
-    if (SDL_MUSTLOCK(s_window_surface)) SDL_LockSurface(s_window_surface);
+    uint32_t* pixels = nullptr;
+    int pitch = 0;
 
-    // Pointer to the pixels
-    Uint32* pixels = (Uint32*)s_window_surface->pixels;
+    if (SDL_LockTexture(s_texture, NULL, (void**)&pixels, &pitch) == 0) {
+        struct amigadisplay* ad = &adisplays[vb_in->monitor_id];
+        struct vidbuf_description* avidinfo = &adisplays[vb_in->monitor_id].gfxvidinfo;
+        struct vidbuffer* vb = avidinfo->outbuffer;
 
-	struct amigadisplay* ad = &adisplays[vb_in->monitor_id];
-	struct vidbuf_description* avidinfo = &adisplays[vb_in->monitor_id].gfxvidinfo;
-	struct vidbuffer* vb = avidinfo->outbuffer;
+        if (!vb || !vb->bufmem)
+            return;
 
-    if (!vb || !vb->bufmem)
-        return;
+        uint8_t* sptr = vb->bufmem;
+        uint8_t* endsptr = vb->bufmemend;
 
-	uint8_t* sptr = vb->bufmem;
-	uint8_t* endsptr = vb->bufmemend;
+        int amiga_width = vb->outwidth;
+        int amiga_height = vb->outheight;
 
-    int amiga_width = vb->outwidth;
-    int amiga_height = vb->outheight;
+        // Change pixels
+        for (int y = 0; y < amiga_height; y++) {
+            uint8_t* dest = (uint8_t*)&pixels[y * s_window_surface->w];
+            memcpy(dest, sptr, amiga_width * 4);
+            sptr += vb->rowbytes;
+        }
 
-    // Change pixels
-    for (int y = 0; y < amiga_height; y++) {
-        uint8_t* dest = (uint8_t*)&pixels[y * s_window_surface->w];
-        memcpy(dest, sptr, amiga_width * 4);
-	    sptr += vb->rowbytes;
+        SDL_UnlockTexture(s_texture);
     }
 
-    // Unlock surface if necessary
-    if (SDL_MUSTLOCK(s_window_surface)) SDL_UnlockSurface(s_window_surface);
+    int amiga_width = 754;
+    int amiga_height = 576;
 
-    // Update the surface
-    SDL_UpdateWindowSurface(s_window);
+    int new_width = 0;
+    int new_height = 0;
+
+    int window_width, window_height;
+    SDL_GetWindowSize(s_window, &window_width, &window_height);
+
+    // Maintain aspect ratio
+    float image_aspect = (float)amiga_width / (float)amiga_height;
+    float window_aspect = (float)window_width / (float)window_height;
+
+    if (window_aspect < image_aspect) {
+        new_width = window_width;
+        new_height = (int)(window_width / image_aspect);
+    } else {
+        new_height = window_height;
+        new_width = (int)(window_height * image_aspect);
+    }
+
+    SDL_Rect rect = { (window_width - new_width) / 2, (window_height - new_height) / 2, new_width, new_height };
+
+    SDL_RenderClear(s_renderer);
+    SDL_RenderCopy(s_renderer, s_texture, NULL, &rect);
+    SDL_RenderPresent(s_renderer);
 }
 
 
@@ -1070,7 +1132,6 @@ int init_sound() {
 }
 
 bool isguiactive() {
-    UNIMPLEMENTED();
     return false;
 }
 
@@ -1910,7 +1971,8 @@ uae_u8* restore_cdtv(unsigned char*) {
 }
 
 void resume_sound() {
-    UNIMPLEMENTED();
+    TRACE();
+    //UNIMPLEMENTED();
 }
 
 uae_u8* save_cdtv_dmac(size_t*, uae_u8*) {
@@ -2215,3 +2277,69 @@ void update_disassembly(uae_u32) {
 void update_memdump(uae_u32) {
     UNIMPLEMENTED();
 }
+
+// dummy write_log
+void write_log (const char *format, ...)
+{
+	va_list parms;
+
+	va_start (parms, format);
+	vprintf (format, parms);
+	va_end (parms);
+}
+
+// dummy write_log
+void write_dlog(const char* format, ...) {
+	va_list parms;
+
+	va_start (parms, format);
+	vprintf (format, parms);
+	va_end (parms);
+}
+
+void console_out_f (const TCHAR * format, ...)
+{
+	va_list parms;
+
+	va_start (parms, format);
+	vprintf (format, parms);
+	va_end (parms);
+}
+
+void console_out (const TCHAR *txt)
+{
+	console_out_f("%s", txt);
+}
+
+TCHAR *buf_out(TCHAR *buffer, int *bufsize, const TCHAR *format, ...)
+{
+	int count;
+	va_list parms;
+	va_start (parms, format);
+
+	if (buffer == NULL)
+		return 0;
+	count = _vsntprintf(buffer, (*bufsize) - 1, format, parms);
+	va_end (parms);
+	*bufsize -= uaetcslen(buffer);
+	return buffer + uaetcslen(buffer);
+}
+
+static TCHAR *console_buffer;
+static int console_buffer_size;
+
+TCHAR* setconsolemode(TCHAR* buffer, int maxlen) {
+	TCHAR *ret = NULL;
+	if (buffer) {
+		console_buffer = buffer;
+		console_buffer_size = maxlen;
+	} else {
+		ret = console_buffer;
+		console_buffer = NULL;
+	}
+	return ret;
+}
+
+// dummy win support for blkdev.cpp
+int GetDriveType(TCHAR* vol) { return 0;}
+

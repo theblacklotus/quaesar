@@ -180,7 +180,6 @@ add_executable(quaesar
     uae_src/uaenative.cpp
     uae_src/uaeresource.cpp
     uae_src/uaeserial.cpp
-    uae_src/quaesar.cpp
     uae_src/blkdev.cpp
     uae_src/gfxutil.cpp
     uae_src/zfile.cpp
@@ -205,6 +204,7 @@ add_executable(quaesar
     src/time.cpp
     src/dummy.cpp
     src/input.cpp
+    src/quaesar.cpp
 )
 
 if (APPLE OR LINUX)
