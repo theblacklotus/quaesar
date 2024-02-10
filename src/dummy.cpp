@@ -488,7 +488,7 @@ bool ariadne2_init(autoconfig_info*) {
 
 void AVIOutput_Restart(bool) {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void AVIOutput_Toggle(int, bool) {
@@ -704,7 +704,7 @@ bool draco_mouse(int, int, int, int, int) {
 
 void driveclick_fdrawcmd_detect() {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void driveclick_fdrawcmd_motor(int, int) {
@@ -1764,7 +1764,7 @@ void draco_ext_interrupt(bool) {
 
 void driveclick_fdrawcmd_close(int) {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void dsp_pause(int) {
