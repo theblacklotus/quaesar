@@ -241,8 +241,15 @@ struct inputdevice_functions inputdevicefunc_joystick = {
 };
 
 const TCHAR* my_getfilepart(const TCHAR* filename) {
-    UNIMPLEMENTED();
-    return nullptr;
+	const TCHAR *p;
+
+	p = strrchr(filename, '\\');
+	if (p)
+		return p + 1;
+	p = strrchr(filename, '/');
+	if (p)
+		return p + 1;
+	return filename;
 }
 
 void fetch_statefilepath(TCHAR* out, int size) {
@@ -820,7 +827,7 @@ void fetch_rompath(char*, int) {
 }
 
 void fetch_saveimagepath(char*, int, int) {
-    UNIMPLEMENTED();
+    TRACE();
 }
 
 void fetch_videopath(char*, int) {
@@ -1008,8 +1015,20 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
     // Handle events on queue
     while (SDL_PollEvent(&e) != 0) {
         // User requests quit
-        if (e.type == SDL_QUIT) {
-            exit(1);
+        switch (e.type) {
+            case SDL_QUIT: // User closes the window
+	            quit_program == UAE_QUIT;
+                // TODO: Fix me
+                exit(0);
+                break;
+            case SDL_KEYDOWN: // User presses a key
+                if (e.key.keysym.sym == SDLK_ESCAPE) { // If the key is ESC
+	                quit_program == UAE_QUIT;
+                    exit(0);
+                    // TODO: Fix me
+                }
+                break;
+            default: break;
         }
     }
 
@@ -1113,7 +1132,6 @@ int init_sound() {
 }
 
 bool isguiactive() {
-    UNIMPLEMENTED();
     return false;
 }
 

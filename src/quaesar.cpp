@@ -31,9 +31,15 @@ int main(int argc, char** argv) {
 	default_prefs(&currprefs, true, 0);
 	fixup_prefs(&currprefs, true);
 
-    strcpy(currprefs.romfile, options.kickstart.c_str());
+    strcpy(currprefs.floppyslots[0].df, options.input.c_str()); 
 
-    printf("input: %s\n", options.input.c_str());
+    // Most compatible mode
+    currprefs.cpu_cycle_exact = 1;
+    currprefs.cpu_memory_cycle_exact = 1;
+    currprefs.blitter_cycle_exact = 1;
+	currprefs.turbo_emulation = 0;
+
+    strcpy(currprefs.romfile, options.kickstart.c_str());
 
 	// Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
