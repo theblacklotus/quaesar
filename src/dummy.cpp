@@ -1,8 +1,10 @@
-#include <stdio.h>
-#include <stdarg.h>
+// clang-format off
 #include <errno.h>
+#include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 
+// Order of these includes is important :(
 #include <sys/timeb.h>
 #include "sysconfig.h"
 #include "sysdeps.h"
@@ -50,11 +52,12 @@
 #include "fpp.h"
 #include "xwin.h"
 #include <SDL.h>
+// clang-format on
 
 int avioutput_enabled = 0;
 bool beamracer_debug = false;
 int volatile bsd_int_requested = 0;
-int busywait = 0; 
+int busywait = 0;
 int key_swap_hack = 0;
 int seriallog = 0;
 int log_vsync, debug_vsync_min_delay, debug_vsync_forced_delay;
@@ -68,13 +71,13 @@ uae_u32 redc[3 * 256], grec[3 * 256], bluc[3 * 256];
 
 uae_u8* start_pc_p = nullptr;
 uae_u32 start_pc = 0;
-uae_u8 *cubo_nvram = nullptr;
+uae_u8* cubo_nvram = nullptr;
 
 int dos_errno(void) {
     return errno;
 }
 
-void pausevideograb(int) { 
+void pausevideograb(int) {
     UNIMPLEMENTED();
 }
 
@@ -105,7 +108,7 @@ void setmouseactive(int, int) {
     UNIMPLEMENTED();
 }
 
-void screenshot(int monid, int,int) {
+void screenshot(int monid, int, int) {
     UNIMPLEMENTED();
 }
 
@@ -116,7 +119,7 @@ int same_aname(const TCHAR* an1, const TCHAR* an2) {
 
 int input_get_default_keyboard(int i) {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
     return 0;
 }
 
@@ -129,8 +132,8 @@ uae_s64 getsetpositionvideograb(uae_s64 framepos) {
 static int dummy_init(void) {
     return 1;
     //*((volatile int*)0) = 0;
-    //UNIMPLEMENTED();
-    //return 0; // Return 0 for success, -1 for failure
+    // UNIMPLEMENTED();
+    // return 0; // Return 0 for success, -1 for failure
 }
 
 // Dummy closing function
@@ -141,7 +144,7 @@ static void dummy_close(void) {
 // Dummy function to acquire an input device
 static int dummy_acquire(int device_id, int exclusive) {
     UNIMPLEMENTED();
-    return 0; // Return 0 for success, -1 for failure
+    return 0;  // Return 0 for success, -1 for failure
 }
 
 // Dummy function to release/unacquire an input device
@@ -151,12 +154,12 @@ static void dummy_unacquire(int device_id) {
 
 // Dummy function to read input from the device
 static void dummy_read(void) {
-    //printf("Reading input from device\n");
+    // printf("Reading input from device\n");
 }
 
 // Dummy function to get the number of input devices
 static int dummy_get_num(void) {
-    //TRACE();
+    // TRACE();
     return 0;
 }
 
@@ -175,13 +178,13 @@ static TCHAR* dummy_get_uniquename(int device_id) {
 // Dummy function to get the number of widgets (input elements) in an input device
 static int dummy_get_widget_num(int device_id) {
     UNIMPLEMENTED();
-    return 4; // Return the number of widgets
+    return 4;  // Return the number of widgets
 }
 
 // Dummy function to get the type and name of a widget
 static int dummy_get_widget_type(int device_id, int widget_id, TCHAR* widget_name, uae_u32* widget_type) {
     UNIMPLEMENTED();
-    return 0; // Return 0 for success, -1 for failure
+    return 0;  // Return 0 for success, -1 for failure
 }
 
 // Dummy function to get the first widget (input element) in an input device
@@ -192,64 +195,34 @@ static int dummy_get_widget_first(int device_id, int widget_type) {
 
 // Dummy function to get the flags of an input device
 int dummy_get_flags(int device_id) {
-    return 0; // Return flags (if any) for the input device
+    return 0;  // Return flags (if any) for the input device
 }
 
 struct inputdevice_functions inputdevicefunc_mouse = {
-    dummy_init, 
-    dummy_close, 
-    dummy_acquire, 
-    dummy_unacquire, 
-    dummy_read, 
-    dummy_get_num, 
-    dummy_get_friendlyname, 
-    dummy_get_uniquename, 
-    dummy_get_widget_num, 
-    dummy_get_widget_type, 
-    dummy_get_widget_first, 
-    dummy_get_flags
-};
+    dummy_init,           dummy_close,           dummy_acquire,          dummy_unacquire,
+    dummy_read,           dummy_get_num,         dummy_get_friendlyname, dummy_get_uniquename,
+    dummy_get_widget_num, dummy_get_widget_type, dummy_get_widget_first, dummy_get_flags};
 
 struct inputdevice_functions inputdevicefunc_keyboard = {
-    dummy_init, 
-    dummy_close, 
-    dummy_acquire, 
-    dummy_unacquire, 
-    dummy_read, 
-    dummy_get_num, 
-    dummy_get_friendlyname, 
-    dummy_get_uniquename, 
-    dummy_get_widget_num, 
-    dummy_get_widget_type, 
-    dummy_get_widget_first, 
-    dummy_get_flags
-};
+    dummy_init,           dummy_close,           dummy_acquire,          dummy_unacquire,
+    dummy_read,           dummy_get_num,         dummy_get_friendlyname, dummy_get_uniquename,
+    dummy_get_widget_num, dummy_get_widget_type, dummy_get_widget_first, dummy_get_flags};
 
 struct inputdevice_functions inputdevicefunc_joystick = {
-    dummy_init, 
-    dummy_close, 
-    dummy_acquire, 
-    dummy_unacquire, 
-    dummy_read, 
-    dummy_get_num, 
-    dummy_get_friendlyname, 
-    dummy_get_uniquename, 
-    dummy_get_widget_num, 
-    dummy_get_widget_type, 
-    dummy_get_widget_first, 
-    dummy_get_flags
-};
+    dummy_init,           dummy_close,           dummy_acquire,          dummy_unacquire,
+    dummy_read,           dummy_get_num,         dummy_get_friendlyname, dummy_get_uniquename,
+    dummy_get_widget_num, dummy_get_widget_type, dummy_get_widget_first, dummy_get_flags};
 
 const TCHAR* my_getfilepart(const TCHAR* filename) {
-	const TCHAR *p;
+    const TCHAR* p;
 
-	p = strrchr(filename, '\\');
-	if (p)
-		return p + 1;
-	p = strrchr(filename, '/');
-	if (p)
-		return p + 1;
-	return filename;
+    p = strrchr(filename, '\\');
+    if (p)
+        return p + 1;
+    p = strrchr(filename, '/');
+    if (p)
+        return p + 1;
+    return filename;
 }
 
 void fetch_statefilepath(TCHAR* out, int size) {
@@ -276,8 +249,8 @@ void toggle_fullscreen(int monid, int) {
 const TCHAR* target_get_display_name(int, bool) {
     TRACE();
     return "Amiga";
-    //UNIMPLEMENTED();
-    //return nullptr;
+    // UNIMPLEMENTED();
+    // return nullptr;
 }
 
 extern int target_get_display(const TCHAR*) {
@@ -299,17 +272,18 @@ int my_truncate(const TCHAR* name, uae_u64 len) {
     return 0;
 }
 
-bool my_issamepath(const TCHAR* path1, const TCHAR *path2) {
+bool my_issamepath(const TCHAR* path1, const TCHAR* path2) {
     UNIMPLEMENTED();
     return false;
 }
 
-int input_get_default_joystick (struct uae_input_device *uid, int i, int port, int af, int mode, bool gp, bool joymouseswap) {
+int input_get_default_joystick(struct uae_input_device* uid, int i, int port, int af, int mode, bool gp,
+                               bool joymouseswap) {
     UNIMPLEMENTED();
     return 0;
 }
 
-bool get_plugin_path (TCHAR *out, int len, const TCHAR *path) {
+bool get_plugin_path(TCHAR* out, int len, const TCHAR* path) {
     TRACE();
     return false;
 }
@@ -322,13 +296,12 @@ void fixtrailing(TCHAR* p) {
     UNIMPLEMENTED();
 }
 
-
 int uae_slirp_redir(int is_udp, int host_port, struct in_addr guest_addr, int guest_port) {
     UNIMPLEMENTED();
     return 0;
 }
 
-int translate_message(int msg,	TCHAR* out) {
+int translate_message(int msg, TCHAR* out) {
     UNIMPLEMENTED();
     return 0;
 }
@@ -346,7 +319,6 @@ struct netdriverdata** target_ethernet_enumerate() {
 void refreshtitle() {
     UNIMPLEMENTED();
 }
-
 
 bool my_utime(const TCHAR* name, struct mytimeval* tv) {
     UNIMPLEMENTED();
@@ -368,7 +340,7 @@ void masoboshi_ncr9x_scsi_put(unsigned int, unsigned int, int) {
 }
 
 struct autoconfig_info;
-      
+
 bool isa_expansion_init(autoconfig_info*) {
     UNIMPLEMENTED();
     return false;
@@ -376,10 +348,10 @@ bool isa_expansion_init(autoconfig_info*) {
 
 uae_u32 gfxboard_get_romtype(rtgboardconfig*) {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
     return 0;
 }
-      
+
 void getpathpart(char*, int, char const*) {
     UNIMPLEMENTED();
 }
@@ -389,13 +361,13 @@ uae_u8* save_log(int, size_t*) {
     return nullptr;
 }
 
-int my_unlink (const TCHAR* name, bool dontrecycle) {
+int my_unlink(const TCHAR* name, bool dontrecycle) {
     UNIMPLEMENTED();
     return 0;
 }
 
 struct fs_usage;
-      
+
 int get_fs_usage(char const*, char const*, fs_usage*) {
     UNIMPLEMENTED();
     return 0;
@@ -419,27 +391,27 @@ void cpuboard_ncr720_io_bput(unsigned int, unsigned int) {
     UNIMPLEMENTED();
 }
 
-void cpuboard_setboard(struct uae_prefs *p, int type, int subtype) {
+void cpuboard_setboard(struct uae_prefs* p, int type, int subtype) {
     UNIMPLEMENTED();
 }
 
-int cpuboard_memorytype(struct uae_prefs *p) {
+int cpuboard_memorytype(struct uae_prefs* p) {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
     return 0;
 }
 
-bool cpuboard_fc_check(uaecptr addr, uae_u32 *v, int size, bool write) {
+bool cpuboard_fc_check(uaecptr addr, uae_u32* v, int size, bool write) {
     UNIMPLEMENTED();
     return false;
 }
 
-int fsdb_name_invalid_dir (a_inode *, const TCHAR *n) {
+int fsdb_name_invalid_dir(a_inode*, const TCHAR* n) {
     UNIMPLEMENTED();
     return 0;
 }
 
-int fsdb_mode_supported (const a_inode *) {
+int fsdb_mode_supported(const a_inode*) {
     UNIMPLEMENTED();
     return 0;
 }
@@ -467,7 +439,7 @@ int a2386_init(autoconfig_info*) {
 }
 */
 
-void a4000t_add_scsi_unit (int ch, struct uaedev_config_info *ci, struct romconfig *rc) {
+void a4000t_add_scsi_unit(int ch, struct uaedev_config_info* ci, struct romconfig* rc) {
     UNIMPLEMENTED();
 }
 
@@ -522,7 +494,7 @@ bool ariadne2_init(autoconfig_info*) {
 }
 
 bool audio_is_pull_event() {
-    //TRACE();
+    // TRACE();
     return false;
 }
 
@@ -561,7 +533,7 @@ addrbank* cd32_fmv_init(autoconfig_info*) {
 
 void cd32_fmv_set_sync(float, float) {
     TRACE();
-    //return 0;
+    // return 0;
 }
 
 void cdtv_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
@@ -759,7 +731,7 @@ void driveclick_fdrawcmd_seek(int, int) {
 
 void driveclick_fdrawcmd_vsync() {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 int driveclick_loadresource(drvsample*, int) {
@@ -807,7 +779,7 @@ uae_u32 emulib_target_getcpurate(unsigned int, unsigned int*) {
 
 void ethernet_reset() {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void fastlane_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
@@ -837,7 +809,7 @@ void fetch_videopath(char*, int) {
 #ifndef _WIN32
 // TODO: Investigate why this is present in filesys.o
 void filesys_addexternals() {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 #endif
 
@@ -854,7 +826,7 @@ void fpux_restore(int*) {
 }
 
 bool frame_drawn(int) {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
     TRACE();
     return true;
 }
@@ -924,42 +896,41 @@ int graphics_init(bool) {
     int amiga_width = 754;
     int amiga_height = 576;
     int depth = 32;
-	
+
     struct vidbuf_description* avidinfo = &adisplays[0].gfxvidinfo;
 
-	avidinfo->drawbuffer.inwidth = avidinfo->drawbuffer.outwidth = amiga_width;
-	avidinfo->drawbuffer.inheight = avidinfo->drawbuffer.outheight = amiga_height;
+    avidinfo->drawbuffer.inwidth = avidinfo->drawbuffer.outwidth = amiga_width;
+    avidinfo->drawbuffer.inheight = avidinfo->drawbuffer.outheight = amiga_height;
 
     int pitch = amiga_width * depth >> 3;
 
-	avidinfo->drawbuffer.pixbytes = depth >> 3;
-	avidinfo->drawbuffer.bufmem = NULL;
-	avidinfo->drawbuffer.linemem = NULL;
-	avidinfo->drawbuffer.rowbytes = pitch;
+    avidinfo->drawbuffer.pixbytes = depth >> 3;
+    avidinfo->drawbuffer.bufmem = NULL;
+    avidinfo->drawbuffer.linemem = NULL;
+    avidinfo->drawbuffer.rowbytes = pitch;
 
     struct vidbuffer* buf = &avidinfo->drawbuffer;
 
     int width = 754;
     int height = 576;
 
-	buf->monitor_id = 0;
-	buf->pixbytes = (depth + 7) / 8;
-	buf->width_allocated = (width + 7) & ~7;
-	buf->height_allocated = height;
+    buf->monitor_id = 0;
+    buf->pixbytes = (depth + 7) / 8;
+    buf->width_allocated = (width + 7) & ~7;
+    buf->height_allocated = height;
 
-	int w = buf->width_allocated;
-	int h = buf->height_allocated;
-	int size = (w * 2) * (h * 2) * buf->pixbytes;
-	buf->rowbytes = w * 2 * buf->pixbytes;
-	buf->realbufmem = xcalloc(uae_u8, size);
-	buf->bufmem_allocated = buf->bufmem = buf->realbufmem + (h / 2) * buf->rowbytes + (w / 2) * buf->pixbytes;
-	buf->bufmemend = buf->realbufmem + size - buf->rowbytes;
-	buf->bufmem_lockable = true;
+    int w = buf->width_allocated;
+    int h = buf->height_allocated;
+    int size = (w * 2) * (h * 2) * buf->pixbytes;
+    buf->rowbytes = w * 2 * buf->pixbytes;
+    buf->realbufmem = xcalloc(uae_u8, size);
+    buf->bufmem_allocated = buf->bufmem = buf->realbufmem + (h / 2) * buf->rowbytes + (w / 2) * buf->pixbytes;
+    buf->bufmemend = buf->realbufmem + size - buf->rowbytes;
+    buf->bufmem_lockable = true;
 
     // Create a window
-    s_window = SDL_CreateWindow("Quaesar",
-        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                width, height, SDL_WINDOW_RESIZABLE);
+    s_window = SDL_CreateWindow("Quaesar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height,
+                                SDL_WINDOW_RESIZABLE);
 
     if (!s_window) {
         SDL_Log("Could not create window: %s", SDL_GetError());
@@ -976,7 +947,8 @@ int graphics_init(bool) {
         return 0;
     }
 
-    s_texture = SDL_CreateTexture(s_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, amiga_width, amiga_height);
+    s_texture =
+        SDL_CreateTexture(s_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, amiga_width, amiga_height);
 
     if (!s_texture) {
         SDL_Log("Could not create texture: %s", SDL_GetError());
@@ -1004,7 +976,6 @@ bool render_screen(int monid, int, bool) {
     return true;
 }
 
-
 void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
     SDL_Event e;
 
@@ -1016,19 +987,20 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
     while (SDL_PollEvent(&e) != 0) {
         // User requests quit
         switch (e.type) {
-            case SDL_QUIT: // User closes the window
-	            quit_program == UAE_QUIT;
+            case SDL_QUIT:  // User closes the window
+                quit_program == UAE_QUIT;
                 // TODO: Fix me
                 exit(0);
                 break;
-            case SDL_KEYDOWN: // User presses a key
-                if (e.key.keysym.sym == SDLK_ESCAPE) { // If the key is ESC
-	                quit_program == UAE_QUIT;
+            case SDL_KEYDOWN:                           // User presses a key
+                if (e.key.keysym.sym == SDLK_ESCAPE) {  // If the key is ESC
+                    quit_program == UAE_QUIT;
                     exit(0);
                     // TODO: Fix me
                 }
                 break;
-            default: break;
+            default:
+                break;
         }
     }
 
@@ -1080,13 +1052,12 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
         new_width = (int)(window_height * image_aspect);
     }
 
-    SDL_Rect rect = { (window_width - new_width) / 2, (window_height - new_height) / 2, new_width, new_height };
+    SDL_Rect rect = {(window_width - new_width) / 2, (window_height - new_height) / 2, new_width, new_height};
 
     SDL_RenderClear(s_renderer);
     SDL_RenderCopy(s_renderer, s_texture, NULL, &rect);
     SDL_RenderPresent(s_renderer);
 }
-
 
 void graphics_leave() {
     UNIMPLEMENTED();
@@ -1098,7 +1069,7 @@ void graphics_reset(bool) {
 
 int graphics_setup() {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
     return 1;
 }
 
@@ -1119,11 +1090,11 @@ bool hydra_init(autoconfig_info*) {
 
 void init_fpucw_x87_80() {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void initparallel() {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 int init_sound() {
@@ -1162,7 +1133,7 @@ bool lanrover_init(autoconfig_info*) {
 
 void logging_init() {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
     return;
 }
 
@@ -1172,7 +1143,7 @@ void machdep_free() {
 
 int machdep_init() {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
     return 1;
 }
 
@@ -1476,7 +1447,7 @@ void setup_brkhandler() {
 
 int setup_sound() {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
     return 0;
 }
 
@@ -1537,7 +1508,8 @@ void squirrel_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
 
-void statusline_render(int, unsigned char*, int, int, int, int, unsigned int*, unsigned int*, unsigned int*, unsigned int*) {
+void statusline_render(int, unsigned char*, int, int, int, int, unsigned int*, unsigned int*, unsigned int*,
+                       unsigned int*) {
     TRACE();
 }
 
@@ -1570,7 +1542,7 @@ int target_checkcapslock(int, int*) {
 
 void target_fixup_options(uae_prefs*) {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 float target_getcurrentvblankrate(int) {
@@ -1638,7 +1610,7 @@ void target_run() {
 
 void target_save_options(zfile*, uae_prefs*) {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void tekmagic_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
@@ -1755,7 +1727,7 @@ void warpengine_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
 
 void x86_bridge_sync_change() {
     TRACE();
-    //return 0;
+    // return 0;
 }
 
 void x86_doirq(unsigned char) {
@@ -1876,7 +1848,7 @@ int fsdb_fill_file_attrs(a_inode_struct*, a_inode_struct*) {
 
 uae_u32 getlocaltime() {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
     return 0;
 }
 
@@ -1894,7 +1866,7 @@ const TCHAR* gfxboard_get_configname(int) {
 
 int gfxboard_get_configtype(rtgboardconfig*) {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
     return 0;
 }
 
@@ -1972,7 +1944,7 @@ uae_u8* restore_cdtv(unsigned char*) {
 
 void resume_sound() {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 uae_u8* save_cdtv_dmac(size_t*, uae_u8*) {
@@ -2021,12 +1993,12 @@ void squirrel_ncr9x_scsi_put(unsigned int, unsigned int, int) {
 }
 
 void target_cpu_speed() {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void target_default_options(uae_prefs*, int) {
     TRACE();
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 static int old_w = -1;
@@ -2080,7 +2052,7 @@ int uaeser_write(void*, unsigned char*, unsigned int) {
 }
 
 int audio_is_pull() {
-    //TRACE();
+    // TRACE();
     return 0;
 }
 
@@ -2162,8 +2134,10 @@ static int dummy_stop_func(int deviceID) {
     return 0;
 }
 
-static int dummy_play_func(int deviceID, int track, int index, int flags, play_status_callback status_callback, play_subchannel_callback subchannel_callback) {
-    printf("Dummy play_func called with deviceID: %d, track: %d, index: %d, flags: %d\n", deviceID, track, index, flags);
+static int dummy_play_func(int deviceID, int track, int index, int flags, play_status_callback status_callback,
+                           play_subchannel_callback subchannel_callback) {
+    printf("Dummy play_func called with deviceID: %d, track: %d, index: %d, flags: %d\n", deviceID, track, index,
+           flags);
     return 0;
 }
 
@@ -2188,7 +2162,8 @@ static int dummy_read_func(int deviceID, uae_u8* buffer, int size, int flags) {
 }
 
 static int dummy_rawread_func(int deviceID, uae_u8* buffer, int size, int subcode, int flags, uae_u32 offset) {
-    printf("Dummy rawread_func called with deviceID: %d, size: %d, subcode: %d, flags: %d, offset: %u\n", deviceID, size, subcode, flags, offset);
+    printf("Dummy rawread_func called with deviceID: %d, size: %d, subcode: %d, flags: %d, offset: %u\n", deviceID,
+           size, subcode, flags, offset);
     return 0;
 }
 
@@ -2212,60 +2187,97 @@ int dummy_scsiemu_func(int deviceID, uae_u8* data) {
     return 0;
 }
 
-struct device_functions devicefunc_cdimage = {
-    _T("DummyDevice"),
-    dummy_open_bus_func, dummy_close_bus_func, dummy_open_device_func, dummy_close_device_func, dummy_info_device_func,
-    dummy_execscsicmd_out_func, dummy_execscsicmd_in_func, dummy_execscsicmd_direct_func, dummy_pause_func, dummy_stop_func,
-    dummy_play_func, dummy_volume_func, dummy_qcode_func, dummy_toc_func, dummy_read_func,
-    dummy_rawread_func, dummy_write_func, dummy_isatapi_func, dummy_ismedia_func, dummy_scsiemu_func
-};
+struct device_functions devicefunc_cdimage = {_T("DummyDevice"),
+                                              dummy_open_bus_func,
+                                              dummy_close_bus_func,
+                                              dummy_open_device_func,
+                                              dummy_close_device_func,
+                                              dummy_info_device_func,
+                                              dummy_execscsicmd_out_func,
+                                              dummy_execscsicmd_in_func,
+                                              dummy_execscsicmd_direct_func,
+                                              dummy_pause_func,
+                                              dummy_stop_func,
+                                              dummy_play_func,
+                                              dummy_volume_func,
+                                              dummy_qcode_func,
+                                              dummy_toc_func,
+                                              dummy_read_func,
+                                              dummy_rawread_func,
+                                              dummy_write_func,
+                                              dummy_isatapi_func,
+                                              dummy_ismedia_func,
+                                              dummy_scsiemu_func};
 
-struct device_functions devicefunc_scsi_ioctl = {
-    _T("IOCTL"),
-    dummy_open_bus_func, dummy_close_bus_func, dummy_open_device_func, dummy_close_device_func, dummy_info_device_func,
-    dummy_execscsicmd_out_func, dummy_execscsicmd_in_func, dummy_execscsicmd_direct_func, dummy_pause_func, dummy_stop_func,
-    dummy_play_func, dummy_volume_func, dummy_qcode_func, dummy_toc_func, dummy_read_func,
-    dummy_rawread_func, dummy_write_func, dummy_isatapi_func, dummy_ismedia_func, dummy_scsiemu_func
-};
+struct device_functions devicefunc_scsi_ioctl = {_T("IOCTL"),
+                                                 dummy_open_bus_func,
+                                                 dummy_close_bus_func,
+                                                 dummy_open_device_func,
+                                                 dummy_close_device_func,
+                                                 dummy_info_device_func,
+                                                 dummy_execscsicmd_out_func,
+                                                 dummy_execscsicmd_in_func,
+                                                 dummy_execscsicmd_direct_func,
+                                                 dummy_pause_func,
+                                                 dummy_stop_func,
+                                                 dummy_play_func,
+                                                 dummy_volume_func,
+                                                 dummy_qcode_func,
+                                                 dummy_toc_func,
+                                                 dummy_read_func,
+                                                 dummy_rawread_func,
+                                                 dummy_write_func,
+                                                 dummy_isatapi_func,
+                                                 dummy_ismedia_func,
+                                                 dummy_scsiemu_func};
 
-struct device_functions devicefunc_scsi_spti = {
-    _T("IOCTL"),
-    dummy_open_bus_func, dummy_close_bus_func, dummy_open_device_func, dummy_close_device_func, dummy_info_device_func,
-    dummy_execscsicmd_out_func, dummy_execscsicmd_in_func, dummy_execscsicmd_direct_func, dummy_pause_func, dummy_stop_func,
-    dummy_play_func, dummy_volume_func, dummy_qcode_func, dummy_toc_func, dummy_read_func,
-    dummy_rawread_func, dummy_write_func, dummy_isatapi_func, dummy_ismedia_func, dummy_scsiemu_func
-};
+struct device_functions devicefunc_scsi_spti = {_T("IOCTL"),
+                                                dummy_open_bus_func,
+                                                dummy_close_bus_func,
+                                                dummy_open_device_func,
+                                                dummy_close_device_func,
+                                                dummy_info_device_func,
+                                                dummy_execscsicmd_out_func,
+                                                dummy_execscsicmd_in_func,
+                                                dummy_execscsicmd_direct_func,
+                                                dummy_pause_func,
+                                                dummy_stop_func,
+                                                dummy_play_func,
+                                                dummy_volume_func,
+                                                dummy_qcode_func,
+                                                dummy_toc_func,
+                                                dummy_read_func,
+                                                dummy_rawread_func,
+                                                dummy_write_func,
+                                                dummy_isatapi_func,
+                                                dummy_ismedia_func,
+                                                dummy_scsiemu_func};
 
-const TCHAR* specialmonitorconfignames[] = {
-	_T("none"),
-	NULL
-};
+const TCHAR* specialmonitorconfignames[] = {_T("none"), NULL};
 
 TCHAR avioutput_filename_gui[MAX_DPATH];
 void* pushall_call_handler = nullptr;
 
-
 #ifdef _WIN32
-void gettimeofday (struct timeval *tv, void *blah)
-{
+void gettimeofday(struct timeval* tv, void* blah) {
 #if 1
-	struct timeb time;
+    struct timeb time;
 
-	ftime (&time);
+    ftime(&time);
 
-	tv->tv_sec = (long)time.time;
-	tv->tv_usec = time.millitm * 1000;
+    tv->tv_sec = (long)time.time;
+    tv->tv_usec = time.millitm * 1000;
 #else
-	SYSTEMTIME st;
-	FILETIME ft;
-	uae_u64 v, sec;
-	GetSystemTime (&st);
-	SystemTimeToFileTime (&st, &ft);
-	v = (ft.dwHighDateTime << 32) | ft.dwLowDateTime;
-	v /= 10;
-	sec = v / 1000000;
-	tv->tv_usec = (unsigned long)(v - (sec * 1000000));
-	tv->tv_sec = (unsigned long)(sec - 11644463600);
+    SYSTEMTIME st;
+    FILETIME ft;
+    uae_u64 v, sec;
+    GetSystemTime(&st);
+    SystemTimeToFileTime(&st, &ft);
+    v = (ft.dwHighDateTime << 32) | ft.dwLowDateTime;
+    v /= 10;
+    sec = v / 1000000;
+    tv->tv_usec = (unsigned long)(v - (sec * 1000000));
+    tv->tv_sec = (unsigned long)(sec - 11644463600);
 #endif
 }
 #endif
@@ -2279,67 +2291,64 @@ void update_memdump(uae_u32) {
 }
 
 // dummy write_log
-void write_log (const char *format, ...)
-{
-	va_list parms;
+void write_log(const char* format, ...) {
+    va_list parms;
 
-	va_start (parms, format);
-	vprintf (format, parms);
-	va_end (parms);
+    va_start(parms, format);
+    vprintf(format, parms);
+    va_end(parms);
 }
 
 // dummy write_log
 void write_dlog(const char* format, ...) {
-	va_list parms;
+    va_list parms;
 
-	va_start (parms, format);
-	vprintf (format, parms);
-	va_end (parms);
+    va_start(parms, format);
+    vprintf(format, parms);
+    va_end(parms);
 }
 
-void console_out_f (const TCHAR * format, ...)
-{
-	va_list parms;
+void console_out_f(const TCHAR* format, ...) {
+    va_list parms;
 
-	va_start (parms, format);
-	vprintf (format, parms);
-	va_end (parms);
+    va_start(parms, format);
+    vprintf(format, parms);
+    va_end(parms);
 }
 
-void console_out (const TCHAR *txt)
-{
-	console_out_f("%s", txt);
+void console_out(const TCHAR* txt) {
+    console_out_f("%s", txt);
 }
 
-TCHAR *buf_out(TCHAR *buffer, int *bufsize, const TCHAR *format, ...)
-{
-	int count;
-	va_list parms;
-	va_start (parms, format);
+TCHAR* buf_out(TCHAR* buffer, int* bufsize, const TCHAR* format, ...) {
+    int count;
+    va_list parms;
+    va_start(parms, format);
 
-	if (buffer == NULL)
-		return 0;
-	count = _vsntprintf(buffer, (*bufsize) - 1, format, parms);
-	va_end (parms);
-	*bufsize -= uaetcslen(buffer);
-	return buffer + uaetcslen(buffer);
+    if (buffer == NULL)
+        return 0;
+    count = _vsntprintf(buffer, (*bufsize) - 1, format, parms);
+    va_end(parms);
+    *bufsize -= uaetcslen(buffer);
+    return buffer + uaetcslen(buffer);
 }
 
-static TCHAR *console_buffer;
+static TCHAR* console_buffer;
 static int console_buffer_size;
 
 TCHAR* setconsolemode(TCHAR* buffer, int maxlen) {
-	TCHAR *ret = NULL;
-	if (buffer) {
-		console_buffer = buffer;
-		console_buffer_size = maxlen;
-	} else {
-		ret = console_buffer;
-		console_buffer = NULL;
-	}
-	return ret;
+    TCHAR* ret = NULL;
+    if (buffer) {
+        console_buffer = buffer;
+        console_buffer_size = maxlen;
+    } else {
+        ret = console_buffer;
+        console_buffer = NULL;
+    }
+    return ret;
 }
 
 // dummy win support for blkdev.cpp
-int GetDriveType(TCHAR* vol) { return 0;}
-
+int GetDriveType(TCHAR* vol) {
+    return 0;
+}
