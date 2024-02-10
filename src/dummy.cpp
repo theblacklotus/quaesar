@@ -910,6 +910,8 @@ void golemfast_ncr9x_scsi_put(unsigned int, unsigned int, int) {
 
 SDL_Window* s_window;
 SDL_Surface* s_window_surface;
+SDL_Texture* s_texture = nullptr;
+SDL_Renderer* s_renderer = nullptr;
 
 int graphics_init(bool) {
     int amiga_width = 754;
@@ -950,10 +952,29 @@ int graphics_init(bool) {
     // Create a window
     s_window = SDL_CreateWindow("Quaesar",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        width, height, 0);
+                                width, height, SDL_WINDOW_RESIZABLE);
 
     if (!s_window) {
         SDL_Log("Could not create window: %s", SDL_GetError());
+        SDL_Quit();
+        return 0;
+    }
+
+    s_renderer = SDL_CreateRenderer(s_window, -1, SDL_RENDERER_ACCELERATED);
+
+    if (!s_renderer) {
+        SDL_Log("Could not create renderer: %s", SDL_GetError());
+        SDL_DestroyWindow(s_window);
+        SDL_Quit();
+        return 0;
+    }
+
+    s_texture = SDL_CreateTexture(s_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, amiga_width, amiga_height);
+
+    if (!s_texture) {
+        SDL_Log("Could not create texture: %s", SDL_GetError());
+        SDL_DestroyRenderer(s_renderer);
+        SDL_DestroyWindow(s_window);
         SDL_Quit();
         return 0;
     }
@@ -992,37 +1013,59 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
         }
     }
 
-    // Lock surface if necessary
-    if (SDL_MUSTLOCK(s_window_surface)) SDL_LockSurface(s_window_surface);
+    uint32_t* pixels = nullptr;
+    int pitch = 0;
 
-    // Pointer to the pixels
-    Uint32* pixels = (Uint32*)s_window_surface->pixels;
+    if (SDL_LockTexture(s_texture, NULL, (void**)&pixels, &pitch) == 0) {
+        struct amigadisplay* ad = &adisplays[vb_in->monitor_id];
+        struct vidbuf_description* avidinfo = &adisplays[vb_in->monitor_id].gfxvidinfo;
+        struct vidbuffer* vb = avidinfo->outbuffer;
 
-	struct amigadisplay* ad = &adisplays[vb_in->monitor_id];
-	struct vidbuf_description* avidinfo = &adisplays[vb_in->monitor_id].gfxvidinfo;
-	struct vidbuffer* vb = avidinfo->outbuffer;
+        if (!vb || !vb->bufmem)
+            return;
 
-    if (!vb || !vb->bufmem)
-        return;
+        uint8_t* sptr = vb->bufmem;
+        uint8_t* endsptr = vb->bufmemend;
 
-	uint8_t* sptr = vb->bufmem;
-	uint8_t* endsptr = vb->bufmemend;
+        int amiga_width = vb->outwidth;
+        int amiga_height = vb->outheight;
 
-    int amiga_width = vb->outwidth;
-    int amiga_height = vb->outheight;
+        // Change pixels
+        for (int y = 0; y < amiga_height; y++) {
+            uint8_t* dest = (uint8_t*)&pixels[y * s_window_surface->w];
+            memcpy(dest, sptr, amiga_width * 4);
+            sptr += vb->rowbytes;
+        }
 
-    // Change pixels
-    for (int y = 0; y < amiga_height; y++) {
-        uint8_t* dest = (uint8_t*)&pixels[y * s_window_surface->w];
-        memcpy(dest, sptr, amiga_width * 4);
-	    sptr += vb->rowbytes;
+        SDL_UnlockTexture(s_texture);
     }
 
-    // Unlock surface if necessary
-    if (SDL_MUSTLOCK(s_window_surface)) SDL_UnlockSurface(s_window_surface);
+    int amiga_width = 754;
+    int amiga_height = 576;
 
-    // Update the surface
-    SDL_UpdateWindowSurface(s_window);
+    int new_width = 0;
+    int new_height = 0;
+
+    int window_width, window_height;
+    SDL_GetWindowSize(s_window, &window_width, &window_height);
+
+    // Maintain aspect ratio
+    float image_aspect = (float)amiga_width / (float)amiga_height;
+    float window_aspect = (float)window_width / (float)window_height;
+
+    if (window_aspect < image_aspect) {
+        new_width = window_width;
+        new_height = (int)(window_width / image_aspect);
+    } else {
+        new_height = window_height;
+        new_width = (int)(window_height * image_aspect);
+    }
+
+    SDL_Rect rect = { (window_width - new_width) / 2, (window_height - new_height) / 2, new_width, new_height };
+
+    SDL_RenderClear(s_renderer);
+    SDL_RenderCopy(s_renderer, s_texture, NULL, &rect);
+    SDL_RenderPresent(s_renderer);
 }
 
 
@@ -1910,7 +1953,8 @@ uae_u8* restore_cdtv(unsigned char*) {
 }
 
 void resume_sound() {
-    UNIMPLEMENTED();
+    TRACE();
+    //UNIMPLEMENTED();
 }
 
 uae_u8* save_cdtv_dmac(size_t*, uae_u8*) {
