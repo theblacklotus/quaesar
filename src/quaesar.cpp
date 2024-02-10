@@ -40,11 +40,12 @@ int main(int argc, char** argv) {
     currprefs.cpu_memory_cycle_exact = 1;
     currprefs.blitter_cycle_exact = 1;
     currprefs.turbo_emulation = 0;
+    currprefs.sound_stereo_separation = 0;
 
     strcpy(currprefs.romfile, options.kickstart.c_str());
 
     // Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
         return 1;
     }

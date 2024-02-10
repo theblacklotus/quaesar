@@ -20,15 +20,12 @@
 #include "uae/time.h"
 #include "fsdb.h"
 #include "uae.h"
-#include "gensound.h"
 #include "ncr_scsi.h"
 #include "ncr9x_scsi.h"
 #include "gfxboard.h"
-#include "audio.h"
 #include "avioutput.h"
 #include "xwin.h"
 #include "clipboard.h"
-#include "sounddep/sound.h"
 #include "keybuf.h"
 #include "savestate.h"
 #include "cdtv.h"
@@ -454,10 +451,6 @@ void activate_console() {
     UNIMPLEMENTED();
 }
 
-void ahi_close_sound() {
-    TRACE();
-}
-
 void alf3_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
@@ -493,14 +486,11 @@ bool ariadne2_init(autoconfig_info*) {
     return false;
 }
 
-bool audio_is_pull_event() {
-    // TRACE();
-    return false;
+void AVIOutput_Restart(bool) {
+    TRACE();
+    // UNIMPLEMENTED();
 }
 
-void AVIOutput_Restart(bool) {
-    UNIMPLEMENTED();
-}
 void AVIOutput_Toggle(int, bool) {
     UNIMPLEMENTED();
 }
@@ -713,20 +703,21 @@ bool draco_mouse(int, int, int, int, int) {
 }
 
 void driveclick_fdrawcmd_detect() {
-    UNIMPLEMENTED();
+    TRACE();
+    // UNIMPLEMENTED();
 }
 
 void driveclick_fdrawcmd_motor(int, int) {
-    UNIMPLEMENTED();
+    TRACE();
 }
 
 int driveclick_fdrawcmd_open(int) {
-    UNIMPLEMENTED();
+    TRACE();
     return 0;
 }
 
 void driveclick_fdrawcmd_seek(int, int) {
-    UNIMPLEMENTED();
+    TRACE();
 }
 
 void driveclick_fdrawcmd_vsync() {
@@ -735,7 +726,7 @@ void driveclick_fdrawcmd_vsync() {
 }
 
 int driveclick_loadresource(drvsample*, int) {
-    UNIMPLEMENTED();
+    TRACE();
     return 0;
 }
 
@@ -812,10 +803,6 @@ void filesys_addexternals() {
     // UNIMPLEMENTED();
 }
 #endif
-
-void finish_sound_buffer() {
-    UNIMPLEMENTED();
-}
 
 void flush_log() {
     UNIMPLEMENTED();
@@ -1097,11 +1084,6 @@ void initparallel() {
     // UNIMPLEMENTED();
 }
 
-int init_sound() {
-    TRACE();
-    return 0;
-}
-
 bool isguiactive() {
     return false;
 }
@@ -1331,10 +1313,6 @@ int parallel_direct_write_status(unsigned char, unsigned char) {
     return 0;
 }
 
-void pause_sound_buffer() {
-    UNIMPLEMENTED();
-}
-
 void pci_read_dma(pci_board_state*, unsigned int, unsigned char*, int) {
     UNIMPLEMENTED();
 }
@@ -1353,14 +1331,6 @@ void rapidfire_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
 
 void release_keys() {
     UNIMPLEMENTED();
-}
-
-void reset_sound() {
-    TRACE();
-}
-
-void restart_sound_buffer() {
-    TRACE();
 }
 
 void restore_cdtv_final() {
@@ -1445,12 +1415,6 @@ void setup_brkhandler() {
     TRACE();
 }
 
-int setup_sound() {
-    TRACE();
-    // UNIMPLEMENTED();
-    return 0;
-}
-
 bool show_screen_maybe(int, bool) {
     UNIMPLEMENTED();
     return false;
@@ -1480,10 +1444,6 @@ bool sndboard_init_capture(int) {
 int sndboard_release_buffer(unsigned char*, int) {
     UNIMPLEMENTED();
     return 0;
-}
-
-void sound_mute(int) {
-    UNIMPLEMENTED();
 }
 
 bool specialmonitor_autoconfig_init(autoconfig_info*) {
@@ -1712,10 +1672,6 @@ void updatedisplayarea(int) {
     TRACE();
 }
 
-void update_sound(float) {
-    UNIMPLEMENTED();
-}
-
 bool vsync_switchmode(int, int) {
     UNIMPLEMENTED();
     return false;
@@ -1749,10 +1705,6 @@ int x86_rt1000_init(autoconfig_info*) {
     return 0;
 }
 
-void x86_update_sound(float) {
-    UNIMPLEMENTED();
-}
-
 void x86_xt_ide_bios(zfile*, romconfig*) {
     UNIMPLEMENTED();
 }
@@ -1766,11 +1718,6 @@ void zeus040_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
 
-int audio_pull_buffer() {
-    UNIMPLEMENTED();
-    return 0;
-}
-
 void bsdlib_reset() {
     UNIMPLEMENTED();
 }
@@ -1778,10 +1725,6 @@ void bsdlib_reset() {
 int build_comp() {
     UNIMPLEMENTED();
     return 0;
-}
-
-void close_sound() {
-    UNIMPLEMENTED();
 }
 
 TCHAR console_getch() {
@@ -1820,7 +1763,8 @@ void draco_ext_interrupt(bool) {
 }
 
 void driveclick_fdrawcmd_close(int) {
-    UNIMPLEMENTED();
+    TRACE();
+    // UNIMPLEMENTED();
 }
 
 void dsp_pause(int) {
@@ -1928,10 +1872,6 @@ int my_rmdir(char const*) {
     return 0;
 }
 
-void pause_sound() {
-    UNIMPLEMENTED();
-}
-
 uae_u8* restore_cdtv_dmac(unsigned char*) {
     UNIMPLEMENTED();
     return nullptr;
@@ -1940,11 +1880,6 @@ uae_u8* restore_cdtv_dmac(unsigned char*) {
 uae_u8* restore_cdtv(unsigned char*) {
     UNIMPLEMENTED();
     return nullptr;
-}
-
-void resume_sound() {
-    TRACE();
-    // UNIMPLEMENTED();
 }
 
 uae_u8* save_cdtv_dmac(size_t*, uae_u8*) {
@@ -2048,11 +1983,6 @@ void uaeser_close(void*) {
 
 int uaeser_write(void*, unsigned char*, unsigned int) {
     UNIMPLEMENTED();
-    return 0;
-}
-
-int audio_is_pull() {
-    // TRACE();
     return 0;
 }
 
