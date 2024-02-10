@@ -487,8 +487,10 @@ bool ariadne2_init(autoconfig_info*) {
 }
 
 void AVIOutput_Restart(bool) {
-    UNIMPLEMENTED();
+    TRACE();
+    //UNIMPLEMENTED();
 }
+
 void AVIOutput_Toggle(int, bool) {
     UNIMPLEMENTED();
 }
@@ -701,20 +703,21 @@ bool draco_mouse(int, int, int, int, int) {
 }
 
 void driveclick_fdrawcmd_detect() {
-    UNIMPLEMENTED();
+    TRACE();
+    //UNIMPLEMENTED();
 }
 
 void driveclick_fdrawcmd_motor(int, int) {
-    UNIMPLEMENTED();
+    TRACE();
 }
 
 int driveclick_fdrawcmd_open(int) {
-    UNIMPLEMENTED();
+    TRACE();
     return 0;
 }
 
 void driveclick_fdrawcmd_seek(int, int) {
-    UNIMPLEMENTED();
+    TRACE();
 }
 
 void driveclick_fdrawcmd_vsync() {
@@ -723,7 +726,7 @@ void driveclick_fdrawcmd_vsync() {
 }
 
 int driveclick_loadresource(drvsample*, int) {
-    UNIMPLEMENTED();
+    TRACE();
     return 0;
 }
 
@@ -1760,7 +1763,8 @@ void draco_ext_interrupt(bool) {
 }
 
 void driveclick_fdrawcmd_close(int) {
-    UNIMPLEMENTED();
+    TRACE();
+    //UNIMPLEMENTED();
 }
 
 void dsp_pause(int) {
