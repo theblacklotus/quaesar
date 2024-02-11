@@ -18,6 +18,24 @@
 extern void real_main(int argc, TCHAR** argv);
 extern void keyboard_settrans();
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// TODO: Move this somewhere else
+
+bool ends_with(const char* str, const char* suffix) {
+    if (!str || !suffix) {
+        return false;
+    }
+    size_t str_len = strlen(str);
+    size_t suffix_len = strlen(suffix);
+
+    if (suffix_len > str_len) {
+        return false;
+    }
+
+    // Compare the end of the string with the suffix
+    return strcmp(str + str_len - suffix_len, suffix) == 0;
+}
+
 // dummy main
 int main(int argc, char** argv) {
     syncbase = 1000000;
@@ -32,11 +50,16 @@ int main(int argc, char** argv) {
     CLI11_PARSE(app, argc, argv);
 
     keyboard_settrans();
-
     default_prefs(&currprefs, true, 0);
     fixup_prefs(&currprefs, true);
 
-    strcpy(currprefs.floppyslots[0].df, options.input.c_str());
+    // TODO: cleanup
+    if (ends_with(options.input.c_str(), ".exe") || !ends_with(options.input.c_str(), ".adf")) {
+        Adf::create_for_exefile(options.input.c_str());
+        strcpy(currprefs.floppyslots[0].df, "dummy.adf");
+    } else {
+        strcpy(currprefs.floppyslots[0].df, options.input.c_str());
+    }
 
     // Most compatible mode
     currprefs.cpu_cycle_exact = 1;
