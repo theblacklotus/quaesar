@@ -14,6 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(ZLIB_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/zlib)
+add_subdirectory(external/ADFlib)
 
 if (APPLE OR LINUX)
     find_package(SDL2 REQUIRED)
@@ -205,6 +206,7 @@ add_executable(quaesar
     src/dummy.cpp
     src/input.cpp
     src/quaesar.cpp
+    src/adf.cpp
 )
 
 if (APPLE OR LINUX)
@@ -235,5 +237,5 @@ if (LINUX)
     target_link_libraries(quaesar PRIVATE dl)
 endif()
 
-target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/zlib")
-target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic)
+target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/ADFlib/src")
+target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic adf)
