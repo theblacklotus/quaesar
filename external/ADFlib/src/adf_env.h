@@ -78,7 +78,7 @@ PREFIX void adfSetEnvFct ( const AdfLogFct    eFct,
                            const AdfNotifyFct notifyFct );
 
 PREFIX void adfEnvCleanUp();
-PREFIX void adfChgEnvProp(int prop, void *new);
+PREFIX void adfChgEnvProp(int prop, void *new_);
 PREFIX char* adfGetVersionNumber();
 PREFIX char* adfGetVersionDate();
 

@@ -206,6 +206,7 @@ add_executable(quaesar
     src/dummy.cpp
     src/input.cpp
     src/quaesar.cpp
+    src/adf.cpp
 )
 
 if (APPLE OR LINUX)
