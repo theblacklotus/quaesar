@@ -81,7 +81,7 @@ void Adf::create_for_exefile(const char* name) {
         exit(1);
     }
 
-    if (adfCreateFlop(device, "empty", FSMASK_INTL | FSMASK_DIRCACHE) != RC_OK) {
+    if (adfCreateFlop(device, "empty", FSMASK_INTL) != RC_OK) {
         printf("Error creating ADF floppy\n");
         exit(1);
     }
@@ -98,6 +98,7 @@ void Adf::create_for_exefile(const char* name) {
         exit(1);
     }
 
+    /*
     printf("Creating file: %s %d\n", name, (int)size);
     
     struct AdfFile* file = adfFileOpen(volume, name, ADF_FILE_MODE_WRITE);
@@ -108,6 +109,9 @@ void Adf::create_for_exefile(const char* name) {
         
     adfFileWrite(file, size, buffer);
     adfFileClose(file);
+    */
+
+    /*
 
     // Create the S directory
     if (adfCreateDir(volume, volume->curDirPtr, "T") != RC_OK) {
@@ -122,7 +126,9 @@ void Adf::create_for_exefile(const char* name) {
     }
 
     adfChangeDir(volume, "S");
+    */
 
+    /*
     // Create the Startup-Sequence file and write commands to it
     file = adfFileOpen(volume, "Startup-Sequence", ADF_FILE_MODE_WRITE);
     if (file) {
@@ -132,8 +138,9 @@ void Adf::create_for_exefile(const char* name) {
         printf("Error creating Startup-Sequence file\n");
         exit(1);
     }
+    */
 
-    adfParentDir(volume);
+    //adfParentDir(volume);
     adfUnMount(volume);
     adfUnMountDev(device);
 
