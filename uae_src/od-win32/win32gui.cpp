@@ -905,9 +905,9 @@ void exit_gui (int ok)
 {
 	if (!gui_active)
 		return;
-	if (guiDlg == NULL)
-		return;
-	SendMessage (guiDlg, WM_COMMAND, ok ? IDOK : IDCANCEL, 0);
+	if (guiDlg && hGUIWnd) {
+		SendMessage (guiDlg, WM_COMMAND, ok ? IDOK : IDCANCEL, 0);
+	}
 }
 
 static int getcbn (HWND hDlg, int v, TCHAR *out, int maxlen)
@@ -12877,6 +12877,8 @@ static void misc_gui_font(HWND hDlg, int fonttype)
 		} else if (fonttype == 2) {
 			if (!full_property_sheet && AMonitors[0].hAmigaWnd) {
 				createstatusline(AMonitors[0].hAmigaWnd, 0);
+				target_graphics_buffer_update(0, true);
+
 			}
 		}
 	}
@@ -16345,24 +16347,23 @@ static INT_PTR CALLBACK HarddiskDlgProc (HWND hDlg, UINT msg, WPARAM wParam, LPA
 			}
 			break;
 			}
-		} else {
-			switch (LOWORD(wParam))
-			{
-			case 10001:
-				clicked_entry--;
+		}
+		switch (LOWORD(wParam))
+		{
+		case 10001:
+			clicked_entry--;
+			hilitehd (hDlg);
+			break;
+		case 10002:
+			clicked_entry++;
+			hilitehd (hDlg);
+			break;
+		default:
+			if (harddiskdlg_button (hDlg, wParam)) {
+				InitializeListView (hDlg);
 				hilitehd (hDlg);
-				break;
-			case 10002:
-				clicked_entry++;
-				hilitehd (hDlg);
-				break;
-			default:
-				if (harddiskdlg_button (hDlg, wParam)) {
-					InitializeListView (hDlg);
-					hilitehd (hDlg);
-				}
-				break;
 			}
+			break;
 		}
 		break;
 
@@ -17323,8 +17324,9 @@ static void diskswapper_addfile (struct uae_prefs *prefs, const TCHAR *file)
 			struct zfile *zf = zfile_fopen (out, _T("rb"), ZFD_NORMAL);
 			if (zf) {
 				int type = zfile_gettype (zf);
-				if (type == ZFILE_DISKIMAGE)
+				if (type == ZFILE_DISKIMAGE || type == ZFILE_EXECUTABLE) {
 					diskswapper_addfile2 (prefs, out);
+				}
 				zfile_fclose (zf);
 			}
 		}
@@ -19036,6 +19038,9 @@ static void CALLBACK timerfunc (HWND hDlg, UINT uMsg, UINT_PTR idEvent, DWORD dw
 				int events[MAX_COMPA_INPUTLIST];
 				
 				int max = inputdevice_get_compatibility_input (&workprefs, inputmap_port, &mode, events, &axistable);
+				if (inputmap_remap_counter >= max) {
+					inputmap_remap_counter = 0;
+				}
 				int evtnum = events[inputmap_remap_counter];
 				int type2 = intputdevice_compa_get_eventtype (evtnum, &axistable2);
 
@@ -21996,11 +22001,15 @@ static BOOL CALLBACK childenumproc (HWND hwnd, LPARAM lParam)
 	return 1;
 }
 
-static void getguisize (HWND hDlg, int *width, int *height)
+static void getguisize (HWND hwnd, int *width, int *height)
 {
 	RECT r;
 
-	GetWindowRect (hDlg, &r);
+	if (!GetWindowRect(hwnd, &r)) {
+		write_log("getguisize failed! %d\n", GetLastError());
+		return;
+	}
+	write_log("getguisize got %dx%d - %dx%d = %dx%d\n", r.left, r.top, r.right, r.bottom, r.right - r.left, r.bottom - r.top);
 	*width = (r.right - r.left);
 	*height = (r.bottom - r.top);
 }
@@ -22051,21 +22060,19 @@ static HWND updatePanel (int id, UINT action)
 	hAccelTable = NULL;
 	if (id < 0) {
 		RECT r;
-		if (GetWindowRect (hDlg, &r)) {
-			LONG left, top;
+		if (!gui_fullscreen && IsWindowVisible(hDlg) && !IsIconic(hDlg) && GetWindowRect(hDlg, &r)) {
+			int left, top;
 			left = r.left;
 			top = r.top;
-			if (!gui_fullscreen) {
-				if (full_property_sheet || isfullscreen () == 0) {
-					regsetint (NULL, _T("GUIPosX"), left);
-					regsetint (NULL, _T("GUIPosY"), top);
-				} else if (isfullscreen () < 0) {
-					regsetint (NULL, _T("GUIPosFWX"), left);
-					regsetint (NULL, _T("GUIPosFWY"), top);
-				} else if (isfullscreen () > 0) {
-					regsetint (NULL, _T("GUIPosFSX"), left);
-					regsetint (NULL, _T("GUIPosFSY"), top);
-				}
+			if (full_property_sheet || isfullscreen () == 0) {
+				regsetint (NULL, _T("GUIPosX"), left);
+				regsetint (NULL, _T("GUIPosY"), top);
+			} else if (isfullscreen () < 0) {
+				regsetint (NULL, _T("GUIPosFWX"), left);
+				regsetint (NULL, _T("GUIPosFWY"), top);
+			} else if (isfullscreen () > 0) {
+				regsetint (NULL, _T("GUIPosFSX"), left);
+				regsetint (NULL, _T("GUIPosFSY"), top);
 			}
 		}
 		ew (hDlg, IDHELP, FALSE);
@@ -22373,7 +22380,7 @@ static int floppyslot_addfile (struct uae_prefs *prefs, const TCHAR *filepath, c
 				struct zfile *zf = zfile_fopen (out, _T("rb"), ZFD_NORMAL);
 				if (zf) {
 					int type = zfile_gettype (zf);
-					if (type == ZFILE_DISKIMAGE) {
+					if (type == ZFILE_DISKIMAGE || type == ZFILE_EXECUTABLE) {
 						drv = floppyslot_addfile2 (prefs, out, drv, firstdrv, maxdrv);
 						if (drv < 0)
 							break;
@@ -22536,7 +22543,11 @@ int dragdrop (HWND hDlg, HDROP hd, struct uae_prefs *prefs, int	currentpage)
 						type = zfile_gettype (z);
 						if (type == ZFILE_ROM) {
 							rd = getromdatabyzfile (z);
-						}
+						} else if (currentpage == QUICKSTART_ID || currentpage == LOADSAVE_ID) {
+							if (type == ZFILE_UNKNOWN && iszip(z)) {
+								type = ZFILE_HDF;
+							}
+						}						
 						// replace with decrunched path but only if
 						// floppy insert and decrunched path is deeper (longer)
 						if (type > 0 && _tcslen(z->name) > _tcslen(file) && drv >= 0) {
@@ -22559,7 +22570,7 @@ int dragdrop (HWND hDlg, HDROP hd, struct uae_prefs *prefs, int	currentpage)
 
 		if (drvdrag) {
 			type = ZFILE_DISKIMAGE;
-		} else if ((zip || harddrive) && type != ZFILE_DISKIMAGE) {
+		} else if ((zip || harddrive) && type != ZFILE_DISKIMAGE && type != ZFILE_EXECUTABLE) {
 			if (do_filesys_insert (file, cnt))
 				continue;
 			if (zip) {
@@ -22578,6 +22589,7 @@ int dragdrop (HWND hDlg, HDROP hd, struct uae_prefs *prefs, int	currentpage)
 		switch (type)
 		{
 		case ZFILE_DISKIMAGE:
+		case ZFILE_EXECUTABLE:
 			if (currentpage == DISK_ID) {
 				diskswapper_addfile (prefs, file);
 			} else if (currentpage == HARDDISK_ID) {
@@ -23066,13 +23078,6 @@ static INT_PTR CALLBACK DialogProc (HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
 	return FALSE;
 }
 
-#if 0
-static ACCEL EmptyAccel[] = {
-	{ FVIRTKEY, VK_UP, 20001 }, { FVIRTKEY, VK_DOWN, 20002 },
-	{ 0, 0, 0 }
-};
-#endif
-
 struct newresource *getresource (int tmpl)
 {
 	TCHAR rid[20];
@@ -23259,10 +23264,6 @@ static int init_page (int tmpl, int icon, int title,
 	ppage[id].idx = id;
 	ppage[id].accel = NULL;
 	ppage[id].focusid = focusid;
-#if 0
-	if (!accels)
-		accels = EmptyAccel;
-#endif
 	if (accels) {
 		int i = -1;
 		while (accels[++i].key);
@@ -23544,6 +23545,7 @@ static int GetSettings (int all_options, HWND hwnd)
 		freescaleresource(panelresource);
 		scaleresource (panelresource, &maindctx, hwnd, gui_resize_enabled && gui_resize_allowed, gui_fullscreen, workprefs.win32_gui_alwaysontop || workprefs.win32_main_alwaysontop ? WS_EX_TOPMOST : 0, 0);
 		HWND phwnd = hwnd;
+		hGUIWnd = NULL;
 		if (isfullscreen() == 0)
 			phwnd = 0;
 		if (isfullscreen() > 0 && currprefs.gfx_api > 1)
@@ -23558,7 +23560,7 @@ static int GetSettings (int all_options, HWND hwnd)
 			int dh = GetSystemMetrics(SM_CYSCREEN);
 			MSG msg;
 			DWORD v;
-			int w, h;
+			int w = 0, h = 0;
 
 			getguisize (dhwnd, &w, &h);
 			write_log (_T("Got GUI size = %dx%d\n"), w, h);
@@ -23689,14 +23691,16 @@ static int GetSettings (int all_options, HWND hwnd)
 			scaleresource_setdefaults(hwnd);
 			gui_size_changed = 10;
 		}
-gui_exit:
+gui_exit:;
+		dhwnd = NULL;
+		hGUIWnd = NULL;
 		freescaleresource(panelresource);
 		if (!gui_size_changed)
 			break;
 		quit_program = 0;
 	}
 
-	if (use_gui_control > 0) {
+	if (use_gui_control > 0 && dhwnd) {
 		KillTimer(dhwnd, 8);
 	}
 

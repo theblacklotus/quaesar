@@ -2576,7 +2576,12 @@ static void allocate_memory (void)
 			restore_ram (a3000lmem_filepos, a3000lmem_bank.baseaddr);
 		if (a3000hmem_bank.allocated_size > 0)
 			restore_ram (a3000hmem_filepos, a3000hmem_bank.baseaddr);
+	} 
+#ifdef ARCADIA
+	else {
+		alg_flag = 0;
 	}
+#endif
 #ifdef AGA
 	chipmem_bank_ce2.baseaddr = chipmem_bank.baseaddr;
 #endif
@@ -2965,9 +2970,6 @@ void memory_reset (void)
 	bool gayleorfatgary;
 
 	highest_ram = 0;
-#ifdef ARCADIA 
-	alg_flag = 0;
-#endif
 	need_hardreset = false;
 	rom_write_enabled = true;
 #ifdef JIT
