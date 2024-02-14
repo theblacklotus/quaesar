@@ -53,7 +53,6 @@
 
 #include "debugger.h"
 
-
 int avioutput_enabled = 0;
 bool beamracer_debug = false;
 int volatile bsd_int_requested = 0;
