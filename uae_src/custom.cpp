@@ -6146,7 +6146,7 @@ static void reset_decisions_scanline_start(void)
 		}
 	}
 
-	if (!ecs_denise) {
+	if (!ecs_denise && currprefs.gfx_overscanmode > OVERSCANMODE_OVERSCAN) {
 		if (!ecs_agnus) {
 			if (vb_start_line == 2 + vblank_extraline) {
 				record_color_change2(0, 0, COLOR_CHANGE_BLANK | 1);
@@ -7056,9 +7056,9 @@ void compute_framesync(void)
 	set_config_changed();
 
 	if (currprefs.monitoremu_mon != 0) {
-		target_graphics_buffer_update(currprefs.monitoremu_mon);
+		target_graphics_buffer_update(currprefs.monitoremu_mon, false);
 	}
-	if (target_graphics_buffer_update(0)) {
+	if (target_graphics_buffer_update(0, false)) {
 		reset_drawing();
 	}
 }
@@ -7783,6 +7783,21 @@ static void check_line_enabled(void)
 	line_disabled &= ~3;
 	line_disabled |= line_hidden() ? 1 : 0;
 	line_disabled |= custom_disabled ? 2 : 0;
+}
+
+void get_mode_blanking_limits(int *phbstop, int *phbstrt, int *pvbstop, int *pvbstrt)
+{
+	if (new_beamcon0 & BEAMCON0_VARVBEN) {
+		*pvbstop = vbstop;
+		*pvbstrt = vbstrt;
+		*phbstop = hbstop_v;
+		*phbstrt = hbstrt_v;
+	} else {
+		*pvbstop = hardwired_vbstop;
+		*pvbstrt = hardwired_vbstrt;
+		*phbstop = (47 << CCK_SHRES_SHIFT) - 7;
+		*phbstrt = ((maxhpos_short + 8) << CCK_SHRES_SHIFT) - 3;
+	}
 }
 
 static void vb_check(void)
@@ -13014,7 +13029,7 @@ static void hsync_handlerh(bool onvsync)
 	hpos_hsync_extra = 0;
 	estimate_last_fetch_cycle(hpos);
 
-	if (vb_end_next_line && !ecs_denise) {
+	if (vb_end_next_line && !ecs_denise && currprefs.gfx_overscanmode > OVERSCANMODE_OVERSCAN) {
 		record_color_change2(hpos, 0, COLOR_CHANGE_BLANK | 1);
 	}
 
@@ -14331,7 +14346,7 @@ static void hsync_handler(void)
 		events_schedule();
 
 	}
-	if (vpos == maxvpos_display_vsync && !maxvpos_display_vsync_next) {
+	if (vpos == maxvpos_display_vsync + 1 && !maxvpos_display_vsync_next) {
 		hsync_record_line_state_last(next_lineno, nextline_how, 0);
 		inputdevice_read_msg(true);
 		vsync_display_render();
@@ -14342,7 +14357,7 @@ static void hsync_handler(void)
 		reset_autoscale();
 		display_vsync_counter++;
 		maxvpos_display_vsync_next = true;
-	} else if (vpos != maxvpos_display_vsync && maxvpos_display_vsync_next) {
+	} else if (vpos != maxvpos_display_vsync + 1 && maxvpos_display_vsync_next) {
 		// protect against weird VPOSW writes causing continuous vblanks
 		maxvpos_display_vsync_next = false;
 	}
@@ -15403,7 +15418,7 @@ static void REGPARAM2 custom_bput (uaecptr addr, uae_u32 value)
 		if (addr & 1) {
 			rval = value & 0xff;
 		} else {
-			rval = (value << 8) | (value & 0xFF);
+			rval = (value << 8) | (value & 0xff);
 		}
 	} else {
 		rval = (value << 8) | (value & 0xff);
@@ -15411,11 +15426,11 @@ static void REGPARAM2 custom_bput (uaecptr addr, uae_u32 value)
 
 	if (currprefs.cs_bytecustomwritebug) {
 		if (addr & 1)
-			custom_wput (addr & ~1, rval);
+			custom_wput(addr & ~1, rval | (rval << 8));
 		else
-			custom_wput (addr, value << 8);
+			custom_wput(addr, value << 8);
 	} else {
-		custom_wput (addr & ~1, rval);
+		custom_wput(addr & ~1, rval);
 	}
 }
 
@@ -16360,6 +16375,7 @@ void check_prefs_changed_custom(void)
 		currprefs.chipset_hr = changed_prefs.chipset_hr;
 		init_custom();
 	}
+	cia_set_eclockphase();
 	if (syncchange) {
 		varsync_changed = 2;
 	}

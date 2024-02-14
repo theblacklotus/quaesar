@@ -1939,7 +1939,7 @@ void target_default_options(uae_prefs*, int) {
 static int old_w = -1;
 static int old_h = -1;
 
-bool target_graphics_buffer_update(int monid) {
+bool target_graphics_buffer_update(int monid, bool force) {
     struct vidbuf_description* avidinfo = &adisplays[monid].gfxvidinfo;
     struct vidbuffer* vb = avidinfo->drawbuffer.tempbufferinuse ? &avidinfo->tempbuffer : &avidinfo->drawbuffer;
 
