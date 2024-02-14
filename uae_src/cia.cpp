@@ -1949,7 +1949,9 @@ static void WriteCIAA(uae_u16 addr, uae_u8 val, uae_u32 *flags)
 #endif
 		c->prb = val;
 		dongle_cia_write(0, reg, c->drb, val);
+#ifdef ARCADIA
 		alg_parallel_port(c->drb, val);
+#endif
 #ifdef PARALLEL_PORT
 		if (isprinter()) {
 			if (isprinter() > 0) {
