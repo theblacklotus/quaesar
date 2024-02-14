@@ -51,6 +51,9 @@
 #include <SDL.h>
 // clang-format on
 
+#include "debugger.h"
+
+
 int avioutput_enabled = 0;
 bool beamracer_debug = false;
 int volatile bsd_int_requested = 0;
@@ -878,6 +881,7 @@ SDL_Window* s_window;
 SDL_Surface* s_window_surface;
 SDL_Texture* s_texture = nullptr;
 SDL_Renderer* s_renderer = nullptr;
+static Debugger* s_debugger = nullptr;
 
 int graphics_init(bool) {
     int amiga_width = 754;
@@ -955,6 +959,8 @@ int graphics_init(bool) {
     // Get the window surface
     s_window_surface = SDL_GetWindowSurface(s_window);
 
+    s_debugger = Debugger_create();
+
     TRACE();
     return 1;
 }
@@ -990,6 +996,8 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
                 break;
         }
     }
+
+    Debugger_update(s_debugger, &e);
 
     uint32_t* pixels = nullptr;
     int pitch = 0;

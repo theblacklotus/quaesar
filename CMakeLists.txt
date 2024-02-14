@@ -15,6 +15,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(ZLIB_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/zlib)
 add_subdirectory(external/ADFlib)
+add_subdirectory(external/dear_imgui)
 
 if (APPLE OR LINUX)
     find_package(SDL2 REQUIRED)
@@ -192,6 +193,7 @@ add_executable(quaesar
     uae_src/cputbl.h 
     uae_src/jit/comptbl.h
     uae_src/blit.h
+    src/debugger.cpp
     src/gfx.cpp
     src/gui.cpp
     src/mman.cpp
@@ -238,4 +240,6 @@ if (LINUX)
 endif()
 
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/ADFlib/src")
-target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic adf)
+target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/dear_imgui")
+target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external")
+target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic adf imgui)
