@@ -16,5 +16,6 @@ struct Debugger {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Debugger* Debugger_create();
-void Debugger_update(Debugger* debugger, SDL_Event* event);
+void Debugger_update(Debugger* debugger);
+void Debugger_update_event(SDL_Event* event);
 void Debugger_destroy(Debugger* debugger);

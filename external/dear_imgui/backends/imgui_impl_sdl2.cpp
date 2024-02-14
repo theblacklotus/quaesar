@@ -358,7 +358,6 @@ bool ImGui_ImplSDL2_ProcessEvent(const SDL_Event* event)
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
         {
-            int mouse_button = -1;
             if (event->button.button == SDL_BUTTON_LEFT) { mouse_button = 0; }
             if (event->button.button == SDL_BUTTON_RIGHT) { mouse_button = 1; }
             if (event->button.button == SDL_BUTTON_MIDDLE) { mouse_button = 2; }

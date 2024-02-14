@@ -94,7 +94,13 @@ static void draw_debugger_window() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Debugger_update(Debugger* debugger, SDL_Event* event) {
+void Debugger_update_event(SDL_Event* event) {
+    ImGui_ImplSDL2_ProcessEvent(event);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Debugger_update(Debugger* debugger) {
     bool show_demo_window = true;
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);

@@ -995,9 +995,11 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
             default:
                 break;
         }
+
+        Debugger_update_event(&e);
     }
 
-    Debugger_update(s_debugger, &e);
+    Debugger_update(s_debugger);
 
     uint32_t* pixels = nullptr;
     int pitch = 0;
