@@ -1,5 +1,5 @@
 # Minimum CMake version requirement
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 
 option(ENABLE_CODE_GENERATION "Enable code generation" OFF)
 
@@ -13,9 +13,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Zlib and disable examples
 
 set(ZLIB_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(CAPSTONE_M68K_SUPPORT ON CACHE BOOL "" FORCE)
+
 add_subdirectory(external/zlib)
 add_subdirectory(external/ADFlib)
 add_subdirectory(external/dear_imgui)
+add_subdirectory(external/capstone)
 
 if (APPLE OR LINUX)
     find_package(SDL2 REQUIRED)
@@ -242,4 +245,5 @@ endif()
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/ADFlib/src")
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/dear_imgui")
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external")
-target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic adf imgui)
+target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/capstone/include")
+target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic adf imgui capstone)
