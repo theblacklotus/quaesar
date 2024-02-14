@@ -1,14 +1,15 @@
 #include "debugger.h"
 #include <SDL.h>
-#include <dear_imgui/imgui.h>
 #include <dear_imgui/backends/imgui_impl_sdl2.h>
 #include <dear_imgui/backends/imgui_impl_sdlrenderer2.h>
+#include <dear_imgui/imgui.h>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Debugger* Debugger_create() {
     uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
-    SDL_Window* window = SDL_CreateWindow("Quaesar: Debugger", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+    SDL_Window* window =
+        SDL_CreateWindow("Quaesar: Debugger", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
 
     // From 2.0.18: Enable native IME.
 #ifdef SDL_HINT_IME_SHOW_UI
@@ -30,12 +31,13 @@ Debugger* Debugger_create() {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-    //ImGui::StyleColorsLight();
+    // ImGui::StyleColorsLight();
 
     // Setup Platform/Renderer backends
     ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
@@ -52,9 +54,10 @@ Debugger* Debugger_create() {
 
 static void draw_debugger_window() {
     static bool show_demo_window = true;
-    ImGuiIO& io = ImGui::GetIO(); 
+    ImGuiIO& io = ImGui::GetIO();
 
-    // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+    // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to
+    // learn more about Dear ImGui!).
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
 
@@ -63,14 +66,15 @@ static void draw_debugger_window() {
         static float f = 0.0f;
         static int counter = 0;
 
-        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+        ImGui::Begin("Hello, world!");  // Create a window called "Hello, world!" and append into it.
 
-        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-        ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+        ImGui::Text("This is some useful text.");           // Display some text (you can use a format strings too)
+        ImGui::Checkbox("Demo Window", &show_demo_window);  // Edit bools storing our window open/close state
 
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);  // Edit 1 float using a slider from 0.0f to 1.0f
 
-        if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+        if (ImGui::Button(
+                "Button"))  // Buttons return true when clicked (most widgets return true when edited/activated)
             counter++;
         ImGui::SameLine();
         ImGui::Text("counter = %d", counter);
@@ -83,11 +87,9 @@ static void draw_debugger_window() {
     // 3. Show another simple window.
     if (show_another_window)
     {
-        ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-        ImGui::Text("Hello from another window!");
-        if (ImGui::Button("Close Me"))
-            show_another_window = false;
-        ImGui::End();
+        ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will
+    have a closing button that will clear the bool when clicked) ImGui::Text("Hello from another window!"); if
+    (ImGui::Button("Close Me")) show_another_window = false; ImGui::End();
     }
     */
 }
@@ -112,11 +114,12 @@ void Debugger_update(Debugger* debugger) {
 
     draw_debugger_window();
 
-    ImGuiIO& io = ImGui::GetIO(); 
+    ImGuiIO& io = ImGui::GetIO();
     // Rendering
     ImGui::Render();
     SDL_RenderSetScale(debugger->renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-    SDL_SetRenderDrawColor(debugger->renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
+    SDL_SetRenderDrawColor(debugger->renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255),
+                           (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
     SDL_RenderClear(debugger->renderer);
     ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
     SDL_RenderPresent(debugger->renderer);
@@ -135,4 +138,3 @@ void Debugger_destroy(Debugger* debugger) {
 
     delete debugger;
 }
-
