@@ -1550,7 +1550,7 @@ Beta 15:
 Combitec HD 20 A/HD 40 A:
 - OMTI compatible HD controller. Usual OMTI IO offset 0x641. Base address is at $800000 + autoboot ROM at $f00000.
 - Autoboot ROM supports autoboot under KS 1.2 (seems to use same hack that other KS 1.2 autobootable HD controller use)
-- Boot ROM version string: "autoboot.device (autoboot.device 6.18 (27.8.89) , Rom_1.2, FFS, Bildchen, Search, New Boot Partition Programmiert von Bernhard Möllemann & Hartmut Sprave (C) Combitec 1988,1989"
+- Boot ROM version string: "autoboot.device (autoboot.device 6.18 (27.8.89) , Rom_1.2, FFS, Bildchen, Search, New Boot Partition Programmiert von Bernhard Mï¿½llemann & Hartmut Sprave (C) Combitec 1988,1989"
 - Boot screen ("COMPUTER TOP EQUIPMENT COLOSSUS(R) HD-AutoBoot")
 
 Beta 14:
@@ -2672,7 +2672,7 @@ Beta 2:
 
 QuikPak 4060:
 - Very similar in high level compared to TekMagic, main difference is SCSI chip, 53C720 (was 53C710 in TekMagic).
-- "tekscsi2.device (tekscsi2 2.1 (17.7.97) ©1997 Asimware Innovations Inc.)". Apparently v2.2 also exists.
+- "tekscsi2.device (tekscsi2 2.1 (17.7.97) ï¿½1997 Asimware Innovations Inc.)". Apparently v2.2 also exists.
 
 Beta 1:
 
@@ -3701,7 +3701,7 @@ Beta 13:
 
 - Masoboshi Mastercard fully emulated. SCSI fake DMA write and true SCSI and IDE DMA read/write support implemented.
 - DKB Rapidfire emulation. v1.31 rom image from flash update disk added to rom scanner.
-  ("dkbscsi.device (DKB SCSI Driver 1.31 - Copyright © 1996 by DKB Software.)").
+  ("dkbscsi.device (DKB SCSI Driver 1.31 - Copyright ï¿½ 1996 by DKB Software.)").
   Almost same hardware as DKB 12x0 accelerator board SCSI controller.
 - MOVEP C undefined behavior fix that caused wrong access order.
 - Fixed nasty JIT FPU bug, saved FPSR was not always correct. (b1)
@@ -5754,7 +5754,7 @@ Vector Falcon 8000:
 - More or less functionally same as Kommos but most glue TTL chips and GALs put in single FPGA-like chip.
 - Long word/word based fake DMA.
 - More colorful boot HD detection screen.
-- vector.device. "Autoconfig 16 Bit SCSI + CD-ROM Driver (©) by J.Kommos V7.1 - 11.08.1993"
+- vector.device. "Autoconfig 16 Bit SCSI + CD-ROM Driver (ï¿½) by J.Kommos V7.1 - 11.08.1993"
 - ROM includes CD ROM filesystem.
 - Bad filesystem loader: must be single hunk, only loads filesystems if KS 1.3, ignores all relocation
   hunks.
@@ -9655,7 +9655,7 @@ Beta 3:
 
 - TD_WRITE64, TD_FORMAT64, NSCMD_TD_WRITE64 and NSCMD_TD_FORMAT64 io_Actual was always zero
 - b1 CIA update broke CIA interrupts partially (keyboard problems etc..)
-- MIDI input buffer length command line parameter, -midiinbuffer §12345
+- MIDI input buffer length command line parameter, -midiinbuffer ï¿½12345
 - AROS ROM updated, should work better again, previous one was quite broken
 
 Beta 2:
@@ -18445,7 +18445,7 @@ Beta 6:
 Beta 5:
 
 - ignore mouse events when WinUAE is not in focus
-- disk emulation track length/motor speed fix (Istv¯n Fabian)
+- disk emulation track length/motor speed fix (Istvï¿½n Fabian)
 - filesystem "ghost"-file fix
   (but we still have one bug left in ACTION_RENAME that isn't so easy to fix)
 - F10 and ALT-keys don't freeze the emulation anymore
@@ -18820,7 +18820,7 @@ Beta 1: (VSync test beta)
 
 - joystick keyboard emulation do not anymore create normal key presses
 - sprite update (no more flashing bees in Superfrog)
-- CIA update (fixes Powermonger, thanks to Istv¯n F¯bi¯n)
+- CIA update (fixes Powermonger, thanks to Istvï¿½n Fï¿½biï¿½n)
 - VSync and separate refresh rate selection added
   I had to implement this because I got too many requests :)
 - requires DirectX 7 or newer (was DX5 or newer)
