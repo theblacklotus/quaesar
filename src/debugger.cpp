@@ -3,6 +3,11 @@
 #include <dear_imgui/backends/imgui_impl_sdl2.h>
 #include <dear_imgui/backends/imgui_impl_sdlrenderer2.h>
 #include <dear_imgui/imgui.h>
+#include "sysconfig.h"
+#include "sysdeps.h"
+#include "options.h"
+#include "memory.h"
+#include "newcpu.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +52,15 @@ Debugger* Debugger_create() {
     Debugger* debugger = new Debugger();
     debugger->window = window;
     debugger->renderer = renderer;
+
+    // TODO: Pick correct CPU depending on starting CPU
+    cs_err err = cs_open(CS_ARCH_M68K, (cs_mode)(CS_MODE_BIG_ENDIAN | CS_MODE_M68K_000), &debugger->capstone);
+    if (err) {
+        printf("Failed on cs_open() with error returned: %u\n", err);
+        abort();
+    }
+
+    cs_option(debugger->capstone, CS_OPT_DETAIL, CS_OPT_ON);
 
     ImVec4* colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
@@ -144,14 +158,67 @@ Debugger* Debugger_create() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static void draw_debugger_window() {
+static void draw_debugger_window(Debugger* self) {
     static bool show_demo_window = true;
     ImGuiIO& io = ImGui::GetIO();
 
+    static bool p_open = true;
+
+    uae_u32 pc = M68K_GETPC;
+
+    uae_u8* pc_addr = memory_get_real_address(pc);
+    uae_u32 start_disasm = pc - 10 * 2;
+
+    // TODO: better
+    cs_insn* insn = nullptr;
+    size_t count = cs_disasm(self->capstone, pc_addr - 10 * 2, 40, start_disasm, 0, &insn);
+
+    printf("-----------------------------------------\n");
+
+    for (size_t j = 0; j < count; j++) {
+        if (insn[j].address == pc) {
+            printf("0x%" PRIx64 ":>\t%s\t%s\n", insn[j].address, insn[j].mnemonic, insn[j].op_str);
+        } else {
+            printf("0x%" PRIx64 ":\t%s\t%s\n", insn[j].address, insn[j].mnemonic, insn[j].op_str);
+        }
+        //print_insn_detail(&insn[j]);
+    }
+
+    printf("%08x\n", M68K_GETPC);
+
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize(viewport->WorkSize);
+    ImGui::SetNextWindowViewport(viewport->ID);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+    window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+    window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+    ImGui::Begin("DockSpace Demo", &p_open, window_flags);
+        
+    ImGui::PopStyleVar(2);
+
+    // Submit the DockSpace
+    ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+
+    /*
+    if (ImGui::BeginMenuBar())
+    {
+        if (ImGui::BeginMenu("Options"))
+        {
+        }
+
+        ImGui::EndMenuBar();
+    }
+    */
+
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to
     // learn more about Dear ImGui!).
-    if (show_demo_window)
-        ImGui::ShowDemoWindow(&show_demo_window);
+    //if (show_demo_window)
+    //    ImGui::ShowDemoWindow(&show_demo_window);
 
     // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
     {
@@ -184,6 +251,8 @@ static void draw_debugger_window() {
     (ImGui::Button("Close Me")) show_another_window = false; ImGui::End();
     }
     */
+
+    ImGui::End();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,7 +273,7 @@ void Debugger_update(Debugger* debugger) {
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
-    draw_debugger_window();
+    draw_debugger_window(debugger);
 
     ImGuiIO& io = ImGui::GetIO();
     // Rendering

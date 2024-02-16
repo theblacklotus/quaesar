@@ -295,6 +295,7 @@ static const cs_arch_config arch_configs[MAX_ARCH] = {
 	{ NULL, NULL, 0 },
 #endif
 #ifdef CAPSTONE_HAS_SH
+    #error foo
 	CS_ARCH_CONFIG_SH,
 #else
 	{ NULL, NULL, 0 },
