@@ -3,11 +3,11 @@
 #include <dear_imgui/backends/imgui_impl_sdl2.h>
 #include <dear_imgui/backends/imgui_impl_sdlrenderer2.h>
 #include <dear_imgui/imgui.h>
-#include "sysconfig.h"
-#include "sysdeps.h"
-#include "options.h"
 #include "memory.h"
 #include "newcpu.h"
+#include "options.h"
+#include "sysconfig.h"
+#include "sysdeps.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -181,7 +181,7 @@ static void draw_debugger_window(Debugger* self) {
         } else {
             printf("0x%" PRIx64 ":\t%s\t%s\n", insn[j].address, insn[j].mnemonic, insn[j].op_str);
         }
-        //print_insn_detail(&insn[j]);
+        // print_insn_detail(&insn[j]);
     }
 
     printf("%08x\n", M68K_GETPC);
@@ -193,11 +193,12 @@ static void draw_debugger_window(Debugger* self) {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-    window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+    window_flags |=
+        ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
     ImGui::Begin("DockSpace Demo", &p_open, window_flags);
-        
+
     ImGui::PopStyleVar(2);
 
     // Submit the DockSpace
@@ -217,7 +218,7 @@ static void draw_debugger_window(Debugger* self) {
 
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to
     // learn more about Dear ImGui!).
-    //if (show_demo_window)
+    // if (show_demo_window)
     //    ImGui::ShowDemoWindow(&show_demo_window);
 
     // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
@@ -311,5 +312,3 @@ void Debugger_destroy(Debugger* debugger) {
 
     delete debugger;
 }
-
-
