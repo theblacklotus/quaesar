@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Debugger* Debugger_create() {
-    uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
+    uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN;
     SDL_Window* window =
         SDL_CreateWindow("Quaesar: Debugger", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
 
@@ -219,6 +219,18 @@ void Debugger_update(Debugger* debugger) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void Debugger_toggle(Debugger* debugger, DebuggerMode mode) {
+    uint32_t window_flags = SDL_GetWindowFlags(debugger->window);
+
+    if (window_flags & SDL_WINDOW_HIDDEN) {
+        SDL_ShowWindow(debugger->window);
+    } else {
+        SDL_HideWindow(debugger->window);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Debugger_destroy(Debugger* debugger) {
     // Cleanup
     ImGui_ImplSDLRenderer2_Shutdown();
@@ -230,3 +242,5 @@ void Debugger_destroy(Debugger* debugger) {
 
     delete debugger;
 }
+
+

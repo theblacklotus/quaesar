@@ -989,6 +989,8 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
                     quit_program == UAE_QUIT;
                     exit(0);
                     // TODO: Fix me
+                } else if (e.key.keysym.sym == SDLK_d) {
+                    Debugger_toggle(s_debugger, DebuggerMode_Live);
                 }
                 break;
             default:
