@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stdint.h>
 #include <capstone/capstone.h>
+#include <stdint.h>
 
 struct SDL_Window;
 struct SDL_Renderer;
