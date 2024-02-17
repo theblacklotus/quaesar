@@ -29,7 +29,7 @@
 #include "../../MCRegisterInfo.h"
 
 #ifndef CAPSTONE_DIET
-static const char s_spacing[] = " ";
+static const char s_spacing[] = "";
 
 static const char* const s_reg_names[] = {
 	"invalid",

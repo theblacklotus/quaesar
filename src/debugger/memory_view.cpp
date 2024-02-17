@@ -58,16 +58,16 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef _MSC_VER
-#define _PRISizeT   "I"
-#define ImSnprintf  _snprintf
+#define _PRISizeT "I"
+#define ImSnprintf _snprintf
 #else
-#define _PRISizeT   "z"
-#define ImSnprintf  snprintf
+#define _PRISizeT "z"
+#define ImSnprintf snprintf
 #endif
 
 #ifdef _MSC_VER
-#pragma warning (push)
-#pragma warning (disable: 4996) // warning C4996: 'sprintf': This function or variable may be unsafe.
+#pragma warning(push)
+#pragma warning(disable : 4996)  // warning C4996: 'sprintf': This function or variable may be unsafe.
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -600,7 +600,7 @@ static const char* format_binary(const uint8_t* buf, int width) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MemoryView::draw_preview_data(size_t addr, const uint8_t* mem_data, size_t mem_size, ImGuiDataType data_type,
-                       DataFormat data_format, char* out_buf, size_t out_buf_size) const {
+                                   DataFormat data_format, char* out_buf, size_t out_buf_size) const {
     uint8_t buf[8];
     size_t elem_size = data_type_get_size(data_type);
     size_t size = addr + elem_size > mem_size ? mem_size - addr : elem_size;

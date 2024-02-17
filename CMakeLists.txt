@@ -196,23 +196,11 @@ add_executable(quaesar
     uae_src/cputbl.h 
     uae_src/jit/comptbl.h
     uae_src/blit.h
-    src/debugger.cpp
-    src/gfx.cpp
-    src/gui.cpp
-    src/mman.cpp
-    src/machdep/m68k.cpp
-    src/thread.cpp
-    src/unicode.cpp
-    src/file_system.cpp
-    src/hardfile_host.cpp
-    src/filepaths.cpp
-    src/sounddep/sound.cpp
-    src/time.cpp
-    src/dummy.cpp
-    src/input.cpp
-    src/quaesar.cpp
-    src/adf.cpp
 )
+
+# Recursively glob for all .cpp files in the src directory
+file(GLOB_RECURSE CROSS_FILES "src/*.cpp")
+target_sources(quaesar PRIVATE ${CROSS_FILES})
 
 if (APPLE OR LINUX)
 	target_compile_options(quaesar PRIVATE -DUAE=1 -D_cdecl= -DFILEFLAG_WRITE=1 -DOS_NAME=\"linux\")
