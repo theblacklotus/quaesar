@@ -3,11 +3,13 @@
 #include <dear_imgui/backends/imgui_impl_sdl2.h>
 #include <dear_imgui/backends/imgui_impl_sdlrenderer2.h>
 #include <dear_imgui/imgui.h>
-#include "memory.h"
-#include "newcpu.h"
-#include "options.h"
+// clang-format off
 #include "sysconfig.h"
 #include "sysdeps.h"
+#include "options.h"
+#include "memory.h"
+#include "newcpu.h"
+// clang-format on
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -165,13 +167,15 @@ static void draw_debugger_window(Debugger* self) {
     static bool p_open = true;
 
     uae_u32 pc = M68K_GETPC;
+    uae_u32 offset = 40;
+    uae_u32 count_bytes = 80;
 
     uae_u8* pc_addr = memory_get_real_address(pc);
-    uae_u32 start_disasm = pc - 10 * 2;
+    uae_u32 start_disasm = pc - offset;
 
     // TODO: better
     cs_insn* insn = nullptr;
-    size_t count = cs_disasm(self->capstone, pc_addr - 10 * 2, 40, start_disasm, 0, &insn);
+    size_t count = cs_disasm(self->capstone, pc_addr - offset, count_bytes, start_disasm, 0, &insn);
 
     printf("-----------------------------------------\n");
 

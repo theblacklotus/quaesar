@@ -51,7 +51,7 @@
 #include <SDL.h>
 // clang-format on
 
-#include "debugger.h"
+#include "debugger/debugger.h"
 
 int avioutput_enabled = 0;
 bool beamracer_debug = false;
