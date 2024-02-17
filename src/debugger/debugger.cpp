@@ -155,6 +155,8 @@ Debugger* Debugger_create() {
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
 
+    debugger->memory_view = new MemoryView();
+
     return debugger;
 }
 
@@ -219,6 +221,9 @@ static void draw_debugger_window(Debugger* self) {
         ImGui::EndMenuBar();
     }
     */
+
+    uae_u8* addr = memory_get_real_address(0x00c000000);
+    self->memory_view->draw_window("Memory View", addr, 512 * 1024);
 
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to
     // learn more about Dear ImGui!).

@@ -3,6 +3,8 @@
 #include <capstone/capstone.h>
 #include <stdint.h>
 
+#include "memory_view.h"
+
 struct SDL_Window;
 struct SDL_Renderer;
 union SDL_Event;
@@ -13,6 +15,7 @@ struct Debugger {
     SDL_Window* window;
     SDL_Renderer* renderer;
     csh capstone;
+    MemoryView* memory_view;
 };
 
 enum DebuggerMode {
