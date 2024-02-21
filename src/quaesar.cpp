@@ -51,12 +51,14 @@ int main(int argc, char** argv) {
     default_prefs(&currprefs, true, 0);
     fixup_prefs(&currprefs, true);
 
-    // TODO: cleanup
-    if (ends_with(options.input.c_str(), ".exe") || !ends_with(options.input.c_str(), ".adf")) {
-        Adf::create_for_exefile(options.input.c_str());
-        strcpy(currprefs.floppyslots[0].df, "dummy.adf");
-    } else {
-        strcpy(currprefs.floppyslots[0].df, options.input.c_str());
+    if (!options.input.empty()) {
+        // TODO: cleanup
+        if (ends_with(options.input.c_str(), ".exe") || !ends_with(options.input.c_str(), ".adf")) {
+            Adf::create_for_exefile(options.input.c_str());
+            strcpy(currprefs.floppyslots[0].df, "dummy.adf");
+        } else {
+            strcpy(currprefs.floppyslots[0].df, options.input.c_str());
+        }
     }
 
     // Most compatible mode
