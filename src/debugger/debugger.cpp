@@ -11,6 +11,8 @@
 #include "newcpu.h"
 // clang-format on
 
+#include "disassembly_view.h"
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Debugger* Debugger_create() {
@@ -156,6 +158,7 @@ Debugger* Debugger_create() {
     }
 
     debugger->memory_view = new MemoryView();
+    debugger->d_view = DisassemblyView_create();
 
     return debugger;
 }
@@ -221,6 +224,8 @@ static void draw_debugger_window(Debugger* self) {
         ImGui::EndMenuBar();
     }
     */
+
+    DisassemblyView_update(self->d_view, "Dummy");
 
     uae_u8* addr = memory_get_real_address(0x00c000000);
     self->memory_view->draw_window("Memory View", addr, 512 * 1024);

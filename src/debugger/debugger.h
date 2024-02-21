@@ -8,6 +8,7 @@
 struct SDL_Window;
 struct SDL_Renderer;
 union SDL_Event;
+struct DisassemblyView;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +17,7 @@ struct Debugger {
     SDL_Renderer* renderer;
     csh capstone;
     MemoryView* memory_view;
+    DisassemblyView* d_view;
 };
 
 enum DebuggerMode {

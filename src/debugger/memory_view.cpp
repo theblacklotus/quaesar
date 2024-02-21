@@ -182,11 +182,15 @@ void MemoryView::draw_contents(void* mem_data_void, size_t mem_size, size_t base
     // click would normally be caught as a window-move.
     const float height_separator = style.ItemSpacing.y;
     float footer_height = opt_footer_extra_height;
-    if (opt_show_options)
+
+    if (opt_show_options) {
         footer_height += height_separator + ImGui::GetFrameHeightWithSpacing() * 1;
-    if (opt_show_data_preview)
-        footer_height +=
-            height_separator + ImGui::GetFrameHeightWithSpacing() * 1 + ImGui::GetTextLineHeightWithSpacing() * 3;
+    }
+
+    if (opt_show_data_preview) {
+        footer_height += height_separator + ImGui::GetFrameHeightWithSpacing() * 1 + ImGui::GetTextLineHeightWithSpacing() * 3;
+    }
+
     ImGui::BeginChild("##scrolling", ImVec2(0, -footer_height), false,
                       ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoNav);
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
