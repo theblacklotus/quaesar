@@ -43,8 +43,6 @@ int main(int argc, char** argv) {
     Options options;
     CLI::App app{"Quaesar"};
 
-    Adf::create_for_exefile("test.exe");
-
     app.add_option("input", options.input, "Executable or image file (adf, dms)")->check(CLI::ExistingFile);
     app.add_option("-k,--kickstart", options.kickstart, "Path to the kickstart ROM")->check(CLI::ExistingFile);
     CLI11_PARSE(app, argc, argv);
