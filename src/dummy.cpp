@@ -797,7 +797,7 @@ void fetch_saveimagepath(char *out, int, int) {
     TRACE();
 }
 
-void fetch_videopath(char*, int) {
+void fetch_videopath(char *out, int) {
     *out = 0;
     UNIMPLEMENTED();
 }
