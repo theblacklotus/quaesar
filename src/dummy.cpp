@@ -777,23 +777,28 @@ void fastlane_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
 
-void fetch_inputfilepath(char*, int) {
+void fetch_inputfilepath(char *out, int) {
+    *out = 0;
     UNIMPLEMENTED();
 }
 
-void fetch_ripperpath(char*, int) {
+void fetch_ripperpath(char *out, int) {
+    *out = 0;
     UNIMPLEMENTED();
 }
 
-void fetch_rompath(char*, int) {
+void fetch_rompath(char *out, int) {
+    *out = 0;
     UNIMPLEMENTED();
 }
 
-void fetch_saveimagepath(char*, int, int) {
+void fetch_saveimagepath(char *out, int, int) {
+    *out = 0;
     TRACE();
 }
 
 void fetch_videopath(char*, int) {
+    *out = 0;
     UNIMPLEMENTED();
 }
 
