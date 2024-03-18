@@ -24,6 +24,7 @@ STATIC_INLINE void do_put_mem_byte(uae_u8* a, uae_u8 v) {
 
 #ifdef _WIN32
 
+#ifdef HAVE_MOVBE
 #include <immintrin.h>
 
 STATIC_INLINE uae_u64 do_get_mem_quad(uae_u64* a) {
@@ -49,6 +50,33 @@ STATIC_INLINE void do_put_mem_long(uae_u32* a, uae_u32 v) {
 STATIC_INLINE void do_put_mem_word(uae_u16* a, uae_u16 v) {
     _store_be_u16(a, v);
 }
+#else /* HAVE_MOVBE */
+
+STATIC_INLINE uae_u64 do_get_mem_quad(uae_u64* a) {
+    return _byteswap_uint64(*a);
+}
+
+STATIC_INLINE uae_u32 do_get_mem_long(uae_u32* a) {
+    return _byteswap_ulong(*a);
+}
+
+STATIC_INLINE uae_u16 do_get_mem_word(uae_u16* a) {
+    return _byteswap_ushort(*a);
+}
+
+STATIC_INLINE void do_put_mem_quad(uae_u64* a, uae_u64 v) {
+    *a = _byteswap_uint64(v);
+}
+
+STATIC_INLINE void do_put_mem_long(uae_u32* a, uae_u32 v) {
+    *a = _byteswap_ulong(v);
+}
+
+STATIC_INLINE void do_put_mem_word(uae_u16* a, uae_u16 v) {
+    *a = _byteswap_ushort(v);
+}
+
+#endif /* HAVE_MOVBE */
 
 STATIC_INLINE uae_u64 do_byteswap_64(uae_u64 v) {
     return _byteswap_uint64(v);
