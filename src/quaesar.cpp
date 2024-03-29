@@ -62,8 +62,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    if (!options.serial_port.empty())
-    {
+    if (!options.serial_port.empty()) {
         currprefs.use_serial = 1;
         strcpy(currprefs.sername, options.serial_port.c_str());
     }
