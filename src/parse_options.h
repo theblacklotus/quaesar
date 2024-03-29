@@ -7,6 +7,8 @@ struct Options {
     std::string input;
     // kickstart file such as kick.rom, kick31.rom, etc.
     std::string kickstart;
+    // serial port path ('/tmp/virtual-serial-port')
+    std::string serial_port;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -16,7 +16,6 @@ int vsync_activeheight, vsync_totalheight;
 int max_uae_width = 8192, max_uae_height = 8192;
 int saveimageoriginalpath;
 float vsync_vblank, vsync_hblank;
-uae_u16 serper, serdat, serdatr;
 
 // related to GSYNC/VSYNC
 int target_get_display_scanline2(int displayindex) {

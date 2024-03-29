@@ -1374,42 +1374,25 @@ void scram5394_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
 
-uae_u16 SERDATR() {
-    UNIMPLEMENTED();
-    return 0;
-}
-
-void SERDAT(uae_u16) {
-    UNIMPLEMENTED();
-}
-
-void serial_dtr_off() {
-    UNIMPLEMENTED();
-}
-
-void serial_exit() {
-    UNIMPLEMENTED();
+void serial_uartbreak(int) {
+    // UNIMPLEMENTED();
 }
 
 void serial_hsynchandler() {
-    UNIMPLEMENTED();
-}
-
-void serial_init() {
-    UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void serial_rbf_clear() {
     UNIMPLEMENTED();
 }
 
-uae_u8 serial_readstatus(uae_u8, uae_u8) {
-    UNIMPLEMENTED();
-    return 0;
+uae_u8 serial_readstatus(uae_u8 v, uae_u8) {
+    // UNIMPLEMENTED();
+    return v;
 }
 
 void serial_rethink() {
-    UNIMPLEMENTED();
+    serial_flush_buffer();
 }
 
 void setup_brkhandler() {
@@ -1891,19 +1874,6 @@ uae_u8* save_cdtv_dmac(size_t*, uae_u8*) {
 uae_u8* save_cdtv(size_t*, uae_u8*) {
     UNIMPLEMENTED();
     return nullptr;
-}
-
-void serial_uartbreak(int) {
-    UNIMPLEMENTED();
-}
-
-uae_u8 serial_writestatus(uae_u8, uae_u8) {
-    UNIMPLEMENTED();
-    return 0;
-}
-
-void SERPER(unsigned short) {
-    UNIMPLEMENTED();
 }
 
 int set_cache_state(int) {
