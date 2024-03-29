@@ -102,7 +102,7 @@ bool specialmonitor_need_genlock() {
 }
 
 void setmouseactive(int, int) {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void screenshot(int monid, int, int) {
@@ -140,7 +140,7 @@ static void dummy_close(void) {
 
 // Dummy function to acquire an input device
 static int dummy_acquire(int device_id, int exclusive) {
-    UNIMPLEMENTED();
+    // UNIMPLEMENTED();
     return 0;  // Return 0 for success, -1 for failure
 }
 
@@ -448,7 +448,7 @@ void a4091_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
 void activate_console() {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void alf3_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
@@ -599,17 +599,17 @@ int compiler_init() {
 }
 
 void console_flush() {
-	fflush(stdout);
+    fflush(stdout);
 }
 
 int console_get(char* out, int maxlen) {
-	TCHAR* res = fgets(out, maxlen, stdin);
-	if (res == NULL) {
-		return -1;
-	}
+    TCHAR* res = fgets(out, maxlen, stdin);
+    if (res == NULL) {
+        return -1;
+    }
 
-	int len = strlen(out);
-	return len - 1;
+    int len = strlen(out);
+    return len - 1;
 }
 
 bool console_isch() {
@@ -985,7 +985,7 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
                 // TODO: Fix me
                 exit(0);
                 break;
-            case SDL_KEYDOWN:                           // User presses a key
+            case SDL_KEYDOWN:                      // User presses a key
                 if (e.key.keysym.sym == SDLK_d) {  // If the key is ESC
                     activate_debugger();
                 }
@@ -1514,11 +1514,11 @@ int target_get_volume_name(uaedev_mount_info*, uaedev_config_info*, bool, bool, 
 #endif
 
 void target_inputdevice_acquire() {
-    UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void target_inputdevice_unacquire() {
-    UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 bool target_isrelativemode() {
@@ -1658,7 +1658,7 @@ bool uae_slirp_start() {
 }
 
 void update_debug_info() {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void updatedisplayarea(int) {
@@ -1894,7 +1894,7 @@ void setcapslockstate(int) {
 }
 
 void setmouseactivexy(int, int, int, int) {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 uae_u32 squirrel_ncr9x_scsi_get(unsigned int, int) {
