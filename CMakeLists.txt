@@ -198,6 +198,10 @@ add_executable(quaesar
     uae_src/blit.h
 )
 
+# Recursively glob for all .cpp files in the src directory
+file(GLOB_RECURSE CROSS_FILES "src/*.cpp")
+target_sources(quaesar PRIVATE ${CROSS_FILES})
+
 if (APPLE OR LINUX OR UNIX)
 	target_compile_options(quaesar PRIVATE -DUAE=1 -D_cdecl= -DFILEFLAG_WRITE=1 -DOS_NAME=\"linux\")
 	target_compile_options(quaesar PRIVATE -DUSHORT=uint16_t -DHWND=uint32_t -DHRESULT=uint32_t -DWPARAM=uint16_t -DLPARAM=uint32_t)

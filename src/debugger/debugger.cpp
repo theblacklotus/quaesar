@@ -126,7 +126,7 @@ Debugger* Debugger_create() {
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowPadding = ImVec2(8.00f, 8.00f);
     style.FramePadding = ImVec2(5.00f, 2.00f);
-    style.CellPadding = ImVec2(6.00f, 6.00f);
+    style.CellPadding = ImVec2(6.00f, 2.00f);
     style.ItemSpacing = ImVec2(6.00f, 6.00f);
     style.ItemInnerSpacing = ImVec2(6.00f, 6.00f);
     style.TouchExtraPadding = ImVec2(0.00f, 0.00f);
@@ -158,7 +158,7 @@ Debugger* Debugger_create() {
     }
 
     debugger->memory_view = new MemoryView();
-    debugger->d_view = DisassemblyView_create();
+    debugger->d_view = DisassemblyView_create(debugger->capstone);
 
     return debugger;
 }
@@ -170,30 +170,6 @@ static void draw_debugger_window(Debugger* self) {
     ImGuiIO& io = ImGui::GetIO();
 
     static bool p_open = true;
-
-    uae_u32 pc = M68K_GETPC;
-    uae_u32 offset = 40;
-    uae_u32 count_bytes = 80;
-
-    uae_u8* pc_addr = memory_get_real_address(pc);
-    uae_u32 start_disasm = pc - offset;
-
-    // TODO: better
-    cs_insn* insn = nullptr;
-    size_t count = cs_disasm(self->capstone, pc_addr - offset, count_bytes, start_disasm, 0, &insn);
-
-    printf("-----------------------------------------\n");
-
-    for (size_t j = 0; j < count; j++) {
-        if (insn[j].address == pc) {
-            printf("0x%" PRIx64 ":>\t%s\t%s\n", insn[j].address, insn[j].mnemonic, insn[j].op_str);
-        } else {
-            printf("0x%" PRIx64 ":\t%s\t%s\n", insn[j].address, insn[j].mnemonic, insn[j].op_str);
-        }
-        // print_insn_detail(&insn[j]);
-    }
-
-    printf("%08x\n", M68K_GETPC);
 
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
