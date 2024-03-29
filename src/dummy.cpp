@@ -779,23 +779,28 @@ void fastlane_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
 
-void fetch_inputfilepath(char*, int) {
+void fetch_inputfilepath(char* out, int) {
+    *out = 0;
     UNIMPLEMENTED();
 }
 
-void fetch_ripperpath(char*, int) {
+void fetch_ripperpath(char* out, int) {
+    *out = 0;
     UNIMPLEMENTED();
 }
 
-void fetch_rompath(char*, int) {
+void fetch_rompath(char* out, int) {
+    *out = 0;
     UNIMPLEMENTED();
 }
 
-void fetch_saveimagepath(char*, int, int) {
+void fetch_saveimagepath(char* out, int, int) {
+    *out = 0;
     TRACE();
 }
 
-void fetch_videopath(char*, int) {
+void fetch_videopath(char* out, int) {
+    *out = 0;
     UNIMPLEMENTED();
 }
 
@@ -877,7 +882,6 @@ void golemfast_ncr9x_scsi_put(unsigned int, unsigned int, int) {
 }
 
 SDL_Window* s_window;
-SDL_Surface* s_window_surface;
 SDL_Texture* s_texture = nullptr;
 SDL_Renderer* s_renderer = nullptr;
 static Debugger* s_debugger = nullptr;
@@ -955,11 +959,7 @@ int graphics_init(bool) {
 
     alloc_colors64k(0, bits, bits, bits, red_shift, green_shift, blue_shift, bits, 24, 0, 0, false);
 
-    // Get the window surface
-    s_window_surface = SDL_GetWindowSurface(s_window);
-
     s_debugger = Debugger_create();
-
     TRACE();
     return 1;
 }
@@ -1021,7 +1021,7 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
 
         // Change pixels
         for (int y = 0; y < amiga_height; y++) {
-            uint8_t* dest = (uint8_t*)&pixels[y * s_window_surface->w];
+            uint8_t* dest = (uint8_t*)&pixels[y * 754];
             memcpy(dest, sptr, amiga_width * 4);
             sptr += vb->rowbytes;
         }
