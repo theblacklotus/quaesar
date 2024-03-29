@@ -995,9 +995,6 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
     uint32_t* pixels = nullptr;
     int pitch = 0;
 
-    int amiga_width = 754;
-    int amiga_height = 576;
-
     if (SDL_LockTexture(s_texture, NULL, (void**)&pixels, &pitch) == 0) {
         struct amigadisplay* ad = &adisplays[vb_in->monitor_id];
         struct vidbuf_description* avidinfo = &adisplays[vb_in->monitor_id].gfxvidinfo;
@@ -1014,13 +1011,16 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
 
         // Change pixels
         for (int y = 0; y < amiga_height; y++) {
-            uint8_t* dest = (uint8_t*)&pixels[y * amiga_width];
+            uint8_t* dest = (uint8_t*)&pixels[y * 754];
             memcpy(dest, sptr, amiga_width * 4);
             sptr += vb->rowbytes;
         }
 
         SDL_UnlockTexture(s_texture);
     }
+
+    int amiga_width = 754;
+    int amiga_height = 576;
 
     int new_width = 0;
     int new_height = 0;
