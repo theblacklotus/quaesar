@@ -880,7 +880,6 @@ void golemfast_ncr9x_scsi_put(unsigned int, unsigned int, int) {
 }
 
 SDL_Window* s_window;
-SDL_Surface* s_window_surface;
 SDL_Texture* s_texture = nullptr;
 SDL_Renderer* s_renderer = nullptr;
 
@@ -957,9 +956,6 @@ int graphics_init(bool) {
 
     alloc_colors64k(0, bits, bits, bits, red_shift, green_shift, blue_shift, bits, 24, 0, 0, false);
 
-    // Get the window surface
-    s_window_surface = SDL_GetWindowSurface(s_window);
-
     TRACE();
     return 1;
 }
@@ -999,6 +995,9 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
     uint32_t* pixels = nullptr;
     int pitch = 0;
 
+    int amiga_width = 754;
+    int amiga_height = 576;
+
     if (SDL_LockTexture(s_texture, NULL, (void**)&pixels, &pitch) == 0) {
         struct amigadisplay* ad = &adisplays[vb_in->monitor_id];
         struct vidbuf_description* avidinfo = &adisplays[vb_in->monitor_id].gfxvidinfo;
@@ -1015,16 +1014,13 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
 
         // Change pixels
         for (int y = 0; y < amiga_height; y++) {
-            uint8_t* dest = (uint8_t*)&pixels[y * s_window_surface->w];
+            uint8_t* dest = (uint8_t*)&pixels[y * amiag_width];
             memcpy(dest, sptr, amiga_width * 4);
             sptr += vb->rowbytes;
         }
 
         SDL_UnlockTexture(s_texture);
     }
-
-    int amiga_width = 754;
-    int amiga_height = 576;
 
     int new_width = 0;
     int new_height = 0;
