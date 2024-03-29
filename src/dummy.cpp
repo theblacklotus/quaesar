@@ -1014,7 +1014,7 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
 
         // Change pixels
         for (int y = 0; y < amiga_height; y++) {
-            uint8_t* dest = (uint8_t*)&pixels[y * amiag_width];
+            uint8_t* dest = (uint8_t*)&pixels[y * amiga_width];
             memcpy(dest, sptr, amiga_width * 4);
             sptr += vb->rowbytes;
         }
