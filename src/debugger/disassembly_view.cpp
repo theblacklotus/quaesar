@@ -50,13 +50,32 @@ static void draw_disassembly(DisassemblyView* self) {
             
     char buffer[512];
 
-    if (ImGui::BeginTable("disassembly", 3, flags)) {
+    float text_height = ImGui::GetTextLineHeight();
+
+    if (ImGui::BeginTable("disassembly", 4, flags)) {
+        ImGui::TableSetupColumn("Loc");
         ImGui::TableSetupColumn("Adress");
         ImGui::TableSetupColumn("Instruction");
         ImGui::TableSetupColumn("Cycles");
         ImGui::TableHeadersRow();
         
         for (size_t j = 0; j < count; j++) {
+            // Assuming we're rendering the triangle in the first column
+            ImGui::TableNextColumn();
+            if (insn[j].address == pc) {
+                //ImGui::TableSetColumnIndex(0);
+                ImDrawList* draw_list = ImGui::GetWindowDrawList();
+                ImVec2 p = ImGui::GetCursorScreenPos();
+                // Define triangle vertices
+                ImVec2 tri[3] = {
+                    ImVec2(p.x, p.y),
+                    ImVec2(p.x + text_height / 2, p.y + text_height / 2),
+                    ImVec2(p.x, p.y + text_height)
+                };
+
+                draw_list->AddTriangleFilled(tri[0], tri[1], tri[2], IM_COL32(255, 255, 0, 255));
+            }
+
             ImGui::TableNextColumn();
             ImGui::Text("0x%" PRIx64, insn[j].address);
             ImGui::TableNextColumn();

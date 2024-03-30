@@ -32,3 +32,4 @@ void Debugger_update(Debugger* debugger);
 void Debugger_update_event(SDL_Event* event);
 void Debugger_destroy(Debugger* debugger);
 void Debugger_toggle(Debugger* debugger, DebuggerMode mode);
+void Debugger_step(Debugger* debugger);

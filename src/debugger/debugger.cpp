@@ -55,7 +55,7 @@ Debugger* Debugger_create() {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-    io.Fonts->AddFontFromFileTTF("../data/static/SourceCodePro-Regular.ttf", 24.0f);
+    io.Fonts->AddFontFromFileTTF("../data/static/SourceCodePro-Regular.ttf", 20.0f);
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -222,8 +222,8 @@ static void draw_debugger_window(Debugger* self) {
 
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to
     // learn more about Dear ImGui!).
-    // if (show_demo_window)
-    //    ImGui::ShowDemoWindow(&show_demo_window);
+    if (show_demo_window)
+        ImGui::ShowDemoWindow(&show_demo_window);
 
     // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
     {
@@ -347,6 +347,11 @@ static void update(void* self) {
                 if (e.key.keysym.sym == SDLK_ESCAPE) {
                     exit(0);
                 }
+
+                if (e.key.keysym.sym == SDLK_F10) {
+                    Debugger_step(s_debugger);
+                }
+
                 break;
             }
         
@@ -356,6 +361,13 @@ static void update(void* self) {
         Debugger_update(s_debugger);
     }
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Debugger_step(Debugger* debugger) {
+
+}
+
 
 static void live_update(void* self) { }
 static void destroy(void* self) { }
