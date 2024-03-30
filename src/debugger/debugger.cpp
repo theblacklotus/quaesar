@@ -13,6 +13,7 @@
 // clang-format on
 
 #include "disassembly_view.h"
+#include "register_view.h"
 #include "debugger_api.h"
 
 extern int debugger_active;
@@ -173,6 +174,7 @@ Debugger* Debugger_create() {
 
     debugger->memory_view = new MemoryView();
     debugger->d_view = DisassemblyView_create(debugger->capstone);
+    debugger->register_view = RegisterView_create();
 
     s_debugger = debugger;
 
@@ -218,6 +220,7 @@ static void draw_debugger_window(Debugger* self) {
     */
 
     DisassemblyView_update(self->d_view, "Dummy");
+    RegisterView_update(self->register_view);
 
     uae_u8* addr = memory_get_real_address(0x00c000000);
     self->memory_view->draw_window("Memory View", addr, 512 * 1024);
