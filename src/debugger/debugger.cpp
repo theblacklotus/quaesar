@@ -9,9 +9,17 @@
 #include "options.h"
 #include "memory.h"
 #include "newcpu.h"
+#include "debug.h"
 // clang-format on
 
 #include "disassembly_view.h"
+#include "debugger_api.h"
+
+extern int debugger_active;
+
+extern DebuggerAPI s_debugger_api;
+
+static Debugger* s_debugger = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +27,8 @@ Debugger* Debugger_create() {
     uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN;
     SDL_Window* window =
         SDL_CreateWindow("Quaesar: Debugger", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+
+    DebuggerAPI_register(&s_debugger_api, nullptr);
 
     // From 2.0.18: Enable native IME.
 #ifdef SDL_HINT_IME_SHOW_UI
@@ -44,6 +54,8 @@ Debugger* Debugger_create() {
     (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+    io.Fonts->AddFontFromFileTTF("../data/static/SourceCodePro-Regular.ttf", 24.0f);
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -159,6 +171,8 @@ Debugger* Debugger_create() {
 
     debugger->memory_view = new MemoryView();
     debugger->d_view = DisassemblyView_create(debugger->capstone);
+
+    s_debugger = debugger;
 
     return debugger;
 }
@@ -283,8 +297,10 @@ void Debugger_toggle(Debugger* debugger, DebuggerMode mode) {
     uint32_t window_flags = SDL_GetWindowFlags(debugger->window);
 
     if (window_flags & SDL_WINDOW_HIDDEN) {
+        activate_debugger_new();
         SDL_ShowWindow(debugger->window);
     } else {
+        deactivate_debugger();
         SDL_HideWindow(debugger->window);
     }
 }
@@ -302,3 +318,57 @@ void Debugger_destroy(Debugger* debugger) {
 
     delete debugger;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static void* create(void* user_data) { return nullptr; }
+static void check_exception(void* self) { }
+static void cop_debug(void* self, uint32_t addr, uint32_t nextaddr, uint16_t word1, uint16_t word2, int hpos, int vpos) { }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static void update(void* self) { 
+    set_special (SPCFLAG_BRK);
+
+    SDL_Event e;
+
+    while (1) {
+        while (SDL_PollEvent(&e) != 0) {
+            // User requests quit
+            switch (e.type) {
+                case SDL_QUIT:  // User closes the window
+                    // TODO: Fix me
+                    exit(0);
+                    break;
+                default:
+                    break;
+
+            case SDL_KEYDOWN:
+                if (e.key.keysym.sym == SDLK_ESCAPE) {
+                    exit(0);
+                }
+                break;
+            }
+        
+            Debugger_update_event(&e);
+       }
+
+        Debugger_update(s_debugger);
+    }
+}
+
+static void live_update(void* self) { }
+static void destroy(void* self) { }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+DebuggerAPI s_debugger_api = {
+    nullptr,
+    create,
+    check_exception,
+    cop_debug,
+    update,
+    live_update,
+    destroy,
+};
+

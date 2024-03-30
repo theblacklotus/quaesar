@@ -37,6 +37,7 @@
 #include "cpummu.h"
 #include "rommgr.h"
 #include "inputrecord.h"
+#include "debugger_api.h"
 #include "calc.h"
 #include "cpummu.h"
 #include "cpummu030.h"
@@ -113,6 +114,11 @@ void deactivate_debugger (void)
 
 void activate_debugger (void)
 {
+#if DEBUGGER_API_ENABLE
+	if (DebuggerAPI_has_debugger()) {
+	    DebuggerAPI_check_exception();
+	}
+#endif
 	disasm_init();
 	if (isfullscreen() > 0)
 		return;
@@ -2846,6 +2852,12 @@ void record_copper_blitwait (uaecptr addr, int hpos, int vpos)
 
 void record_copper (uaecptr addr, uaecptr nextaddr, uae_u16 word1, uae_u16 word2, int hpos, int vpos)
 {
+#if DEBUGGER_API_ENABLE
+	if (DebuggerAPI_has_debugger()) {
+	    DebuggerAPI_debug_copper(addr, nextaddr, word1, word2, hpos, vpos);
+	    return;
+	}
+#endif
 	int t = nr_cop_records[curr_cop_set];
 	init_record_copper();
 	if (t < NR_COPPER_RECORDS) {
@@ -7327,6 +7339,13 @@ static bool check_breakpoint_count(struct breakpoint_node *bpn, uaecptr pc)
 void debug (void)
 {
 	int wasactive;
+
+#if DEBUGGER_API_ENABLE
+	if (DebuggerAPI_has_debugger()) {
+	    DebuggerAPI_update();
+		return;
+	}
+#endif
 
 	if (savestate_state)
 		return;

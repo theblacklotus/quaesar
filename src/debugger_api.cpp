@@ -1,0 +1,67 @@
+#include "debugger_api.h"
+#include <vector>
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct Debugger {
+    void* user_data;
+    DebuggerAPI* api;
+};
+
+static std::vector<Debugger> s_debuggers;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool DebuggerAPI_has_debugger() {
+    return !s_debuggers.empty();
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void DebuggerAPI_register(DebuggerAPI* api, void* user_data) {
+    void* self = api->create(user_data);
+
+    Debugger debugger = { user_data, api };
+
+    s_debuggers.push_back(debugger);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void DebuggerAPI_check_exception() {
+    for (Debugger& debugger : s_debuggers) {
+        debugger.api->check_exception(debugger.user_data);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void DebuggerAPI_debug_copper(uint32_t addr, uint32_t nextaddr, uint16_t word1, uint16_t word2, int hpos, int vpos) {
+    for (Debugger& debugger : s_debuggers) {
+        debugger.api->debug_copper(debugger.user_data, addr, nextaddr, word1, word2, hpos, vpos);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void DebuggerAPI_update() {
+    for (Debugger& debugger : s_debuggers) {
+        debugger.api->update(debugger.user_data);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void DebuggerAPI_live_update() {
+    for (Debugger& debugger : s_debuggers) {
+        debugger.api->live_update(debugger.user_data);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void DebuggerAPI_destroy() {
+    for (Debugger& debugger : s_debuggers) {
+        debugger.api->destroy(debugger.user_data);
+    }
+}

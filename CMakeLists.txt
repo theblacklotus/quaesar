@@ -222,7 +222,7 @@ if (WIN32)
 endif()
 
 if (APPLE)
-    target_compile_options(quaesar PRIVATE -DFILEFLAG_DIR=1 -DFILEFLAG_DIR=1 -D_ftelli64=ftell -D_fseeki64=fseek -D_fseeko64=fseeko -Dfseeko64=fseeko -Dftello64=ftell)
+    target_compile_options(quaesar PRIVATE -Wno-macro-redefined -Wno-deprecated-declarations -DFILEFLAG_DIR=1 -DFILEFLAG_DIR=1 -D_ftelli64=ftell -D_fseeki64=fseek -D_fseeko64=fseeko -Dfseeko64=fseeko -Dftello64=ftell)
 endif()
 
 if (LINUX OR UNIX)

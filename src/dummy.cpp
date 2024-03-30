@@ -104,7 +104,7 @@ bool specialmonitor_need_genlock() {
 }
 
 void setmouseactive(int, int) {
-    UNIMPLEMENTED();
+    //UNIMPLEMENTED();
 }
 
 void screenshot(int monid, int, int) {
@@ -450,7 +450,7 @@ void a4091_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
 void activate_console() {
-    UNIMPLEMENTED();
+    //UNIMPLEMENTED();
 }
 
 void alf3_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
@@ -601,7 +601,7 @@ int compiler_init() {
 }
 
 void console_flush() {
-    UNIMPLEMENTED();
+    //UNIMPLEMENTED();
 }
 
 int console_get(char*, int) {
@@ -1105,7 +1105,7 @@ bool is_mainthread() {
 }
 
 bool ismouseactive() {
-    UNIMPLEMENTED();
+    //UNIMPLEMENTED();
     return false;
 }
 
@@ -1676,7 +1676,7 @@ bool uae_slirp_start() {
 }
 
 void update_debug_info() {
-    UNIMPLEMENTED();
+    //UNIMPLEMENTED();
 }
 
 void updatedisplayarea(int) {
@@ -1855,7 +1855,6 @@ int input_get_default_mouse(uae_input_device*, int, int, int, bool, bool, bool) 
 }
 
 int isfullscreen() {
-    UNIMPLEMENTED();
     return 0;
 }
 
