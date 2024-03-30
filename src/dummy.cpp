@@ -142,7 +142,7 @@ static void dummy_close(void) {
 
 // Dummy function to acquire an input device
 static int dummy_acquire(int device_id, int exclusive) {
-    UNIMPLEMENTED();
+    //UNIMPLEMENTED();
     return 0;  // Return 0 for success, -1 for failure
 }
 
@@ -1534,11 +1534,11 @@ int target_get_volume_name(uaedev_mount_info*, uaedev_config_info*, bool, bool, 
 #endif
 
 void target_inputdevice_acquire() {
-    UNIMPLEMENTED();
+    //UNIMPLEMENTED();
 }
 
 void target_inputdevice_unacquire() {
-    UNIMPLEMENTED();
+    //UNIMPLEMENTED();
 }
 
 bool target_isrelativemode() {

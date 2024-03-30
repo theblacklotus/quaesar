@@ -55,7 +55,7 @@
 #include "keybuf.h"
 
 static int trace_mode;
-static uae_u32 trace_param[3];
+uae_u32 trace_param[3];
 
 int debugger_active;
 static int debug_rewind;
@@ -7191,23 +7191,32 @@ static void debug_1 (void)
 	nxdis = nextpc; nxmem = 0;
 	debugger_active = 1;
 
-	for (;;) {
-		int v;
+#if DEBUGGER_API_ENABLE
+	if (DebuggerAPI_has_debugger()) {
+	    DebuggerAPI_update();
+		return;
+	} else {
+#endif
+    for (;;) {
+        int v;
 
-		if (!debugger_active)
-			return;
-		update_debug_info ();
-		console_out (_T(">"));
-		console_flush ();
-		debug_linecounter = 0;
-		v = console_get (input, MAX_LINEWIDTH);
-		if (v < 0)
-			return;
-		if (v == 0)
-			continue;
-		if (debug_line (input))
-			return;
+        if (!debugger_active)
+            return;
+        update_debug_info ();
+        console_out (_T(">"));
+        console_flush ();
+        debug_linecounter = 0;
+        v = console_get (input, MAX_LINEWIDTH);
+        if (v < 0)
+            return;
+        if (v == 0)
+            continue;
+        if (debug_line (input))
+            return;
+    }
+#if DEBUGGER_API_ENABLE
 	}
+#endif
 }
 
 static void addhistory(void)
@@ -7340,12 +7349,6 @@ void debug (void)
 {
 	int wasactive;
 
-#if DEBUGGER_API_ENABLE
-	if (DebuggerAPI_has_debugger()) {
-	    DebuggerAPI_update();
-		return;
-	}
-#endif
 
 	if (savestate_state)
 		return;
@@ -8802,3 +8805,10 @@ bool debug_sprintf(uaecptr addr, uae_u32 val, int size)
 	}
 	return true;
 }
+
+void debug_internal_step() {
+    no_trace_exceptions = 0;
+    debug_cycles(2);
+    trace_param[0] = trace_param[1] = 0;
+}
+

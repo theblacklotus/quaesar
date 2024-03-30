@@ -21,6 +21,8 @@ extern DebuggerAPI s_debugger_api;
 
 static Debugger* s_debugger = nullptr;
 
+extern void debug_internal_step();
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Debugger* Debugger_create() {
@@ -350,6 +352,7 @@ static void update(void* self) {
 
                 if (e.key.keysym.sym == SDLK_F10) {
                     Debugger_step(s_debugger);
+                    return;
                 }
 
                 break;
@@ -365,9 +368,10 @@ static void update(void* self) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Debugger_step(Debugger* debugger) {
-
+    debug_internal_step();
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static void live_update(void* self) { }
 static void destroy(void* self) { }
