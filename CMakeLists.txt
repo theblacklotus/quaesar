@@ -208,6 +208,7 @@ add_executable(quaesar
     src/input.cpp
     src/quaesar.cpp
     src/adf.cpp
+    src/reloc.cpp
 )
 
 if (APPLE OR LINUX OR UNIX)

@@ -682,8 +682,8 @@ int custom_fsdb_used_as_nname(a_inode_struct*, char const*) {
 }
 
 int debuggable() {
-    UNIMPLEMENTED();
-    return 0;
+    // UNIMPLEMENTED();
+    return 1;
 }
 
 void debugger_change(int) {
