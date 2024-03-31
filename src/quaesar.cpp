@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
     rb->end_address = 0xf20000;
     strcpy(rb->lf.loadfile, "bootrom.bin");
 
-    currprefs.start_debugger = 1;
+    // currprefs.start_debugger = 1;
     currprefs.uaeboard = 1;
 
     real_main(argc, argv);
