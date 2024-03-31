@@ -643,6 +643,11 @@ void rtarea_init(void)
 	calltrap (deftrapres (uae_puts, TRAPFLAG_NO_RETVAL, _T("uae_puts")));
 	dw (RTS);
 
+	org (rtarea_base + 0xFF90);
+	uae_u32 REGPARAM2 dehunk_payload (TrapContext *ctx);
+	calltrap (deftrapres (dehunk_payload, TRAPFLAG_DORET | TRAPFLAG_EXTRA_STACK, _T("dehunk_payload")));
+	dw(RTS);
+
 	org (a);
 
 	uae_boot_rom_size = here () - rtarea_base;

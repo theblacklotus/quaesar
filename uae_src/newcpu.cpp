@@ -6595,10 +6595,6 @@ void m68k_go (int may_quit)
 			if (cpu_hardreset) {
 				memory_clear ();
 				write_log (_T("hardreset, memory cleared\n"));
-
-				void unpack_payload();
-				unpack_payload();
-
 			}
 #ifdef DEBUGGER
 			if (debug_dma) {
