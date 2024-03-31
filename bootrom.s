@@ -96,8 +96,34 @@ DOS:
 		moveq	#0,d0
 		rts
 
-.dummy	move.l	#0,d0
-		rts
+.dosopen	moveq	#0,d0
+			rts
+
+.dosclose	moveq	#0,d0
+			rts
+
+.dosread	moveq	#0,d0
+			rts
+
+.doswrite	moveq	#0,d0
+			cmp.l	#$FEED,d1
+			bne.b	.notcon
+			move.l	d2,a0
+			jsr		$f0ff10
+			move.l	d3,d0
+.notcon		rts
+
+.dosinput	moveq	#0,d0
+			rts
+
+.dosoutput	move.l	#$FEED,d0
+			rts
+
+.dosseek	moveq	#0,d0
+			rts
+
+.dummy		move.l	#0,d0
+			rts
 
 .shortfunc	macro
 			dc.w	(\1-.func)
@@ -109,6 +135,14 @@ DOS:
 		.shortfunc	.libclose
 		.shortfunc	.dummy		; expunge
 		.shortfunc	.dummy		; null
+
+		.shortfunc	.dosopen
+		.shortfunc	.dosclose
+		.shortfunc	.dosread
+		.shortfunc	.doswrite
+		.shortfunc	.dosinput
+		.shortfunc	.dosoutput
+		.shortfunc	.dosseek
 
 		rept 100
 		.shortfunc	.dummy
