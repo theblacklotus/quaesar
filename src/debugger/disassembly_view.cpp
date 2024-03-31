@@ -174,17 +174,9 @@ static void draw_disassembly(DisassemblyView* self) {
                     const RegisterStringInfo* reg = &detail->regs_write_string_info[reg_id];
                     ImVec2 start_pos = ImVec2(op_str_start + (reg->offset * text_char_width), p.y);
                     ImVec2 end_pos = ImVec2(start_pos.x + (reg->length * text_char_width), p.y + text_height);
-                    printf("start_pos: %f %f\n", start_pos.x, start_pos.y);
-                    printf("end_pos: %f %f\n", end_pos.x, end_pos.y);
                     draw_list->AddRectFilled(start_pos, end_pos, IM_COL32(127, 0, 0, 127)); 
                 }
             }
-            
-            //ImVec2 start_pos = ImVec2(op_str_start, p.y);
-            //ImVec2 end_pos = ImVec2(start_pos.x + 2.0f * text_char_width, p.y + text_height);
-            //draw_list->AddRectFilled(start_pos, end_pos, IM_COL32(127, 127, 127, 127));
-
-            //draw_list->AddRectFilled(p, ImVec2(p.x, p.y + text_height), IM_COL32(127, 127, 127, 127));
 
             ImGui::TableNextColumn();
         }
@@ -199,69 +191,19 @@ static void draw_disassembly(DisassemblyView* self) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void DisassemblyView_update(DisassemblyView* self, const char* name) {
-    //static bool show_demo_window = true;
-    //ImGui::ShowDemoWindow(&show_demo_window);
-
     static bool open = true;
 
     float text_height = ImGui::GetTextLineHeight();
 
     if (ImGui::Begin("Disassembly", &open, ImGuiWindowFlags_NoScrollbar)) {
-        //ImGui::BeginChild("##scrolling", ImVec2(00.0f, 0.0f), false, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoNav);
-        //ImDrawList* draw_list = ImGui::GetWindowDrawList();
-        //ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-        //ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-
-
         draw_disassembly(self);
-        
-        //ImGui::PopStyleVar(2);
-
-        //ImGui::EndChild();
     }
 
     ImGui::End();
 }
 
-
-    /*
-    for (size_t j = 0; j < count; j++) {
-        cs_detail* detail = insn[j].detail;
-
-        printf("--------------------------------------------------------\n");
-
-        printf("%08llxx %s %s\n", insn[j].address, insn[j].mnemonic, insn[j].op_str);
-        printf(" read offsets registers: ");
-
-        for (int i = 0; i < detail->regs_read_string_count; i++) {
-            RegisterStringInfo* reg = &detail->regs_read_string_info[i];
-            printf("  %d %d %d |", reg->offset, reg->length, reg->type);  
-        }
-
-        printf("\n");
-        printf(" write offsets registers:");
-
-        for (int i = 0; i < detail->regs_write_string_count; i++) {
-            RegisterStringInfo* reg = &detail->regs_write_string_info[i];
-            printf("  %d %d %d | \n", reg->offset, reg->length, reg->type);  
-        }
-        
-        printf("\n");
-        printf(" read registers: ");
-
-        for (int i = 0; i < detail->regs_read_count; i++) {
-            printf("  %d |", detail->regs_read[i]);  
-        }
-
-        printf("\n");
-        printf(" write registers: ");
-
-        for (int i = 0; i < detail->regs_write_count; i++) {
-            printf("  %d |", detail->regs_write[i]);  
-        }
-        
-        printf("\n");
-    }
-    */
+SelectedRegisters* DisassemblyView_get_selected_registers(DisassemblyView* self) {
+    return &s_selected_registers;
+}
 
 
