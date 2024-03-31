@@ -146,7 +146,7 @@ static int dummy_acquire(int device_id, int exclusive) {
 
 // Dummy function to release/unacquire an input device
 static void dummy_unacquire(int device_id) {
-    printf("Unacquiring input device %d\n", device_id);
+    //    printf("Unacquiring input device %d\n", device_id);
 }
 
 // Dummy function to read input from the device
