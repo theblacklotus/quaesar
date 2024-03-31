@@ -377,18 +377,31 @@ typedef struct cs_opt_skipdata {
 #define MAX_IMPL_R_REGS 20
 #define MAX_NUM_GROUPS 8
 
+#define REGISTER_STRING_INFO_REGISTER 0
+#define REGISTER_STRING_INFO_REG_BITS 1
+
+typedef struct RegisterStringInfo {
+    uint16_t offset;
+    uint8_t length;
+    uint8_t type;
+} RegisterStringInfo;
+
 /// NOTE: All information in cs_detail is only available when CS_OPT_DETAIL = CS_OPT_ON
 /// Initialized as memset(., 0, offsetof(cs_detail, ARCH)+sizeof(cs_ARCH))
 /// by ARCH_getInstruction in arch/ARCH/ARCHDisassembler.c
 /// if cs_detail changes, in particular if a field is added after the union,
 /// then update arch/ARCH/ARCHDisassembler.c accordingly
 typedef struct cs_detail {
-	uint16_t regs_read
-		[MAX_IMPL_R_REGS]; ///< list of implicit registers read by this insn
-	uint8_t regs_read_count; ///< number of implicit registers read by this insn
+	RegisterStringInfo regs_read_string_info[MAX_IMPL_R_REGS];
+	uint8_t regs_read_string_count;
 
-	uint16_t regs_write
-		[MAX_IMPL_W_REGS]; ///< list of implicit registers modified by this insn
+	RegisterStringInfo regs_write_string_info[MAX_IMPL_W_REGS];
+	uint8_t regs_write_string_count;
+	
+	uint16_t regs_read[MAX_IMPL_R_REGS]; ///< list of implicit registers read by this insn
+	uint8_t regs_read_count; ///< number of implicit registers read by this insn
+	
+	uint16_t regs_write[MAX_IMPL_W_REGS]; ///< list of implicit registers modified by this insn
 	uint8_t regs_write_count; ///< number of implicit registers modified by this insn
 
 	uint8_t groups[MAX_NUM_GROUPS]; ///< list of group this instruction belong to

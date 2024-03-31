@@ -65,8 +65,9 @@ int main(int argc, char** argv) {
     currprefs.cpu_cycle_exact = 1;
     currprefs.cpu_memory_cycle_exact = 1;
     currprefs.blitter_cycle_exact = 1;
-    currprefs.turbo_emulation = 0;
+    currprefs.turbo_emulation = 1;
     currprefs.sound_stereo_separation = 0;
+    currprefs.uaeboard = 1;
 
     strcpy(currprefs.romfile, options.kickstart.c_str());
 

@@ -40,6 +40,44 @@ static void draw_disassembly(DisassemblyView* self) {
     cs_insn* insn = nullptr;
     size_t count = cs_disasm(self->capstone, pc_addr - offset, count_bytes, start_disasm, 0, &insn);
 
+    for (size_t j = 0; j < count; j++) {
+        cs_detail* detail = insn[j].detail;
+
+        printf("--------------------------------------------------------\n");
+
+        printf("%08llxx %s %s\n", insn[j].address, insn[j].mnemonic, insn[j].op_str);
+        printf(" read offsets registers: ");
+
+        for (int i = 0; i < detail->regs_read_string_count; i++) {
+            RegisterStringInfo* reg = &detail->regs_read_string_info[i];
+            printf("  %d %d %d |", reg->offset, reg->length, reg->type);  
+        }
+
+        printf("\n");
+        printf(" write offsets registers:");
+
+        for (int i = 0; i < detail->regs_write_string_count; i++) {
+            RegisterStringInfo* reg = &detail->regs_write_string_info[i];
+            printf("  %d %d %d | \n", reg->offset, reg->length, reg->type);  
+        }
+        
+        printf("\n");
+        printf(" read registers: ");
+
+        for (int i = 0; i < detail->regs_read_count; i++) {
+            printf("  %d |", detail->regs_read[i]);  
+        }
+
+        printf("\n");
+        printf(" write registers: ");
+
+        for (int i = 0; i < detail->regs_write_count; i++) {
+            printf("  %d |", detail->regs_write[i]);  
+        }
+        
+        printf("\n");
+    }
+
     int max_instruction_width = 20;
         
     ImGuiTableFlags flags = ImGuiTableFlags_Resizable
