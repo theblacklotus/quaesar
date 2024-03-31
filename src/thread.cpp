@@ -10,21 +10,21 @@
 
 void uae_sem_destroy(uae_sem_t* sem) {
     if (*sem) {
-        SDL_DestroySemaphore((SDL_sem*)sem);
+        SDL_DestroySemaphore((SDL_sem*)(*sem));
         *sem = nullptr;
     }
 }
 
 int uae_sem_trywait(uae_sem_t* sem) {
-    return SDL_SemTryWait((SDL_sem*)sem);
+    return SDL_SemTryWait((SDL_sem*)(*sem));
 }
 
 int uae_sem_trywait_delay(uae_sem_t* sem, int ms) {
-    return SDL_SemWaitTimeout((SDL_sem*)sem, ms);
+    return SDL_SemWaitTimeout((SDL_sem*)(*sem), ms);
 }
 
 void uae_sem_post(uae_sem_t* sem) {
-    SDL_SemPost((SDL_sem*)sem);
+    SDL_SemPost((SDL_sem*)(*sem));
 }
 
 void uae_sem_unpost(uae_sem_t*) {
@@ -33,7 +33,7 @@ void uae_sem_unpost(uae_sem_t*) {
 }
 
 void uae_sem_wait(uae_sem_t* sem) {
-    SDL_SemWait((SDL_sem*)sem);
+    SDL_SemWait((SDL_sem*)(*sem));
 }
 
 void uae_sem_init(uae_sem_t* sem, int manual_reset, int initial_state) {
