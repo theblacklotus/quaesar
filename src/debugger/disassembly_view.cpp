@@ -10,8 +10,8 @@
 static SelectedRegisters s_selected_registers;
 
 static uint32_t s_colors[] = {
-    0xffb27474, 0xffb28050, 0xffa9b250, 0xff60b250,
-    0xff4fb292, 0xff4f71b2, 0xff8850b2, 0xffb25091,
+    0xb274747f, 0xb280507f, 0xa9b2507f, 0x60b2507f,
+    0x4fb2927f, 0x4f71b27f, 0x8850b27f, 0xb250917f,
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,29 +46,36 @@ static void draw_disassembly(DisassemblyView* self) {
     uae_u8* pc_addr = memory_get_real_address(pc);
     uae_u32 start_disasm = pc - offset;
 
+    #define M68K_CODE "\x38\x38"
+
     cs_insn* insn = nullptr;
     size_t count = cs_disasm(self->capstone, pc_addr - offset, count_bytes, start_disasm, 0, &insn);
+    //size_t count = cs_disasm(self->capstone, (unsigned char*)M68K_CODE, 2, 0, 0, &insn);
+
+    //pc = 0;
 
     int color_index = 0;
 
+    memset(&s_selected_registers, 0, sizeof(s_selected_registers));
+
     for (size_t j = 0; j < count; j++) {
         cs_detail* detail = insn[j].detail;
-            
-        if (insn[j].address == pc) {
+
+        if (insn[j].address != pc) {
             continue;
         }
 
         for (int i = 0; i < detail->regs_read_count; i++) {
-            int c = s_selected_registers.read_register_count++;
-            s_selected_registers.read_registers[c] = detail->regs_read[i];
-            s_selected_registers.read_registers_colors[c] = s_colors[color_index & 7];
+            int reg_id = detail->regs_read[i];
+            s_selected_registers.read_registers[reg_id] = 1;
+            s_selected_registers.read_registers_colors[reg_id] = s_colors[color_index & 7];
             color_index++;
         }
 
         for (int i = 0; i < detail->regs_write_count; i++) {
-            int c = s_selected_registers.write_register_count++;
-            s_selected_registers.write_registers[c] = detail->regs_write[i];
-            s_selected_registers.write_register_colors[c] = s_colors[color_index & 7];
+            int reg_id = detail->regs_write[i];
+            s_selected_registers.write_registers[reg_id] = 1; 
+            s_selected_registers.write_register_colors[reg_id] = s_colors[color_index & 7];
             color_index++;
         }
     }
@@ -84,6 +91,7 @@ static void draw_disassembly(DisassemblyView* self) {
     char buffer[512];
 
     float text_height = ImGui::GetTextLineHeight();
+    float text_char_width = ImGui::CalcTextSize("F").x;
 
     if (ImGui::BeginTable("disassembly", 4, flags)) {
         ImGui::TableSetupColumn("Loc");
@@ -93,18 +101,21 @@ static void draw_disassembly(DisassemblyView* self) {
         ImGui::TableHeadersRow();
         
         for (size_t j = 0; j < count; j++) {
+            cs_detail* detail = insn[j].detail;
+
             // Assuming we're rendering the triangle in the first column
             ImGui::TableNextColumn();
             if (insn[j].address == pc) {
-                //ImGui::TableSetColumnIndex(0);
                 ImDrawList* draw_list = ImGui::GetWindowDrawList();
                 ImVec2 p = ImGui::GetCursorScreenPos();
-                // Define triangle vertices
                 ImVec2 tri[3] = {
                     ImVec2(p.x, p.y),
                     ImVec2(p.x + text_height / 2, p.y + text_height / 2),
                     ImVec2(p.x, p.y + text_height)
                 };
+
+                ImU32 row_bg_color = ImGui::GetColorU32(ImVec4(0.25f, 0.50f, 0.25f, 0.25f));
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, row_bg_color);
 
                 draw_list->AddTriangleFilled(tri[0], tri[1], tri[2], IM_COL32(255, 255, 0, 255));
             }
@@ -119,14 +130,61 @@ static void draw_disassembly(DisassemblyView* self) {
             for (int i = 0; i < max_instruction_width - width; i++) {
                 buffer[width + i] = ' ';
             }
+            
+            ImVec2 p = ImGui::GetCursorScreenPos();
 
             strcpy(buffer + max_instruction_width, insn[j].op_str);
-
             ImGui::Text("%s", buffer);
 
-            //ImDrawList* draw_list = ImGui::GetWindowDrawList();
-            //ImVec2 p = ImGui::GetCursorScreenPos();
-            //AddRect
+            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            float op_str_start = p.x + ((max_instruction_width - 1) * text_char_width);
+
+            /*
+            for (int i = 0; i < detail->regs_read_string_count; i++) {
+                const RegisterStringInfo* reg = &detail->regs_read_string_info[i];
+                ImVec2 start_pos = ImVec2(op_str_start + (reg->offset * text_char_width), p.y);
+                ImVec2 end_pos = ImVec2(start_pos.x + (reg->length * text_char_width), p.y + text_height);
+                draw_list->AddRectFilled(start_pos, end_pos, IM_COL32(0, 127, 0, 100));
+            }
+
+            for (int i = 0; i < detail->regs_write_string_count; i++) {
+                const RegisterStringInfo* reg = &detail->regs_write_string_info[i];
+                ImVec2 start_pos = ImVec2(op_str_start + (reg->offset * text_char_width), p.y);
+                ImVec2 end_pos = ImVec2(start_pos.x + (reg->length * text_char_width), p.y + text_height);
+                draw_list->AddRectFilled(start_pos, end_pos, IM_COL32(127, 0, 0, 100));
+            }
+            */
+
+            // Check if the current instruction includes any of the selected registers
+            for (int i = 0; i < detail->regs_read_count; i++) {
+                int reg_id = detail->regs_read[i];
+                if (s_selected_registers.read_registers[reg_id]) {
+                    const uint32_t color = s_selected_registers.read_registers_colors[reg_id];
+                    const RegisterStringInfo* reg = &detail->regs_read_string_info[reg_id];
+                    ImVec2 start_pos = ImVec2(op_str_start + (reg->offset * text_char_width), p.y);
+                    ImVec2 end_pos = ImVec2(start_pos.x + (reg->length * text_char_width), p.y + text_height);
+                    draw_list->AddRectFilled(start_pos, end_pos, IM_COL32(0, 127, 0, 127)); 
+                }
+            }
+
+            for (int i = 0; i < detail->regs_write_count; i++) {
+                int reg_id = detail->regs_write[i];
+                if (s_selected_registers.write_registers[reg_id]) {
+                    const uint32_t color = s_selected_registers.write_registers[reg_id];
+                    const RegisterStringInfo* reg = &detail->regs_write_string_info[reg_id];
+                    ImVec2 start_pos = ImVec2(op_str_start + (reg->offset * text_char_width), p.y);
+                    ImVec2 end_pos = ImVec2(start_pos.x + (reg->length * text_char_width), p.y + text_height);
+                    printf("start_pos: %f %f\n", start_pos.x, start_pos.y);
+                    printf("end_pos: %f %f\n", end_pos.x, end_pos.y);
+                    draw_list->AddRectFilled(start_pos, end_pos, IM_COL32(127, 0, 0, 127)); 
+                }
+            }
+            
+            //ImVec2 start_pos = ImVec2(op_str_start, p.y);
+            //ImVec2 end_pos = ImVec2(start_pos.x + 2.0f * text_char_width, p.y + text_height);
+            //draw_list->AddRectFilled(start_pos, end_pos, IM_COL32(127, 127, 127, 127));
+
+            //draw_list->AddRectFilled(p, ImVec2(p.x, p.y + text_height), IM_COL32(127, 127, 127, 127));
 
             ImGui::TableNextColumn();
         }

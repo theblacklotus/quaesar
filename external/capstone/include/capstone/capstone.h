@@ -381,9 +381,10 @@ typedef struct cs_opt_skipdata {
 #define REGISTER_STRING_INFO_REG_BITS 1
 
 typedef struct RegisterStringInfo {
-    uint16_t offset;
-    uint8_t length;
+    int16_t offset;
+    int16_t length;
     uint8_t type;
+    uint8_t used;
 } RegisterStringInfo;
 
 /// NOTE: All information in cs_detail is only available when CS_OPT_DETAIL = CS_OPT_ON
@@ -392,11 +393,8 @@ typedef struct RegisterStringInfo {
 /// if cs_detail changes, in particular if a field is added after the union,
 /// then update arch/ARCH/ARCHDisassembler.c accordingly
 typedef struct cs_detail {
-	RegisterStringInfo regs_read_string_info[MAX_IMPL_R_REGS];
-	uint8_t regs_read_string_count;
-
-	RegisterStringInfo regs_write_string_info[MAX_IMPL_W_REGS];
-	uint8_t regs_write_string_count;
+	RegisterStringInfo regs_read_string_info[64];
+	RegisterStringInfo regs_write_string_info[64];
 	
 	uint16_t regs_read[MAX_IMPL_R_REGS]; ///< list of implicit registers read by this insn
 	uint8_t regs_read_count; ///< number of implicit registers read by this insn

@@ -9,6 +9,7 @@
 typedef struct SStream {
 	char buffer[512];
 	int index;
+	int index_temp;
 	bool is_closed;
 } SStream;
 

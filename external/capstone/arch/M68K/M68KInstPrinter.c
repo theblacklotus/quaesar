@@ -41,7 +41,6 @@ static const char* const s_reg_names[] = {
 	"sr", "ccr", "sfc", "dfc", "usp", "vbr", "cacr",
 	"caar", "msp", "isp", "tc", "itt0", "itt1", "dtt0",
 	"dtt1", "mmusr", "urp", "srp",
-
 	"fpcr", "fpsr", "fpiar",
 };
 
@@ -124,35 +123,33 @@ static void registerBits(cs_detail* detail, SStream* O, const cs_m68k_op* op, bo
     RegisterStringInfo* info = NULL;
 
 	if (write_reg) {
-	    int i = detail->regs_write_string_count++;
-        info = &detail->regs_write_string_info[i];
+        info = &detail->regs_write_string_info[0];
     } else {
-	    int i = detail->regs_read_string_count++;
-        info = &detail->regs_read_string_info[i];
+        info = &detail->regs_read_string_info[0];
     }
 
     info->type = REGISTER_STRING_INFO_REG_BITS; 
+    info->used = 1;
     info->length = strlen(buffer);
     info->offset = O->index;
 
 	SStream_concat(O, "%s", buffer);
 }
 
-static void addStringInfo(cs_detail* detail, SStream* O, int adjust_offset, bool is_write, uint8_t length)
+static void addStringInfo(cs_detail* detail, SStream* O, int register_id, int adjust_offset, bool is_write, uint8_t length)
 {
     RegisterStringInfo* info = NULL;
 
     if (is_write) {
-        int i = detail->regs_write_string_count++;
-        info = &detail->regs_write_string_info[i];
+        info = &detail->regs_write_string_info[register_id];
     } else {
-        int i = detail->regs_read_string_count++;
-        info = &detail->regs_read_string_info[i];
+        info = &detail->regs_read_string_info[register_id];
     }
 
     info->type = REGISTER_STRING_INFO_REGISTER; 
+    info->used = 1;
     info->length = length;
-    info->offset = O->index + adjust_offset;
+    info->offset = (O->index - O->index_temp) + adjust_offset;
 }
 
 static void registerPair(SStream* O, const cs_m68k_op* op)
@@ -173,8 +170,8 @@ static void printAddressingMode(cs_detail* detail, SStream* O, unsigned int pc, 
 					registerPair(O, op);
 					break;
 				case M68K_OP_REG:
+                    addStringInfo(detail, O, op->reg, 0, is_write, strlen(s_reg_names[op->reg]));
 					SStream_concat(O, "%s", s_reg_names[op->reg]);
-                    addStringInfo(detail, O, 0, is_write, strlen(s_reg_names[op->reg]));
 					break;
 				default:
 					break;
@@ -183,35 +180,35 @@ static void printAddressingMode(cs_detail* detail, SStream* O, unsigned int pc, 
 
 		case M68K_AM_REG_DIRECT_DATA: 
 		{
-		    addStringInfo(detail, O, 0, is_write, 2);
+		    addStringInfo(detail, O, op->reg, 0, is_write, 2);
 		    SStream_concat(O, "d%d", (op->reg - M68K_REG_D0)); 
 		    break;
 		}
 
 		case M68K_AM_REG_DIRECT_ADDR: 
 		{
-		    addStringInfo(detail, O, 0, is_write, 2);
+		    addStringInfo(detail, O, op->reg, 0, is_write, 2);
 		    SStream_concat(O, "a%d", (op->reg - M68K_REG_A0)); 
 		    break;
 		}
 
 		case M68K_AM_REGI_ADDR: 
 		{
-		    addStringInfo(detail, O, 1, is_write, 2);
+		    addStringInfo(detail, O, op->reg, 1, is_write, 2);
 		    SStream_concat(O, "(a%d)", (op->reg - M68K_REG_A0)); 
 		    break;
 		}
 
 		case M68K_AM_REGI_ADDR_POST_INC: 
 		{
-		    addStringInfo(detail, O, 1, true, 2);
+		    addStringInfo(detail, O, op->reg, 1, true, 2);
 		    SStream_concat(O, "(a%d)+", (op->reg - M68K_REG_A0)); 
 		    break;
 		}
 
 		case M68K_AM_REGI_ADDR_PRE_DEC: 
 		{
-		    addStringInfo(detail, O, 2, true, 2);
+		    addStringInfo(detail, O, op->reg, 2, true, 2);
 		    SStream_concat(O, "-(a%d)", (op->reg - M68K_REG_A0)); 
 		    break;
 		}
@@ -219,7 +216,7 @@ static void printAddressingMode(cs_detail* detail, SStream* O, unsigned int pc, 
 		case M68K_AM_REGI_ADDR_DISP: 
 		{
 		    SStream_concat(O, "%s$%x(a%d)", op->mem.disp < 0 ? "-" : "", abs(op->mem.disp), (op->mem.base_reg - M68K_REG_A0)); 
-		    addStringInfo(detail, O, -2, false, 2);
+		    addStringInfo(detail, O, op->mem.base_reg, -2, false, 2);
 		    break;
 		}
 
@@ -255,7 +252,7 @@ static void printAddressingMode(cs_detail* detail, SStream* O, unsigned int pc, 
 			      pc + 2 + op->mem.disp, 
 			      getRegName(op->mem.index_reg), 
 			      op->mem.index_size ? 'l' : 'w');
-		    addStringInfo(detail, O, -3, false, 2);
+		    addStringInfo(detail, O, op->mem.index_reg, -3, false, 2);
 			break;
 		}
 		case M68K_AM_AREGI_INDEX_8_BIT_DISP:
@@ -266,8 +263,8 @@ static void printAddressingMode(cs_detail* detail, SStream* O, unsigned int pc, 
 			      getRegName(op->mem.base_reg), 
 			      getRegName(op->mem.index_reg), 
 			      op->mem.index_size ? 'l' : 'w');
-		    addStringInfo(detail, O, -5, false, 2);
-		    addStringInfo(detail, O, -3, false, 2);
+		    addStringInfo(detail, O, op->mem.base_reg, -5, false, 2);
+		    addStringInfo(detail, O, op->mem.index_reg, -3, false, 2);
 			break;
 		}
 		case M68K_AM_PCI_INDEX_BASE_DISP:
@@ -287,11 +284,11 @@ static void printAddressingMode(cs_detail* detail, SStream* O, unsigned int pc, 
 			} else {
 				if (op->mem.base_reg != M68K_REG_INVALID)
 				{
-				    addStringInfo(detail, O, 0, false, 2);
-					SStream_concat(O, "a%d,%s", op->mem.base_reg - M68K_REG_A0, s_spacing);
+				    addStringInfo(detail, O, op->mem.base_reg, 0, false, 2);
+					SStream_concat(O, "a%d,%s", op->mem.base_reg, s_spacing);
 				}
 
-			    addStringInfo(detail, O, 0, false, 2);
+			    addStringInfo(detail, O, op->mem.index_reg, 0, false, 2);
 				SStream_concat(O, "%s.%c", getRegName(op->mem.index_reg), op->mem.index_size ? 'l' : 'w');
 			}
 
@@ -319,12 +316,12 @@ static void printAddressingMode(cs_detail* detail, SStream* O, unsigned int pc, 
 			if (op->mem.base_reg != M68K_REG_INVALID) {
 				if (op->mem.in_disp > 0)
 				{
-			        addStringInfo(detail, O, 1, false, 2);
+			        addStringInfo(detail, O, op->mem.base_reg, 1, false, 2);
 					SStream_concat(O, ",%s", getRegName(op->mem.base_reg));
 			    }
 				else
                 {
-			        addStringInfo(detail, O, 0, false, 2);
+			        addStringInfo(detail, O, op->mem.base_reg, 0, false, 2);
 					SStream_concat(O, "%s", getRegName(op->mem.base_reg));
                 }
 			}
@@ -420,6 +417,8 @@ void M68K_printInst(MCInst* MI, SStream* O, void* PrinterInfo)
 	}
 
 	SStream_concat0(O, " ");
+
+	O->index_temp = O->index;
 
 	// this one is a bit spacial so we do special things
 
