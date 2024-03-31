@@ -52,10 +52,7 @@ static void draw_disassembly(DisassemblyView* self) {
     size_t count = cs_disasm(self->capstone, pc_addr - offset, count_bytes, start_disasm, 0, &insn);
     //size_t count = cs_disasm(self->capstone, (unsigned char*)M68K_CODE, 2, 0, 0, &insn);
 
-    //pc = 0;
-
     int color_index = 0;
-
     memset(&s_selected_registers, 0, sizeof(s_selected_registers));
 
     for (size_t j = 0; j < count; j++) {
@@ -138,22 +135,6 @@ static void draw_disassembly(DisassemblyView* self) {
 
             ImDrawList* draw_list = ImGui::GetWindowDrawList();
             float op_str_start = p.x + ((max_instruction_width - 1) * text_char_width);
-
-            /*
-            for (int i = 0; i < detail->regs_read_string_count; i++) {
-                const RegisterStringInfo* reg = &detail->regs_read_string_info[i];
-                ImVec2 start_pos = ImVec2(op_str_start + (reg->offset * text_char_width), p.y);
-                ImVec2 end_pos = ImVec2(start_pos.x + (reg->length * text_char_width), p.y + text_height);
-                draw_list->AddRectFilled(start_pos, end_pos, IM_COL32(0, 127, 0, 100));
-            }
-
-            for (int i = 0; i < detail->regs_write_string_count; i++) {
-                const RegisterStringInfo* reg = &detail->regs_write_string_info[i];
-                ImVec2 start_pos = ImVec2(op_str_start + (reg->offset * text_char_width), p.y);
-                ImVec2 end_pos = ImVec2(start_pos.x + (reg->length * text_char_width), p.y + text_height);
-                draw_list->AddRectFilled(start_pos, end_pos, IM_COL32(127, 0, 0, 100));
-            }
-            */
 
             // Check if the current instruction includes any of the selected registers
             for (int i = 0; i < detail->regs_read_count; i++) {

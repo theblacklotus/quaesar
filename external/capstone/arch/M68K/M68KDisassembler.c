@@ -3397,7 +3397,7 @@ static int instruction_is_valid(m68k_info *info, const unsigned int word_check)
 	if ( (i->word2_mask && ((word_check & i->word2_mask) != i->word2_match)) ||
 		(i->instruction == d68000_invalid) ) {
 		d68000_invalid(info);
-		return 0;
+		return 1;
 	}
 
 	return 1;
