@@ -7,6 +7,15 @@
 #include "memory.h"
 #include "newcpu.h"
 
+static SelectedRegisters s_selected_registers;
+
+static uint32_t s_colors[] = {
+    0xffb27474, 0xffb28050, 0xffa9b250, 0xff60b250,
+    0xff4fb292, 0xff4f71b2, 0xff8850b2, 0xffb25091,
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 struct DisassemblyView {
     csh capstone;
 };
@@ -40,42 +49,28 @@ static void draw_disassembly(DisassemblyView* self) {
     cs_insn* insn = nullptr;
     size_t count = cs_disasm(self->capstone, pc_addr - offset, count_bytes, start_disasm, 0, &insn);
 
+    int color_index = 0;
+
     for (size_t j = 0; j < count; j++) {
         cs_detail* detail = insn[j].detail;
-
-        printf("--------------------------------------------------------\n");
-
-        printf("%08llxx %s %s\n", insn[j].address, insn[j].mnemonic, insn[j].op_str);
-        printf(" read offsets registers: ");
-
-        for (int i = 0; i < detail->regs_read_string_count; i++) {
-            RegisterStringInfo* reg = &detail->regs_read_string_info[i];
-            printf("  %d %d %d |", reg->offset, reg->length, reg->type);  
+            
+        if (insn[j].address == pc) {
+            continue;
         }
-
-        printf("\n");
-        printf(" write offsets registers:");
-
-        for (int i = 0; i < detail->regs_write_string_count; i++) {
-            RegisterStringInfo* reg = &detail->regs_write_string_info[i];
-            printf("  %d %d %d | \n", reg->offset, reg->length, reg->type);  
-        }
-        
-        printf("\n");
-        printf(" read registers: ");
 
         for (int i = 0; i < detail->regs_read_count; i++) {
-            printf("  %d |", detail->regs_read[i]);  
+            int c = s_selected_registers.read_register_count++;
+            s_selected_registers.read_registers[c] = detail->regs_read[i];
+            s_selected_registers.read_registers_colors[c] = s_colors[color_index & 7];
+            color_index++;
         }
-
-        printf("\n");
-        printf(" write registers: ");
 
         for (int i = 0; i < detail->regs_write_count; i++) {
-            printf("  %d |", detail->regs_write[i]);  
+            int c = s_selected_registers.write_register_count++;
+            s_selected_registers.write_registers[c] = detail->regs_write[i];
+            s_selected_registers.write_register_colors[c] = s_colors[color_index & 7];
+            color_index++;
         }
-        
-        printf("\n");
     }
 
     int max_instruction_width = 20;
@@ -128,6 +123,11 @@ static void draw_disassembly(DisassemblyView* self) {
             strcpy(buffer + max_instruction_width, insn[j].op_str);
 
             ImGui::Text("%s", buffer);
+
+            //ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            //ImVec2 p = ImGui::GetCursorScreenPos();
+            //AddRect
+
             ImGui::TableNextColumn();
         }
 
@@ -164,4 +164,46 @@ void DisassemblyView_update(DisassemblyView* self, const char* name) {
 
     ImGui::End();
 }
+
+
+    /*
+    for (size_t j = 0; j < count; j++) {
+        cs_detail* detail = insn[j].detail;
+
+        printf("--------------------------------------------------------\n");
+
+        printf("%08llxx %s %s\n", insn[j].address, insn[j].mnemonic, insn[j].op_str);
+        printf(" read offsets registers: ");
+
+        for (int i = 0; i < detail->regs_read_string_count; i++) {
+            RegisterStringInfo* reg = &detail->regs_read_string_info[i];
+            printf("  %d %d %d |", reg->offset, reg->length, reg->type);  
+        }
+
+        printf("\n");
+        printf(" write offsets registers:");
+
+        for (int i = 0; i < detail->regs_write_string_count; i++) {
+            RegisterStringInfo* reg = &detail->regs_write_string_info[i];
+            printf("  %d %d %d | \n", reg->offset, reg->length, reg->type);  
+        }
+        
+        printf("\n");
+        printf(" read registers: ");
+
+        for (int i = 0; i < detail->regs_read_count; i++) {
+            printf("  %d |", detail->regs_read[i]);  
+        }
+
+        printf("\n");
+        printf(" write registers: ");
+
+        for (int i = 0; i < detail->regs_write_count; i++) {
+            printf("  %d |", detail->regs_write[i]);  
+        }
+        
+        printf("\n");
+    }
+    */
+
 
