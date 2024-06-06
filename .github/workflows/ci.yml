@@ -8,8 +8,8 @@ on:
 
 jobs:
   linux_ubuntu_22_04:
-    name: (Ubuntu 22.04) GCC ${{ matrix.gcc-version }}.x
-    runs-on: ubuntu-22.04
+    name: (Ubuntu 24.04) GCC ${{ matrix.gcc-version }}.x
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         gcc-version: [11, 12, 13]
