@@ -365,15 +365,19 @@ void resume_sound_device(struct sound_data* sd) {
 
 int get_default_audio_device() {
     int device_idx = -1;
+#if SDL_VERSION_ATLEAST(2, 24, 0)
     SDL_AudioSpec spec;
-    char* cur_driver = nullptr;
-    if (SDL_GetDefaultAudioInfo(&cur_driver, &spec, 0) == 0) {
+    char* default_device_name = nullptr;
+    if (SDL_GetDefaultAudioInfo(&default_device_name, &spec, 0) == 0) {
         for (int i = 0; i < num_sound_devices; i++) {
-            if (strcmp(sound_devices[i]->name, cur_driver) == 0)
-                device_idx = i;
+            if (strcmp(sound_devices[i]->name, default_device_name) != 0)
+                continue;
+            device_idx = i;
+            break;
         }
-        SDL_free(cur_driver);
+        SDL_free(default_device_name);
     }
+#endif
     return device_idx;
 }
 
