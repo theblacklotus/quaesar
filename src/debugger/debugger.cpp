@@ -12,9 +12,9 @@
 #include "debug.h"
 // clang-format on
 
+#include "debugger_api.h"
 #include "disassembly_view.h"
 #include "register_view.h"
-#include "debugger_api.h"
 
 extern int debugger_active;
 
@@ -326,14 +326,19 @@ void Debugger_destroy(Debugger* debugger) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static void* create(void* user_data) { return nullptr; }
-static void check_exception(void* self) { }
-static void cop_debug(void* self, uint32_t addr, uint32_t nextaddr, uint16_t word1, uint16_t word2, int hpos, int vpos) { }
+static void* create(void* user_data) {
+    return nullptr;
+}
+static void check_exception(void* self) {
+}
+static void cop_debug(void* self, uint32_t addr, uint32_t nextaddr, uint16_t word1, uint16_t word2, int hpos,
+                      int vpos) {
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static void update(void* self) { 
-    set_special (SPCFLAG_BRK);
+static void update(void* self) {
+    set_special(SPCFLAG_BRK);
 
     SDL_Event e;
 
@@ -348,21 +353,21 @@ static void update(void* self) {
                 default:
                     break;
 
-            case SDL_KEYDOWN:
-                if (e.key.keysym.sym == SDLK_ESCAPE) {
-                    exit(0);
-                }
+                case SDL_KEYDOWN:
+                    if (e.key.keysym.sym == SDLK_ESCAPE) {
+                        exit(0);
+                    }
 
-                if (e.key.keysym.sym == SDLK_F10) {
-                    Debugger_step(s_debugger);
-                    return;
-                }
+                    if (e.key.keysym.sym == SDLK_F10) {
+                        Debugger_step(s_debugger);
+                        return;
+                    }
 
-                break;
+                    break;
             }
-        
+
             Debugger_update_event(&e);
-       }
+        }
 
         Debugger_update(s_debugger);
     }
@@ -376,18 +381,13 @@ void Debugger_step(Debugger* debugger) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static void live_update(void* self) { }
-static void destroy(void* self) { }
+static void live_update(void* self) {
+}
+static void destroy(void* self) {
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 DebuggerAPI s_debugger_api = {
-    nullptr,
-    create,
-    check_exception,
-    cop_debug,
-    update,
-    live_update,
-    destroy,
+    nullptr, create, check_exception, cop_debug, update, live_update, destroy,
 };
-

@@ -188,7 +188,8 @@ void MemoryView::draw_contents(void* mem_data_void, size_t mem_size, size_t base
     }
 
     if (opt_show_data_preview) {
-        footer_height += height_separator + ImGui::GetFrameHeightWithSpacing() * 1 + ImGui::GetTextLineHeightWithSpacing() * 3;
+        footer_height +=
+            height_separator + ImGui::GetFrameHeightWithSpacing() * 1 + ImGui::GetTextLineHeightWithSpacing() * 3;
     }
 
     ImGui::BeginChild("##scrolling", ImVec2(0, -footer_height), false,
@@ -755,7 +756,7 @@ void MemoryView::draw_preview_data(size_t addr, const uint8_t* mem_data, size_t 
         }
         case ImGuiDataType_COUNT:
             break;
-    }              // Switch
+    }  // Switch
     IM_ASSERT(0);  // Shouldn't reach
 }
 

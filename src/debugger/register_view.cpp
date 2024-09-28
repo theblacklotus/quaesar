@@ -1,7 +1,7 @@
-#include <stdint.h>
-#include <dear_imgui/imgui.h>
-#include <capstone/m68k.h>
 #include "register_view.h"
+#include <capstone/m68k.h>
+#include <dear_imgui/imgui.h>
+#include <stdint.h>
 #include "disassembly_view.h"
 // clang-format off
 #include "sysconfig.h"
@@ -25,7 +25,7 @@ RegisterView* RegisterView_create() {
 
 static void update_selected_registers(int reg_id, const SelectedRegisters* selected_registers) {
     if (selected_registers->read_registers[reg_id]) {
-       ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, IM_COL32(0, 127, 0, 127));
+        ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, IM_COL32(0, 127, 0, 127));
     } else if (selected_registers->write_registers[reg_id]) {
         ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, IM_COL32(127, 0, 0, 127));
     }
@@ -36,11 +36,8 @@ static void update_selected_registers(int reg_id, const SelectedRegisters* selec
 void RegisterView_update(RegisterView* self, const SelectedRegisters* selected_registers) {
     static bool open = true;
 
-    ImGuiTableFlags flags = ImGuiTableFlags_Resizable
-        | ImGuiTableFlags_Reorderable
-        | ImGuiTableFlags_Hideable
-        | ImGuiTableFlags_BordersOuter
-        | ImGuiTableFlags_BordersV;
+    ImGuiTableFlags flags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable |
+                            ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV;
 
     float text_char_width = ImGui::CalcTextSize("F").x;
 
@@ -55,7 +52,7 @@ void RegisterView_update(RegisterView* self, const SelectedRegisters* selected_r
                 update_selected_registers(M68K_REG_A0 + i, selected_registers);
                 ImGui::Text("a%d", i);
                 ImGui::TableNextColumn();
-                ImGui::Text("%08X", m68k_areg(regs, i)); 
+                ImGui::Text("%08X", m68k_areg(regs, i));
             }
 
             for (int i = 0; i < 8; i++) {
@@ -63,13 +60,12 @@ void RegisterView_update(RegisterView* self, const SelectedRegisters* selected_r
                 update_selected_registers(M68K_REG_D0 + i, selected_registers);
                 ImGui::Text("d%d", i);
                 ImGui::TableNextColumn();
-                ImGui::Text("%08X", m68k_dreg(regs, i)); 
+                ImGui::Text("%08X", m68k_dreg(regs, i));
             }
         }
-        
+
         ImGui::EndTable();
     }
-    
+
     ImGui::End();
 }
-
