@@ -41,14 +41,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-20.04
-            clang-version: 8
-          - os: ubuntu-20.04
-            clang-version: 9
-          - os: ubuntu-20.04
-            clang-version: 10
-          - os: ubuntu-20.04
-            clang-version: 11
           - os: ubuntu-22.04
             clang-version: 12
           - os: ubuntu-22.04
