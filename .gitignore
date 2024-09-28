@@ -64,3 +64,4 @@ packages.config
 *.d
 temp
 output
+build/

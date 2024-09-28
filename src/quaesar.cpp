@@ -45,6 +45,7 @@ int main(int argc, char** argv) {
 
     app.add_option("input", options.input, "Executable or image file (adf, dms)")->check(CLI::ExistingFile);
     app.add_option("-k,--kickstart", options.kickstart, "Path to the kickstart ROM")->check(CLI::ExistingFile);
+    app.add_option("--serial_port", options.serial_port, "Serial port path");
     CLI11_PARSE(app, argc, argv);
 
     keyboard_settrans();
@@ -59,6 +60,11 @@ int main(int argc, char** argv) {
         } else {
             strcpy(currprefs.floppyslots[0].df, options.input.c_str());
         }
+    }
+
+    if (!options.serial_port.empty()) {
+        currprefs.use_serial = 1;
+        strcpy(currprefs.sername, options.serial_port.c_str());
     }
 
     // Most compatible mode

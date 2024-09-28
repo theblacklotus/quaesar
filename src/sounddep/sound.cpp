@@ -363,6 +363,24 @@ void resume_sound_device(struct sound_data* sd) {
     sd->paused = 0;
 }
 
+int get_default_audio_device() {
+    int device_idx = -1;
+#if SDL_VERSION_ATLEAST(2, 24, 0)
+    SDL_AudioSpec spec;
+    char* default_device_name = nullptr;
+    if (SDL_GetDefaultAudioInfo(&default_device_name, &spec, 0) == 0) {
+        for (int i = 0; i < num_sound_devices; i++) {
+            if (strcmp(sound_devices[i]->name, default_device_name) != 0)
+                continue;
+            device_idx = i;
+            break;
+        }
+        SDL_free(default_device_name);
+    }
+#endif
+    return device_idx;
+}
+
 static int open_sound() {
     auto size = currprefs.sound_maxbsiz;
 
@@ -379,10 +397,12 @@ static int open_sound() {
 
     sdp->softvolume = -1;
     int num = enumerate_sound_devices();
-    if (currprefs.win32_soundcard >= num)
-        currprefs.win32_soundcard = changed_prefs.win32_soundcard = 0;
     if (num == 0)
         return 0;
+    if (currprefs.win32_soundcard < 0)
+        currprefs.win32_soundcard = changed_prefs.win32_soundcard = get_default_audio_device();
+    if ((unsigned)currprefs.win32_soundcard >= (unsigned)num)
+        currprefs.win32_soundcard = changed_prefs.win32_soundcard = 0;
     const auto ch = get_audio_nativechannels(active_sound_stereo);
     const auto ret = open_sound_device(sdp, currprefs.win32_soundcard, size, currprefs.sound_freq, ch);
     if (!ret)

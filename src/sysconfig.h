@@ -67,8 +67,8 @@
 // #define D3D /* D3D display filter support */
 #define PARALLEL_PORT   /* parallel port emulation */
 #define PARALLEL_DIRECT /* direct parallel port emulation */
-// #define SERIAL_PORT /* serial port emulation */
-#define SERIAL_ENET /* serial port UDP transport */
+#define SERIAL_PORT     /* serial port emulation */
+#define SERIAL_ENET     /* serial port UDP transport */
 // #define SCSIEMU /* uaescsi.device emulation */
 // #define UAESERIAL /* uaeserial.device emulation */
 #define FPUEMU /* FPU emulation */

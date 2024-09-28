@@ -174,6 +174,7 @@ add_executable(quaesar
     uae_src/scsi.cpp
     uae_src/scsiemul.cpp
     uae_src/scsitape.cpp
+    uae_src/serial.cpp
     uae_src/sndboard.cpp
     uae_src/statusline.cpp
     uae_src/tabletlibrary.cpp

@@ -8389,6 +8389,7 @@ void default_prefs (struct uae_prefs *p, bool reset, int type)
 	p->keyboard_connected = true;
 
 	p->produce_sound = 3;
+	p->win32_soundcard = -1;
 	p->sound_stereo = SND_STEREO;
 	p->sound_stereo_separation = 7;
 	p->sound_mixed_stereo_delay = 0;

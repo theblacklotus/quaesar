@@ -104,7 +104,7 @@ bool specialmonitor_need_genlock() {
 }
 
 void setmouseactive(int, int) {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void screenshot(int monid, int, int) {
@@ -142,7 +142,7 @@ static void dummy_close(void) {
 
 // Dummy function to acquire an input device
 static int dummy_acquire(int device_id, int exclusive) {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
     return 0;  // Return 0 for success, -1 for failure
 }
 
@@ -450,7 +450,7 @@ void a4091_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
 void activate_console() {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void alf3_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
@@ -601,12 +601,17 @@ int compiler_init() {
 }
 
 void console_flush() {
-    //UNIMPLEMENTED();
+    fflush(stdout);
 }
 
-int console_get(char*, int) {
-    UNIMPLEMENTED();
-    return 0;
+int console_get(char* out, int maxlen) {
+    TCHAR* res = fgets(out, maxlen, stdin);
+    if (res == NULL) {
+        return -1;
+    }
+
+    int len = strlen(out);
+    return len - 1;
 }
 
 bool console_isch() {
@@ -984,7 +989,10 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
                 // TODO: Fix me
                 exit(0);
                 break;
-            case SDL_KEYDOWN:                           // User presses a key
+            case SDL_KEYDOWN:                      // User presses a key
+                if (e.key.keysym.sym == SDLK_d) {  // If the key is ESC
+                    activate_debugger();
+                }
                 if (e.key.keysym.sym == SDLK_ESCAPE) {  // If the key is ESC
                     quit_program == UAE_QUIT;
                     exit(0);
@@ -1105,7 +1113,6 @@ bool is_mainthread() {
 }
 
 bool ismouseactive() {
-    //UNIMPLEMENTED();
     return false;
 }
 
@@ -1384,42 +1391,25 @@ void scram5394_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
 
-uae_u16 SERDATR() {
-    UNIMPLEMENTED();
-    return 0;
-}
-
-void SERDAT(uae_u16) {
-    UNIMPLEMENTED();
-}
-
-void serial_dtr_off() {
-    UNIMPLEMENTED();
-}
-
-void serial_exit() {
-    UNIMPLEMENTED();
+void serial_uartbreak(int) {
+    // UNIMPLEMENTED();
 }
 
 void serial_hsynchandler() {
-    UNIMPLEMENTED();
-}
-
-void serial_init() {
-    UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void serial_rbf_clear() {
     UNIMPLEMENTED();
 }
 
-uae_u8 serial_readstatus(uae_u8, uae_u8) {
-    UNIMPLEMENTED();
-    return 0;
+uae_u8 serial_readstatus(uae_u8 v, uae_u8) {
+    // UNIMPLEMENTED();
+    return v;
 }
 
 void serial_rethink() {
-    UNIMPLEMENTED();
+    serial_flush_buffer();
 }
 
 void setup_brkhandler() {
@@ -1534,11 +1524,11 @@ int target_get_volume_name(uaedev_mount_info*, uaedev_config_info*, bool, bool, 
 #endif
 
 void target_inputdevice_acquire() {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void target_inputdevice_unacquire() {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 bool target_isrelativemode() {
@@ -1592,8 +1582,10 @@ void toggle_mousegrab() {
     UNIMPLEMENTED();
 }
 
-void to_upper(char*, int) {
-    UNIMPLEMENTED();
+void to_upper(char* s, int len) {
+    for (int i = 0; i < len; i++) {
+        s[i] = toupper(s[i]);
+    }
 }
 
 uae_u32 trifecta_ncr9x_scsi_get(unsigned int, int) {
@@ -1676,7 +1668,7 @@ bool uae_slirp_start() {
 }
 
 void update_debug_info() {
-    //UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 void updatedisplayarea(int) {
@@ -1902,19 +1894,6 @@ uae_u8* save_cdtv(size_t*, uae_u8*) {
     return nullptr;
 }
 
-void serial_uartbreak(int) {
-    UNIMPLEMENTED();
-}
-
-uae_u8 serial_writestatus(uae_u8, uae_u8) {
-    UNIMPLEMENTED();
-    return 0;
-}
-
-void SERPER(unsigned short) {
-    UNIMPLEMENTED();
-}
-
 int set_cache_state(int) {
     UNIMPLEMENTED();
     return 0;
@@ -1925,7 +1904,7 @@ void setcapslockstate(int) {
 }
 
 void setmouseactivexy(int, int, int, int) {
-    UNIMPLEMENTED();
+    // UNIMPLEMENTED();
 }
 
 uae_u32 squirrel_ncr9x_scsi_get(unsigned int, int) {

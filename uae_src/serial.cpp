@@ -11,7 +11,7 @@
 #include "sysconfig.h"
 #include "sysdeps.h"
 
-#include "config.h"
+// #include "config.h"
 #include "options.h"
 #include "uae.h"
 #include "memory.h"
@@ -204,7 +204,7 @@ void SERDAT (uae_u16 w)
 uae_u16 SERDATR (void)
 {
 	if (!currprefs.use_serial)
-		return 0;
+		return 0x3000;
 #if SERIALDEBUG > 2
 	write_log ("SERDATR: read 0x%04x\n", serdat);
 #endif
