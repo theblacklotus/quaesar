@@ -10,7 +10,8 @@ struct DebuggerAPI {
     void* priv_data;
     void* (*create)(void* user_data);
     void (*check_exception)(void* self);
-    void (*debug_copper)(void* self, uint32_t addr, uint32_t nextaddr, uint16_t word1, uint16_t word2, int hpos, int vpos);
+    void (*debug_copper)(void* self, uint32_t addr, uint32_t nextaddr, uint16_t word1, uint16_t word2, int hpos, 
+                         int vpos);
     void (*update)(void* self);
     void (*live_update)(void* self);
     void (*destroy)(void* self);
