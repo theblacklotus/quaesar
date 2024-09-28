@@ -78,7 +78,7 @@ jobs:
       env:
         CC: clang-${{ matrix.clang-version }}
         CXX: clang++-${{ matrix.clang-version }}
-      run: mkdir temp && cd temp && cmake .. -G Ninja && ninja
+      run: mkdir temp && cd temp && cmake .. -G Ninja && ninja --verbose
 
   macos:
     runs-on: ${{ matrix.os }}
