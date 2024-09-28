@@ -3,11 +3,13 @@
 #include <capstone/m68k.h>
 #include "register_view.h"
 #include "disassembly_view.h"
+// clang-format off
 #include "sysconfig.h"
 #include "sysdeps.h"
 #include "options.h"
 #include "memory.h"
 #include "newcpu.h"
+// clang-format on
 
 struct RegisterView {
     uint32_t dummy;

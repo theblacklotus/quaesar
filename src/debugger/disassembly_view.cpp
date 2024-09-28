@@ -1,11 +1,13 @@
 #include "disassembly_view.h"
 #include <dear_imgui/imgui.h>
 #include <capstone/capstone.h>
+// clang-format off
 #include "sysconfig.h"
 #include "sysdeps.h"
 #include "options.h"
 #include "memory.h"
 #include "newcpu.h"
+// clang-format on
 
 static SelectedRegisters s_selected_registers;
 
