@@ -56,29 +56,23 @@
 
 #pragma once
 
-#include <dear_imgui/imgui.h>
+#include <imgui_eastl.h>
 #include <stdint.h>  // uint8_t, etc.
 #include <stdio.h>   // sprintf, scanf
+#include "debugger/ui/ui_view.h"
 
-#ifdef _MSC_VER
-#define _PRISizeT "I"
-#define ImSnprintf _snprintf
-#else
-#define _PRISizeT "z"
-#define ImSnprintf snprintf
-#endif
+namespace qd::window {
 
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996)  // warning C4996: 'sprintf': This function or variable may be unsafe.
-#endif
+class MemoryView : public UiWindow {
+    QDB_CLASS_ID(WndId::MemoryView);
+    void* m_memAddr = 0;
+    size_t m_memSize = 0;
+    size_t m_baseDisplayAddr = 0x0000;
 
-struct MemoryView {
+public:
     enum DataFormat { DataFormat_Bin = 0, DataFormat_Dec = 1, DataFormat_Hex = 2, DataFormat_COUNT };
 
     // Settings
-    // = true   // set to false when drawwindow() was closed. ignore if not using drawwindow().
-    bool open;
     // = false  // disable any editing.
     bool read_only;
     // = 16     // number of columns to display.
@@ -142,12 +136,14 @@ struct MemoryView {
         }
     };
 
-    MemoryView();
+    MemoryView(UiViewCreate* cp);
+    virtual void drawContent() override;
+
     void goto_address_and_highlight(size_t addr_min, size_t addr_max);
-    void draw_window(const char* title, void* mem_data, size_t mem_size, size_t base_display_addr = 0x0000);
-    void draw_contents(void* mem_data_void, size_t mem_size, size_t base_display_addr = 0x0000);
+    void setMemAddr(void* mem_data, size_t mem_size, size_t base_display_addr = 0x0000);
 
 private:
+    void draw_contents(void* mem_data_void, size_t mem_size, size_t base_display_addr = 0x0000);
     void draw_options_line(const Sizes& s, void* mem_data, size_t mem_size, size_t base_display_addr);
     void draw_preview_line(const Sizes& s, void* mem_data_void, size_t mem_size, size_t base_display_addr);
     void calc_sizes(Sizes& s, size_t mem_size, size_t base_display_addr);
@@ -158,3 +154,5 @@ private:
 
     void* endianness_copy(void* dst, void* src, size_t size) const;
 };
+
+};  // namespace qd::window

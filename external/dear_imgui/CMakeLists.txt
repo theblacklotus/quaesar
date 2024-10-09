@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(imgui)
 
-if (APPLE OR LINUX OR UNIX)
+if (APPLE OR LINUX)
     find_package(SDL2 REQUIRED)
 endif()
 
@@ -21,8 +21,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/backends)
 # Create static library
 add_library(imgui STATIC ${IMGUI_SOURCES})
 
-if (APPLE OR LINUX OR UNIX)
-    target_include_directories(imgui PRIVATE ${SDL2_INCLUDE_DIRS})
+if (APPLE OR LINUX)
+    target_link_libraries(imgui PRIVATE ${SDL2_LIBRARIES})
 else()
     target_include_directories(imgui PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/include")
 endif()

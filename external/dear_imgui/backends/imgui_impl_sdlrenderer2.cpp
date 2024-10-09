@@ -193,12 +193,17 @@ void ImGui_ImplSDLRenderer2_RenderDrawData(ImDrawData* draw_data)
 
                 // Bind texture, Draw
 				SDL_Texture* tex = (SDL_Texture*)pcmd->GetTexID();
-                SDL_RenderGeometryRaw(bd->SDLRenderer, tex,
+                int err = SDL_RenderGeometryRaw(bd->SDLRenderer, tex,
                     xy, (int)sizeof(ImDrawVert),
                     color, (int)sizeof(ImDrawVert),
                     uv, (int)sizeof(ImDrawVert),
                     cmd_list->VtxBuffer.Size - pcmd->VtxOffset,
                     idx_buffer + pcmd->IdxOffset, pcmd->ElemCount, sizeof(ImDrawIdx));
+                if (err)
+                {
+                    const char *errName = SDL_GetError();
+                    SDL_Log(errName);
+                }
             }
         }
     }

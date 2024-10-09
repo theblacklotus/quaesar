@@ -53,7 +53,12 @@
 // position 1 for one frame.
 // - Using InputText() is awkward and maybe overkill here, consider implementing something custom.
 
-#include "memory_view.h"
+#include "memory_wnd.h"
+#include <debugger/debugger.h>
+
+namespace qd::window {
+
+QDB_WINDOW_REGISTER(MemoryView);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -72,9 +77,11 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-MemoryView::MemoryView() {
+MemoryView::MemoryView(UiViewCreate* cp) : UiWindow(cp) {
+    mTitle = "Memory";
+    mVisible = true;
+
     // Settings
-    open = true;
     read_only = false;
     cols = 16;
     opt_show_options = true;
@@ -101,8 +108,9 @@ MemoryView::MemoryView() {
     highlight_min = hightlight_max = (size_t)-1;
     preview_endianess = 0;
     preview_data_type = ImGuiDataType_S32;
-}
 
+    setMemAddr(getDbg()->addrToPtr(0x0000), 512 * 1024, 0x0000);
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MemoryView::goto_address_and_highlight(size_t addr_min, size_t addr_max) {
@@ -147,21 +155,25 @@ void MemoryView::calc_sizes(Sizes& s, size_t mem_size, size_t base_display_addr)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MemoryView::draw_window(const char* title, void* mem_data, size_t mem_size, size_t base_display_addr) {
-    Sizes s;
-    calc_sizes(s, mem_size, base_display_addr);
+void MemoryView::setMemAddr(void* mem_data, size_t mem_size, size_t base_display_addr) {
+    m_memAddr = mem_data;
+    m_memSize = mem_size;
+    m_baseDisplayAddr = base_display_addr;
+}
+
+void MemoryView::drawContent() {
+    MemoryView::Sizes s;
+    calc_sizes(s, m_memSize, m_baseDisplayAddr);
     ImGui::SetNextWindowSize(ImVec2(s.window_width, s.window_width * 0.60f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSizeConstraints(ImVec2(0.0f, 0.0f), ImVec2(s.window_width, FLT_MAX));
 
-    open = true;
-
-    if (ImGui::Begin(title, &open, ImGuiWindowFlags_NoScrollbar)) {
+    if (ImGui::Begin(mTitle.c_str(), &mVisible, ImGuiWindowFlags_NoScrollbar)) {
         if (ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows) &&
             ImGui::IsMouseReleased(ImGuiMouseButton_Right))
             ImGui::OpenPopup("context");
-        draw_contents(mem_data, mem_size, base_display_addr);
+        draw_contents(m_memAddr, m_memSize, m_baseDisplayAddr);
         if (contents_width_changed) {
-            calc_sizes(s, mem_size, base_display_addr);
+            calc_sizes(s, m_memSize, m_baseDisplayAddr);
             ImGui::SetWindowSize(ImVec2(s.window_width, ImGui::GetWindowSize().y));
         }
     }
@@ -756,8 +768,8 @@ void MemoryView::draw_preview_data(size_t addr, const uint8_t* mem_data, size_t 
         }
         case ImGuiDataType_COUNT:
             break;
-    }
-    IM_ASSERT(0);
+    }  // Switch
+    IM_ASSERT(0);  // Shouldn't reach
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -768,3 +780,5 @@ void MemoryView::draw_preview_data(size_t addr, const uint8_t* mem_data, size_t 
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
+
+};  // namespace qd::window

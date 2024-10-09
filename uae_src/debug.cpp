@@ -37,7 +37,6 @@
 #include "cpummu.h"
 #include "rommgr.h"
 #include "inputrecord.h"
-#include "debugger_api.h"
 #include "calc.h"
 #include "cpummu.h"
 #include "cpummu030.h"
@@ -53,9 +52,10 @@
 #include "readcpu.h"
 #include "cputbl.h"
 #include "keybuf.h"
+#include <debugger/debugger.h>
 
 static int trace_mode;
-uae_u32 trace_param[3];
+static uae_u32 trace_param[3];
 
 int debugger_active;
 static int debug_rewind;
@@ -114,11 +114,6 @@ void deactivate_debugger (void)
 
 void activate_debugger (void)
 {
-#if DEBUGGER_API_ENABLE
-	if (DebuggerAPI_has_debugger()) {
-	    DebuggerAPI_check_exception();
-	}
-#endif
 	disasm_init();
 	if (isfullscreen() > 0)
 		return;
@@ -2852,12 +2847,6 @@ void record_copper_blitwait (uaecptr addr, int hpos, int vpos)
 
 void record_copper (uaecptr addr, uaecptr nextaddr, uae_u16 word1, uae_u16 word2, int hpos, int vpos)
 {
-#if DEBUGGER_API_ENABLE
-	if (DebuggerAPI_has_debugger()) {
-	    DebuggerAPI_debug_copper(addr, nextaddr, word1, word2, hpos, vpos);
-	    return;
-	}
-#endif
 	int t = nr_cop_records[curr_cop_set];
 	init_record_copper();
 	if (t < NR_COPPER_RECORDS) {
@@ -7191,32 +7180,24 @@ static void debug_1 (void)
 	nxdis = nextpc; nxmem = 0;
 	debugger_active = 1;
 
-#if DEBUGGER_API_ENABLE
-	if (DebuggerAPI_has_debugger()) {
-	    DebuggerAPI_update();
-		return;
-	} else {
-#endif
-    for (;;) {
-        int v;
+	for (;;) {
+		int v;
 
-        if (!debugger_active)
-            return;
-        update_debug_info ();
-        console_out (_T(">"));
-        console_flush ();
-        debug_linecounter = 0;
-        v = console_get (input, MAX_LINEWIDTH);
-        if (v < 0)
-            return;
-        if (v == 0)
-            continue;
-        if (debug_line (input))
-            return;
-    }
-#if DEBUGGER_API_ENABLE
+		if (!debugger_active)
+			return;
+		update_debug_info ();
+		console_out (_T(">"));
+		console_flush ();
+		debug_linecounter = 0;
+		// TODO: CONFILCT: terminal stops execution when 'd' was pressed
+		v = -1; // console_get(input, MAX_LINEWIDTH);
+		if (v < 0)
+			return;
+		if (v == 0)
+			continue;
+		if (debug_line (input))
+			return;
 	}
-#endif
 }
 
 static void addhistory(void)
@@ -7348,7 +7329,6 @@ static bool check_breakpoint_count(struct breakpoint_node *bpn, uaecptr pc)
 void debug (void)
 {
 	int wasactive;
-
 
 	if (savestate_state)
 		return;
@@ -8806,9 +8786,8 @@ bool debug_sprintf(uaecptr addr, uae_u32 val, int size)
 	return true;
 }
 
-void debug_internal_step() {
-    no_trace_exceptions = 0;
-    debug_cycles(2);
-    trace_param[0] = trace_param[1] = 0;
-}
 
+void qd::Debugger::applyConsoleCmd(const char *cmd) {
+    TCHAR* buf = (TCHAR *)cmd;
+    ::debug_line(buf);
+}
