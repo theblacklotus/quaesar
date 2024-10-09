@@ -202,7 +202,7 @@ void ImGui_ImplSDLRenderer2_RenderDrawData(ImDrawData* draw_data)
                 if (err)
                 {
                     const char *errName = SDL_GetError();
-                    SDL_Log(errName);
+                    SDL_Log("%s", errName);
                 }
             }
         }

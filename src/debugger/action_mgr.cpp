@@ -3,7 +3,7 @@
 
 namespace qd {
 
-extern uint32_t qdbActionAutoClassId = 0;
+uint32_t qdbActionAutoClassId = 0;
 
 Debugger* Action::getDbg() const {
     return gui->getDbg();

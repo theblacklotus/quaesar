@@ -768,8 +768,8 @@ void MemoryView::draw_preview_data(size_t addr, const uint8_t* mem_data, size_t 
         }
         case ImGuiDataType_COUNT:
             break;
-    }  // Switch
-    IM_ASSERT(0);  // Shouldn't reach
+    }
+    IM_ASSERT(0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

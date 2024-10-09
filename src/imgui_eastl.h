@@ -53,7 +53,7 @@ static int _inputFixedStringCallback(ImGuiInputTextCallbackData* data) {
 template <int S, bool OV, typename A>
 bool InputText(const char* label, eastl::fixed_string<char, S, OV, A>* str, ImGuiInputTextFlags flags = 0) {
     flags |= ImGuiInputTextFlags_CallbackResize;
-    using TString = eastl::basic_string<char, eastl::fixed_string<char, S, OV, A>::fixed_allocator_type>;
+    using TString = eastl::basic_string<char, typename eastl::fixed_string<char, S, OV, A>::fixed_allocator_type>;
     FixedStringInputTextCallback data = {static_cast<TString*>(str)};
     return ImGui::InputText(label, str->data(), str->capacity() + 1, flags,
                             _inputFixedStringCallback<TString::allocator_type>, &data);

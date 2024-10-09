@@ -7,14 +7,14 @@ class Color {
 public:
     enum EColor : uint32_t {
         // AABBGGRR     AABBGGRR
-        BLACK = 0xFF000000ui32,
-        RED = 0xFF0000FFui32,
-        GREEN = 0xFF00FF00ui32,
-        BLUE = 0xFFFF0000ui32,
-        WHITE = 0xFFFFFFFFui32,
-        YELLOW = 0xFF00FFFFui32,
-        CYAN = 0xFFFFFF00ui32,
-        MAGENTA = 0xFFFF00FFui32,
+        BLACK = 0xFF000000ul,
+        RED = 0xFF0000FFul,
+        GREEN = 0xFF00FF00ul,
+        BLUE = 0xFFFF0000ul,
+        WHITE = 0xFFFFFFFFul,
+        YELLOW = 0xFF00FFFFul,
+        CYAN = 0xFFFFFF00ul,
+        MAGENTA = 0xFFFF00FFul,
     };
 
 public:

@@ -1,5 +1,6 @@
 #include <EASTL/allocator.h>
 #include <stdio.h>
+#include <wchar.h>
 #include "sysconfig.h"
 
 void* operator new[](size_t size, const char* pName, int flags, unsigned debugFlags, const char* file, int line) {
@@ -37,16 +38,8 @@ int Vsnprintf32(char8_t* pDestination, size_t n, const char32_t* pFormat, va_lis
 
 int Vsnprintf16(wchar_t* pDestination, size_t n, const wchar_t* pFormat, va_list arguments) {
 #ifdef _MSC_VER
-
-    // 	va_list va_alist;
-    // 	char logbuf[100] = {0};
-    // 	va_start(va_alist, text);
-    // 	_vsnprintf(logbuf + strlen(logbuf), sizeof(logbuf) - strlen(logbuf), text, va_alist);
-    // 	va_end(va_alist);
-    //
-
-    return _vsnwprintf(pDestination, n + 1, pFormat, arguments);
+    return _vsnwprintf(pDestination, n, pFormat, arguments);
 #else
-    return vsnwprintf(pDestination, n, pFormat, arguments);
+    return vswprintf(pDestination, n, pFormat, arguments);
 #endif
 }

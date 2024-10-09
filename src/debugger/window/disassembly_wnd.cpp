@@ -69,7 +69,7 @@ void DisassemblyView::drawContent() {
             const cs_insn& entry = instructions[i];
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
-            ImGui::Text("0x%08X", entry.address);
+            ImGui::Text("0x%08X", (uint32_t)entry.address);
             ImGui::TableNextColumn();
             op_str.clear();
             for (int b = 0; b < entry.size; ++b) {
