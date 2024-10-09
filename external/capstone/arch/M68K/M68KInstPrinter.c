@@ -15,7 +15,6 @@
 #include <stdio.h>	// DEBUG
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 #include "M68KInstPrinter.h"
 
@@ -41,6 +40,7 @@ static const char* const s_reg_names[] = {
 	"sr", "ccr", "sfc", "dfc", "usp", "vbr", "cacr",
 	"caar", "msp", "isp", "tc", "itt0", "itt1", "dtt0",
 	"dtt1", "mmusr", "urp", "srp",
+
 	"fpcr", "fpsr", "fpiar",
 };
 
@@ -104,7 +104,7 @@ static void printRegbitsRange(char* buffer, uint32_t data, const char* prefix)
 	}
 }
 
-static void registerBits(cs_detail* detail, SStream* O, const cs_m68k_op* op, bool write_reg)
+static void registerBits(SStream* O, const cs_m68k_op* op)
 {
 	char buffer[128];
 	unsigned int data = op->register_bits;
@@ -120,57 +120,27 @@ static void registerBits(cs_detail* detail, SStream* O, const cs_m68k_op* op, bo
 	printRegbitsRange(buffer, (data >> 8) & 0xff, "a");
 	printRegbitsRange(buffer, (data >> 16) & 0xff, "fp");
 
-    RegisterStringInfo* info = NULL;
-
-	if (write_reg) {
-        info = &detail->regs_write_string_info[0];
-    } else {
-        info = &detail->regs_read_string_info[0];
-    }
-
-    info->type = REGISTER_STRING_INFO_REG_BITS; 
-    info->used = 1;
-    info->length = strlen(buffer);
-    info->offset = O->index;
-
 	SStream_concat(O, "%s", buffer);
-}
-
-static void addStringInfo(cs_detail* detail, SStream* O, int register_id, int adjust_offset, bool is_write, uint8_t length)
-{
-    RegisterStringInfo* info = NULL;
-
-    if (is_write) {
-        info = &detail->regs_write_string_info[register_id];
-    } else {
-        info = &detail->regs_read_string_info[register_id];
-    }
-
-    info->type = REGISTER_STRING_INFO_REGISTER; 
-    info->used = 1;
-    info->length = length;
-    info->offset = (O->index - O->index_temp) + adjust_offset;
 }
 
 static void registerPair(SStream* O, const cs_m68k_op* op)
 {
-	SStream_concat(O, "%s:%s", s_reg_names[op->reg_pair.reg_0], s_reg_names[op->reg_pair.reg_1]);
+	SStream_concat(O, "%s:%s", s_reg_names[op->reg_pair.reg_0],
+			s_reg_names[op->reg_pair.reg_1]);
 }
 
-static void printAddressingMode(cs_detail* detail, SStream* O, unsigned int pc, const cs_m68k* inst, const cs_m68k_op* op, bool is_write)
+static void printAddressingMode(SStream* O, unsigned int pc, const cs_m68k* inst, const cs_m68k_op* op)
 {
 	switch (op->address_mode) {
 		case M68K_AM_NONE:
 			switch (op->type) {
 				case M68K_OP_REG_BITS:
-					registerBits(detail, O, op, is_write);
+					registerBits(O, op);
 					break;
 				case M68K_OP_REG_PAIR:
-					//registerPair(detail, O, op, is_write);
 					registerPair(O, op);
 					break;
 				case M68K_OP_REG:
-                    addStringInfo(detail, O, op->reg, 0, is_write, strlen(s_reg_names[op->reg]));
 					SStream_concat(O, "%s", s_reg_names[op->reg]);
 					break;
 				default:
@@ -178,54 +148,13 @@ static void printAddressingMode(cs_detail* detail, SStream* O, unsigned int pc, 
 			}
 			break;
 
-		case M68K_AM_REG_DIRECT_DATA: 
-		{
-		    addStringInfo(detail, O, op->reg, 0, is_write, 2);
-		    SStream_concat(O, "d%d", (op->reg - M68K_REG_D0)); 
-		    break;
-		}
-
-		case M68K_AM_REG_DIRECT_ADDR: 
-		{
-		    addStringInfo(detail, O, op->reg, 0, is_write, 2);
-		    SStream_concat(O, "a%d", (op->reg - M68K_REG_A0)); 
-		    break;
-		}
-
-		case M68K_AM_REGI_ADDR: 
-		{
-		    addStringInfo(detail, O, op->reg, 1, is_write, 2);
-		    SStream_concat(O, "(a%d)", (op->reg - M68K_REG_A0)); 
-		    break;
-		}
-
-		case M68K_AM_REGI_ADDR_POST_INC: 
-		{
-		    addStringInfo(detail, O, op->reg, 1, true, 2);
-		    SStream_concat(O, "(a%d)+", (op->reg - M68K_REG_A0)); 
-		    break;
-		}
-
-		case M68K_AM_REGI_ADDR_PRE_DEC: 
-		{
-		    addStringInfo(detail, O, op->reg, 2, true, 2);
-		    SStream_concat(O, "-(a%d)", (op->reg - M68K_REG_A0)); 
-		    break;
-		}
-
-		case M68K_AM_REGI_ADDR_DISP: 
-		{
-		    SStream_concat(O, "%s$%x(a%d)", op->mem.disp < 0 ? "-" : "", abs(op->mem.disp), (op->mem.base_reg - M68K_REG_A0)); 
-		    addStringInfo(detail, O, op->mem.base_reg, -2, false, 2);
-		    break;
-		}
-
-		case M68K_AM_PCI_DISP: 
-		{
-		    SStream_concat(O, "$%x(pc)", pc + 2 + op->mem.disp); 
-		    break;
-		}
-
+		case M68K_AM_REG_DIRECT_DATA: SStream_concat(O, "d%d", (op->reg - M68K_REG_D0)); break;
+		case M68K_AM_REG_DIRECT_ADDR: SStream_concat(O, "a%d", (op->reg - M68K_REG_A0)); break;
+		case M68K_AM_REGI_ADDR: SStream_concat(O, "(a%d)", (op->reg - M68K_REG_A0)); break;
+		case M68K_AM_REGI_ADDR_POST_INC: SStream_concat(O, "(a%d)+", (op->reg - M68K_REG_A0)); break;
+		case M68K_AM_REGI_ADDR_PRE_DEC: SStream_concat(O, "-(a%d)", (op->reg - M68K_REG_A0)); break;
+		case M68K_AM_REGI_ADDR_DISP: SStream_concat(O, "%s$%x(a%d)", op->mem.disp < 0 ? "-" : "", abs(op->mem.disp), (op->mem.base_reg - M68K_REG_A0)); break;
+		case M68K_AM_PCI_DISP: SStream_concat(O, "$%x(pc)", pc + 2 + op->mem.disp); break;
 		case M68K_AM_ABSOLUTE_DATA_SHORT: SStream_concat(O, "$%x.w", op->imm); break;
 		case M68K_AM_ABSOLUTE_DATA_LONG: SStream_concat(O, "$%x.l", op->imm); break;
 		case M68K_AM_IMMEDIATE:
@@ -247,26 +176,11 @@ static void printAddressingMode(cs_detail* detail, SStream* O, unsigned int pc, 
 			 SStream_concat(O, "#$%x", op->imm);
 			 break;
 		case M68K_AM_PCI_INDEX_8_BIT_DISP:
-		{
-			SStream_concat(O, "$%x(pc,%s.%c)", 
-			      pc + 2 + op->mem.disp, 
-			      getRegName(op->mem.index_reg), 
-			      op->mem.index_size ? 'l' : 'w');
-		    addStringInfo(detail, O, op->mem.index_reg, -3, false, 2);
+			SStream_concat(O, "$%x(pc,%s%s.%c)", pc + 2 + op->mem.disp, s_spacing, getRegName(op->mem.index_reg), op->mem.index_size ? 'l' : 'w');
 			break;
-		}
 		case M68K_AM_AREGI_INDEX_8_BIT_DISP:
-		{
-			SStream_concat(O, "%s$%x(%s,%s.%c)", 
-			      op->mem.disp < 0 ? "-" : "", 
-			      abs(op->mem.disp), 
-			      getRegName(op->mem.base_reg), 
-			      getRegName(op->mem.index_reg), 
-			      op->mem.index_size ? 'l' : 'w');
-		    addStringInfo(detail, O, op->mem.base_reg, -5, false, 2);
-		    addStringInfo(detail, O, op->mem.index_reg, -3, false, 2);
+			SStream_concat(O, "%s$%x(%s,%s%s.%c)", op->mem.disp < 0 ? "-" : "", abs(op->mem.disp), getRegName(op->mem.base_reg), s_spacing, getRegName(op->mem.index_reg), op->mem.index_size ? 'l' : 'w');
 			break;
-		}
 		case M68K_AM_PCI_INDEX_BASE_DISP:
 		case M68K_AM_AREGI_INDEX_BASE_DISP:
 
@@ -283,12 +197,7 @@ static void printAddressingMode(cs_detail* detail, SStream* O, unsigned int pc, 
 			    SStream_concat(O, "pc,%s.%c", getRegName(op->mem.index_reg), op->mem.index_size ? 'l' : 'w');
 			} else {
 				if (op->mem.base_reg != M68K_REG_INVALID)
-				{
-				    addStringInfo(detail, O, op->mem.base_reg, 0, false, 2);
-					SStream_concat(O, "a%d,%s", op->mem.base_reg, s_spacing);
-				}
-
-			    addStringInfo(detail, O, op->mem.index_reg, 0, false, 2);
+					SStream_concat(O, "a%d,%s", op->mem.base_reg - M68K_REG_A0, s_spacing);
 				SStream_concat(O, "%s.%c", getRegName(op->mem.index_reg), op->mem.index_size ? 'l' : 'w');
 			}
 
@@ -315,15 +224,9 @@ static void printAddressingMode(cs_detail* detail, SStream* O, unsigned int pc, 
 
 			if (op->mem.base_reg != M68K_REG_INVALID) {
 				if (op->mem.in_disp > 0)
-				{
-			        addStringInfo(detail, O, op->mem.base_reg, 1, false, 2);
-					SStream_concat(O, ",%s", getRegName(op->mem.base_reg));
-			    }
+					SStream_concat(O, ",%s%s", s_spacing, getRegName(op->mem.base_reg));
 				else
-                {
-			        addStringInfo(detail, O, op->mem.base_reg, 0, false, 2);
 					SStream_concat(O, "%s", getRegName(op->mem.base_reg));
-                }
 			}
 
 			if (op->address_mode == M68K_AM_MEMI_POST_INDEX || op->address_mode == M68K_AM_PC_MEMI_POST_INDEX)
@@ -418,14 +321,12 @@ void M68K_printInst(MCInst* MI, SStream* O, void* PrinterInfo)
 
 	SStream_concat0(O, " ");
 
-	O->index_temp = O->index;
-
 	// this one is a bit spacial so we do special things
 
 	if (MI->Opcode == M68K_INS_CAS2) {
 		int reg_value_0, reg_value_1;
-		printAddressingMode(detail, O, info->pc, ext, &ext->operands[0], false); SStream_concat0(O, ",");
-		printAddressingMode(detail, O, info->pc, ext, &ext->operands[1], true); SStream_concat0(O, ",");
+		printAddressingMode(O, info->pc, ext, &ext->operands[0]); SStream_concat0(O, ",");
+		printAddressingMode(O, info->pc, ext, &ext->operands[1]); SStream_concat0(O, ",");
 		reg_value_0 = ext->operands[2].register_bits >> 4;
 		reg_value_1 = ext->operands[2].register_bits & 0xf;
 		SStream_concat(O, "(%s):(%s)", s_reg_names[M68K_REG_D0 + reg_value_0], s_reg_names[M68K_REG_D0 + reg_value_1]);
@@ -433,8 +334,7 @@ void M68K_printInst(MCInst* MI, SStream* O, void* PrinterInfo)
 	}
 
 	for (i  = 0; i < ext->op_count; ++i) {
-	    bool is_write = i == ext->op_count - 1;
-		printAddressingMode(detail, O, info->pc, ext, &ext->operands[i], is_write);
+		printAddressingMode(O, info->pc, ext, &ext->operands[i]);
 		if ((i + 1) != ext->op_count)
 			SStream_concat(O, ",%s", s_spacing);
 	}

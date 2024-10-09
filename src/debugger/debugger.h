@@ -3,29 +3,44 @@
 #include <capstone/capstone.h>
 #include <stdint.h>
 
-#include "memory_view.h"
-
 struct SDL_Window;
 struct SDL_Renderer;
 union SDL_Event;
-struct DisassemblyView;
-struct RegisterView;
+
+namespace qd {
+class GuiManager;
+class VM;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-struct Debugger {
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    csh capstone;
-    MemoryView* memory_view;
-    DisassemblyView* d_view;
-    RegisterView* register_view;
-};
 
 enum DebuggerMode {
     DebuggerMode_Live,
     DebuggerMode_Break,
 };
+
+class Debugger {
+public:
+    SDL_Window* window = nullptr;
+    SDL_Renderer* renderer = nullptr;
+    csh capstone;
+    VM* vm = nullptr;
+    GuiManager* gui = nullptr;
+
+public:
+    void create();
+    void destroy();
+
+    bool isDebugActivated();
+    void setDebugMode(DebuggerMode debug_mode);
+
+    void* addrToPtr(uint32_t addr);
+
+    void applyConsoleCmd(const char* cmd);
+
+    qd::VM* getVm() const {
+        return vm;
+    }
+};  // class Debugger
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,4 +49,6 @@ void Debugger_update(Debugger* debugger);
 void Debugger_update_event(SDL_Event* event);
 void Debugger_destroy(Debugger* debugger);
 void Debugger_toggle(Debugger* debugger, DebuggerMode mode);
-void Debugger_step(Debugger* debugger);
+bool Debugger_is_window_visible(Debugger* debugger);
+
+};  // namespace qd

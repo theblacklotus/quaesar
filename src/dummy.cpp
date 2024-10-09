@@ -51,7 +51,8 @@
 #include <SDL.h>
 // clang-format on
 
-#include "debugger/debugger.h"
+#include <debugger/debugger.h>
+#include "quaesar.h"
 
 int avioutput_enabled = 0;
 bool beamracer_debug = false;
@@ -889,7 +890,7 @@ void golemfast_ncr9x_scsi_put(unsigned int, unsigned int, int) {
 SDL_Window* s_window;
 SDL_Texture* s_texture = nullptr;
 SDL_Renderer* s_renderer = nullptr;
-static Debugger* s_debugger = nullptr;
+static qd::Debugger* s_debugger = nullptr;
 
 int graphics_init(bool) {
     int amiga_width = 754;
@@ -964,7 +965,8 @@ int graphics_init(bool) {
 
     alloc_colors64k(0, bits, bits, bits, red_shift, green_shift, blue_shift, bits, 24, 0, 0, false);
 
-    s_debugger = Debugger_create();
+    s_debugger = qd::Debugger_create();
+
     TRACE();
     return 1;
 }
@@ -985,7 +987,7 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
         // User requests quit
         switch (e.type) {
             case SDL_QUIT:  // User closes the window
-                quit_program == UAE_QUIT;
+                // quit_program == UAE_QUIT;
                 // TODO: Fix me
                 exit(0);
                 break;
@@ -994,21 +996,22 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
                     activate_debugger();
                 }
                 if (e.key.keysym.sym == SDLK_ESCAPE) {  // If the key is ESC
-                    quit_program == UAE_QUIT;
+                    // quit_program == UAE_QUIT;
                     exit(0);
                     // TODO: Fix me
                 } else if (e.key.keysym.sym == SDLK_d) {
-                    Debugger_toggle(s_debugger, DebuggerMode_Live);
+                    qd::Debugger_toggle(s_debugger, qd::DebuggerMode_Live);
                 }
                 break;
             default:
                 break;
         }
 
-        Debugger_update_event(&e);
+        qd::Debugger_update_event(&e);
     }
 
-    Debugger_update(s_debugger);
+    if (qd::Debugger_is_window_visible(s_debugger))
+        qd::Debugger_update(s_debugger);
 
     uint32_t* pixels = nullptr;
     int pitch = 0;
@@ -1018,22 +1021,20 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
         struct vidbuf_description* avidinfo = &adisplays[vb_in->monitor_id].gfxvidinfo;
         struct vidbuffer* vb = avidinfo->outbuffer;
 
-        if (!vb || !vb->bufmem)
-            return;
+        if (vb && vb->bufmem) {
+            uint8_t* sptr = vb->bufmem;
+            uint8_t* endsptr = vb->bufmemend;
 
-        uint8_t* sptr = vb->bufmem;
-        uint8_t* endsptr = vb->bufmemend;
+            int amiga_width = vb->outwidth;
+            int amiga_height = vb->outheight;
 
-        int amiga_width = vb->outwidth;
-        int amiga_height = vb->outheight;
-
-        // Change pixels
-        for (int y = 0; y < amiga_height; y++) {
-            uint8_t* dest = (uint8_t*)&pixels[y * 754];
-            memcpy(dest, sptr, amiga_width * 4);
-            sptr += vb->rowbytes;
+            // Change pixels
+            for (int y = 0; y < amiga_height; y++) {
+                uint8_t* dest = (uint8_t*)&pixels[y * 754];
+                memcpy(dest, sptr, amiga_width * 4);
+                sptr += vb->rowbytes;
+            }
         }
-
         SDL_UnlockTexture(s_texture);
     }
 

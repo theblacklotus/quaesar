@@ -10,6 +10,7 @@
 #ifndef UAE_DEBUG_H
 #define UAE_DEBUG_H
 
+#include "sysconfig.h"
 #include "uae/types.h"
 
 #ifndef D

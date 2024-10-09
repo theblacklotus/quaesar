@@ -83,6 +83,11 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+#ifdef WIN32
+    // shows Windows ASSERT dialog with the 'Ignore' button, which allows you to continue executing the program.
+    _set_error_mode(_OUT_TO_MSGBOX);
+#endif
+
     real_main(argc, argv);
 
     return 0;

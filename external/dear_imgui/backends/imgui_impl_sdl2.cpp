@@ -765,8 +765,8 @@ void ImGui_ImplSDL2_NewFrame()
     ImGuiIO& io = ImGui::GetIO();
 
     // Setup display size (every frame to accommodate for window resizing)
-    int w, h;
-    int display_w, display_h;
+    int w = 0, h = 0;
+    int display_w = 0, display_h = 0;
     SDL_GetWindowSize(bd->Window, &w, &h);
     if (SDL_GetWindowFlags(bd->Window) & SDL_WINDOW_MINIMIZED)
         w = h = 0;

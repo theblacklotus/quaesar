@@ -19,13 +19,22 @@ add_subdirectory(external/zlib)
 add_subdirectory(external/ADFlib)
 add_subdirectory(external/dear_imgui)
 add_subdirectory(external/capstone)
+add_subdirectory(external/EASTL)
 
 if (APPLE OR LINUX OR UNIX)
     find_package(SDL2 REQUIRED)
 endif()
 
+
+add_definitions(-DEASTL_EASTDC_VSNPRINTF=0)
+
 if (WIN32)
   add_definitions(-D_HAS_STD_BYTE=0)
+  if(MSVC) # Enable Edit and Continue  for Debug builds
+    string(REGEX REPLACE "/Z[iI7]" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
+    add_link_options("/INCREMENTAL")
+  endif()
 endif()
 
 include_directories(uae_src/include uae_src src .)
@@ -201,7 +210,8 @@ add_executable(quaesar
 
 # Recursively glob for all .cpp files in the src directory
 file(GLOB_RECURSE CROSS_FILES "src/*.cpp")
-target_sources(quaesar PRIVATE ${CROSS_FILES})
+file(GLOB_RECURSE QUAE_HEADERS "src/*.h")
+target_sources(quaesar PRIVATE ${CROSS_FILES} ${QUAE_HEADERS})
 
 if (APPLE OR LINUX OR UNIX)
 	target_compile_options(quaesar PRIVATE -DUAE=1 -D_cdecl= -DFILEFLAG_WRITE=1 -DOS_NAME=\"linux\")
@@ -235,4 +245,11 @@ target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/ADFlib/
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/dear_imgui")
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external")
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/capstone/include")
-target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic adf imgui capstone)
+target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/EASTL/include")
+target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic adf imgui capstone EASTL)
+
+
+if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")
+    file(COPY_FILE "${CMAKE_CURRENT_LIST_DIR}/bin/install/default_layout.ini" "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")
+endif()
+
