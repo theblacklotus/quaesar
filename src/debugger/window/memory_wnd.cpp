@@ -234,16 +234,16 @@ void MemoryView::draw_contents(void* mem_data_void, size_t mem_size, size_t base
     if (data_editing_addr != (size_t)-1) {
         // Move cursor but only apply on next frame so scrolling with be synchronized (because currently we can't
         // change the scrolling while the window is being rendered)
-        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_UpArrow)) &&
+        if (ImGui::IsKeyPressed(ImGuiKey_UpArrow) &&
             (ptrdiff_t)data_editing_addr >= (ptrdiff_t)cols) {
             data_editing_addr_next = data_editing_addr - cols;
-        } else if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_DownArrow)) &&
+        } else if (ImGui::IsKeyPressed(ImGuiKey_DownArrow) &&
                    (ptrdiff_t)data_editing_addr < (ptrdiff_t)mem_size - cols) {
             data_editing_addr_next = data_editing_addr + cols;
-        } else if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_LeftArrow)) &&
+        } else if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow) &&
                    (ptrdiff_t)data_editing_addr > (ptrdiff_t)0) {
             data_editing_addr_next = data_editing_addr - 1;
-        } else if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_RightArrow)) &&
+        } else if (ImGui::IsKeyPressed(ImGuiKey_RightArrow) &&
                    (ptrdiff_t)data_editing_addr < (ptrdiff_t)mem_size - 1) {
             data_editing_addr_next = data_editing_addr + 1;
         }

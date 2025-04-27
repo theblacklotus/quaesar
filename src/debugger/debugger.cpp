@@ -262,7 +262,7 @@ void Debugger::render() {
     SDL_SetRenderDrawColor(debugger->mRenderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255),
                            (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
     SDL_RenderClear(debugger->mRenderer);
-    ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
+    ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), debugger->mRenderer);
     SDL_RenderPresent(debugger->mRenderer);
 }
 
