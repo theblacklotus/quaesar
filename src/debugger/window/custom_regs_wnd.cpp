@@ -51,7 +51,7 @@ void FlagsTooltipContent::_drawRegCols(const CustomFlagsDesc* fd, int b, uint16_
     ImGui::TextColored(uiGetColorF(UiStyle::CustomRegsWnd_RegName), "%02i", cb.noBeg);
     ImGui::TableNextColumn();
 
-    ImGui::TextColoredV(uiGetColorF(UiStyle::CustomRegsWnd_RegName), cb.name.data(), nullptr);
+    ImGui::TextColored(uiGetColorF(UiStyle::CustomRegsWnd_RegName), "%s", cb.name.data());
     ImGui::TableNextColumn();
 
     int bitsVal = (rv >> cb.shiftL) & cb.mask;
@@ -64,7 +64,7 @@ struct DrawCustomRegColumn {
     qd::VM::CustomRegs* custRegs;
     void drawColumn(CustReg reg_id) {
         stReg.assign(reg_id.toString().begin(), reg_id.toString().end());
-        ImGui::TextColoredV(uiGetColorF(UiStyle::CustomRegsWnd_RegName), stReg.c_str(), nullptr);
+        ImGui::TextColored(uiGetColorF(UiStyle::CustomRegsWnd_RegName), "%s", stReg.c_str());
 
         if (ImGui::BeginItemTooltip()) {
             FlagsTooltipContent flgContent;

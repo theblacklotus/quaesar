@@ -39,7 +39,7 @@ void RegistersView::drawContent() {
 
             // Ax col
             ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
-            ImGui::TextV(stReg.sprintf("A%d", i).c_str(), nullptr);
+            ImGui::Text("A%d", i);
             ImGui::PopStyleColor();
             ImGui::TableNextColumn();
             editCommonRegVal(cpu->getRegA(i));
@@ -47,7 +47,7 @@ void RegistersView::drawContent() {
 
             // Dx col
             ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
-            ImGui::TextV(stReg.sprintf("D%d", i).c_str(), nullptr);
+            ImGui::Text("D%d", i);
             ImGui::PopStyleColor();
             ImGui::TableNextColumn();
             editCommonRegVal(cpu->getRegD(i));
@@ -60,7 +60,7 @@ void RegistersView::drawContent() {
 
             // PC
             ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
-            ImGui::TextV(stReg.sprintf("PC").c_str(), nullptr);
+            ImGui::Text("PC");
             ImGui::PopStyleColor();
             ImGui::TableNextColumn();
             editCommonRegVal(cpu->getPC());
