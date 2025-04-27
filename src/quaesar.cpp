@@ -211,15 +211,10 @@ void App::destroyUaeWindow() {
 
 
 void App::createUaeWindow() {
-    const int amiga_width = 754;
-    const int amiga_height = 576;
-    int wndWidth = amiga_width;
-    int wndHeight = amiga_height;
-
     SDL_AtomicSet(&scrFrameNo, 0);
 
     // Create a window
-    app->mUaeWindow = SDL_CreateWindow("Quaesar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, wndWidth, wndHeight,
+    app->mUaeWindow = SDL_CreateWindow("Quaesar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mAmigaWidth, mAmigaHeight,
                                        SDL_WINDOW_RESIZABLE);
 
     if (!app->mUaeWindow) {
@@ -235,8 +230,8 @@ void App::createUaeWindow() {
         return;
     }
 
-    mUaeScrTexture = SDL_CreateTexture(mUaeRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, amiga_width,
-                                       amiga_height);
+    mUaeScrTexture = SDL_CreateTexture(mUaeRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING,
+                                       mAmigaWidth, mAmigaHeight);
 
     if (!mUaeScrTexture) {
         SDL_Log("Could not create texture: %s", SDL_GetError());
@@ -244,8 +239,36 @@ void App::createUaeWindow() {
         SDL_DestroyWindow(mUaeWindow);
         return;
     }
+
+    mAmigaBuffer = new uint32_t[mAmigaWidth * mAmigaHeight];
 }
 
+ // Function to recreate a dynamic texture with new dimensions
+void App::recreateTexture(int newWidth, int newHeight) {
+    int currentWidth = 0;
+    int currentHeight = 0;
+
+    // Get the format of the old texture
+    Uint32 format;
+    int access;
+    SDL_QueryTexture(mUaeScrTexture, &format, &access, &currentWidth, &currentHeight);
+
+    if (newWidth == currentWidth && newHeight == currentHeight) {
+        return;
+    }
+
+    // Destroy the old texture
+    SDL_DestroyTexture(mUaeScrTexture);
+
+    // Create a new texture with the desired dimensions
+    mUaeScrTexture = SDL_CreateTexture(
+        mUaeRenderer,
+        format,
+        access,  // Using the same access pattern as the original
+        newWidth,
+        newHeight
+    );
+}
 
 void App::renderUaeWindow() {
     // render UAE texture screen
@@ -253,17 +276,16 @@ void App::renderUaeWindow() {
     if (curFrame == renderedFrameNo) {
         return;
     }
+
     renderedFrameNo = curFrame;
 
-    int amiga_width = 754;
-    int amiga_height = 576;
     int new_width = 0;
     int new_height = 0;
     int window_width, window_height;
     SDL_GetWindowSize(mUaeWindow, &window_width, &window_height);
 
     // Maintain aspect ratio
-    float image_aspect = (float)amiga_width / (float)amiga_height;
+    float image_aspect = (float)mAmigaWidth / (float)mAmigaHeight;
     float window_aspect = (float)window_width / (float)window_height;
 
     if (window_aspect < image_aspect) {
@@ -276,6 +298,17 @@ void App::renderUaeWindow() {
     SDL_Rect rect = {(window_width - new_width) / 2, (window_height - new_height) / 2, new_width, new_height};
     SDL_RenderClear(mUaeRenderer);
     if (mUaeScrTextureMutex.tryLock()) {
+        recreateTexture(mAmigaWidth, mAmigaHeight); // Recreate texture if needed
+        uint32_t* texture_pixels = nullptr;
+        int pitch = 0;
+        if (SDL_LockTexture(mUaeScrTexture, NULL, (void**)&texture_pixels, &pitch) == 0) {
+            for (int y = 0; y < mAmigaHeight; y++) {
+                uint8_t* dest = (uint8_t*)&texture_pixels[y * mAmigaWidth];
+                memcpy(dest, &mAmigaBuffer[y * mAmigaWidth], mAmigaWidth * 4);
+            }
+            SDL_UnlockTexture(mUaeScrTexture);
+        }
+
         SDL_RenderCopy(mUaeRenderer, mUaeScrTexture, NULL, &rect);
         SDL_RenderPresent(mUaeRenderer);
         mUaeScrTextureMutex.unlock();
@@ -283,15 +316,19 @@ void App::renderUaeWindow() {
 }
 
 
-uint32_t* App::lockUaeScreenTexBuf() {
+uint32_t* App::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
     mUaeScrTextureMutex.lock();
     uint32_t* pixels = nullptr;
-    int pitch = 0;
-    if (SDL_LockTexture(mUaeScrTexture, NULL, (void**)&pixels, &pitch) == 0) {
-        return pixels;
+
+    if (amiga_width > mAmigaWidth || mAmigaHeight > amiga_height) {
+        delete [] mAmigaBuffer;
+        mAmigaBuffer = new uint32_t[mAmigaWidth * mAmigaHeight];
     }
-    mUaeScrTextureMutex.unlock();
-    return nullptr;
+
+    mAmigaWidth = amiga_width;
+    mAmigaHeight = amiga_height;
+
+    return pixels;
 }
 
 

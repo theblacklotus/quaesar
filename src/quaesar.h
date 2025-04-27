@@ -19,6 +19,9 @@ class App {
     SDL_atomic_t scrFrameNo = {};
     int renderedFrameNo = -1;
     bool mQuitRequestPosted = false;
+    int mAmigaWidth = 754;
+    int mAmigaHeight = 576;
+    uint32_t* mAmigaBuffer = nullptr;
 
 public:
     qd::Debugger* mDebugger = nullptr;
@@ -32,7 +35,7 @@ public:
     void requestToQuit();
     bool hasQuitRequest() const;
 
-    uint32_t* lockUaeScreenTexBuf();
+    uint32_t* lockUaeScreenTexBuf(int amiga_width, int amiga_height);
     void unlockUaeScreenTexBuf();
 
     qd::Debugger* getDbg() const {
@@ -48,6 +51,8 @@ private:
     void createUaeWindow();
     void renderUaeWindow();
     void destroyUaeWindow();
+    void recreateTexture(int newWidth, int newHeight);
+
 
 };  // class App
 //////////////////////////////////////////////////////////////////////////

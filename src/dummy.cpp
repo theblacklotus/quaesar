@@ -958,22 +958,24 @@ bool render_screen(int /*monid*/, int, bool) {
 
 void unlockscr(struct vidbuffer* vb_in, int /*y_start*/, int /*y_end*/) {
     // copy UAE screen to texture buf
-    if (uint32_t* pixels = app->lockUaeScreenTexBuf()) {
-        struct vidbuf_description* avidinfo = &adisplays[vb_in->monitor_id].gfxvidinfo;
-        struct vidbuffer* vb = avidinfo->outbuffer;
+    struct vidbuf_description* avidinfo = &adisplays[vb_in->monitor_id].gfxvidinfo;
+    struct vidbuffer* vb = avidinfo->outbuffer;
 
-        if (vb && vb->bufmem) {
-            uint8_t* sptr = vb->bufmem;
-            int amiga_width = vb->outwidth;
-            int amiga_height = vb->outheight;
+    if (!vb || !vb->bufmem) {
+        return;
+    }
 
-            // Change pixels
-            for (int y = 0; y < amiga_height; y++) {
-                uint8_t* dest = (uint8_t*)&pixels[y * 754];
-                memcpy(dest, sptr, amiga_width * 4);
-                sptr += vb->rowbytes;
-            }
+    uint8_t* sptr = vb->bufmem;
+    int amiga_width = vb->outwidth;
+    int amiga_height = vb->outheight;
+
+    if (uint32_t* pixels = app->lockUaeScreenTexBuf(amiga_width, amiga_height)) {
+        for (int y = 0; y < amiga_height; y++) {
+            uint8_t* dest = (uint8_t*)&pixels[y * amiga_width];
+            memcpy(dest, sptr, amiga_width * 4);
+            sptr += vb->rowbytes;
         }
+
         app->unlockUaeScreenTexBuf();
     }
 }
