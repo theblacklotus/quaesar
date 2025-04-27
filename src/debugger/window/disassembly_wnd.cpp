@@ -99,7 +99,7 @@ void DisassemblyView::drawContent() {
             for (int b = 0; b < entry.size; ++b) {
                 strTmp.append_sprintf("%02X", entry.bytes[b]);
             }
-            ImGui::TextColoredV(uiGetColorF(UiStyle::DisasmWnd_OpCodeBytes), strTmp.c_str(), nullptr);
+            ImGui::TextColored(uiGetColorF(UiStyle::DisasmWnd_OpCodeBytes), "%s", strTmp.c_str());
             ImGui::TableNextColumn();
             // col:instr
             strTmp = entry.mnemonic;
