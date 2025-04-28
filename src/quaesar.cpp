@@ -195,6 +195,7 @@ void App::mainLoop() {
             mDebugger->update();
             mDebugger->render();
         }
+
         renderUaeWindow();
     }
 }
@@ -211,11 +212,17 @@ void App::destroyUaeWindow() {
 
 
 void App::createUaeWindow() {
+    uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN;
+
     SDL_AtomicSet(&scrFrameNo, 0);
+
+    mAmigaWidth = 754;
+    mAmigaHeight = 576;
+    mAmigaBuffer = new uint32_t[mAmigaWidth * mAmigaHeight];
 
     // Create a window
     app->mUaeWindow = SDL_CreateWindow("Quaesar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mAmigaWidth, mAmigaHeight,
-                                       SDL_WINDOW_RESIZABLE);
+                                       window_flags);
 
     if (!app->mUaeWindow) {
         SDL_Log("Could not create window: %s", SDL_GetError());
@@ -239,8 +246,6 @@ void App::createUaeWindow() {
         SDL_DestroyWindow(mUaeWindow);
         return;
     }
-
-    mAmigaBuffer = new uint32_t[mAmigaWidth * mAmigaHeight];
 }
 
  // Function to recreate a dynamic texture with new dimensions
@@ -310,17 +315,16 @@ void App::renderUaeWindow() {
         }
 
         SDL_RenderCopy(mUaeRenderer, mUaeScrTexture, NULL, &rect);
-        SDL_RenderPresent(mUaeRenderer);
         mUaeScrTextureMutex.unlock();
     }
-}
 
+    SDL_RenderPresent(mUaeRenderer);
+}
 
 uint32_t* App::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
     mUaeScrTextureMutex.lock();
-    uint32_t* pixels = nullptr;
 
-    if (amiga_width > mAmigaWidth || mAmigaHeight > amiga_height) {
+    if (amiga_width > mAmigaWidth || amiga_height > mAmigaHeight) {
         delete [] mAmigaBuffer;
         mAmigaBuffer = new uint32_t[mAmigaWidth * mAmigaHeight];
     }
@@ -328,12 +332,11 @@ uint32_t* App::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
     mAmigaWidth = amiga_width;
     mAmigaHeight = amiga_height;
 
-    return pixels;
+    return mAmigaBuffer;
 }
 
 
 void App::unlockUaeScreenTexBuf() {
-    SDL_UnlockTexture(mUaeScrTexture);
     mUaeScrTextureMutex.unlock();
     SDL_AtomicIncRef(&scrFrameNo);
 }
