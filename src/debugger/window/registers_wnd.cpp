@@ -7,6 +7,10 @@
 namespace qd {
 namespace window {
 
+#define REG_A 0x00
+#define REG_D 0x08
+#define REG_PC 0x10
+
 static const char* s_regLookup[] = {
     "A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7",
     "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7",
@@ -47,7 +51,7 @@ void RegistersView::drawContent() {
             ImGui::Text("A%d", i);
             ImGui::PopStyleColor();
             ImGui::TableNextColumn();
-            editCommonRegVal(cpu->getRegA(i), i + 8);
+            editCommonRegVal(cpu->getRegA(i), REG_A + 8);
             ImGui::TableNextColumn();
 
             // Dx col
@@ -55,7 +59,7 @@ void RegistersView::drawContent() {
             ImGui::Text("D%d", i);
             ImGui::PopStyleColor();
             ImGui::TableNextColumn();
-            editCommonRegVal(cpu->getRegD(i), i);
+            editCommonRegVal(cpu->getRegD(i), REG_D + i);
             // ImGui::TableNextColumn();
         }
 
@@ -68,7 +72,7 @@ void RegistersView::drawContent() {
             ImGui::Text("##PC");
             ImGui::PopStyleColor();
             ImGui::TableNextColumn();
-            editCommonRegVal(cpu->getPC(), 17);
+            editCommonRegVal(cpu->getPC(), REG_PC);
             ImGui::TableNextColumn();
 
             ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
