@@ -19,6 +19,20 @@ static const char* s_regLookup[] = {
 };
 // clang-format on
 
+struct FlagDef {
+    const char* name;
+    const char* displayName;
+    CpuFlg_ flagType;
+};
+
+static const FlagDef s_flagDefs[] = {
+    {"Z", "Z:", CpuFlg_Z},
+    {"C", "C:", CpuFlg_C},
+    {"N", "N:", CpuFlg_N},
+    {"V", "V:", CpuFlg_V},
+    {"X", "X:", CpuFlg_X}
+};
+
 void RegistersView::drawContent() {
     Debugger* dbg = getDbg();
     VM* vm = dbg->vm;
@@ -29,110 +43,78 @@ void RegistersView::drawContent() {
 
     eastl::fixed_string<char, 128, false> stVal, stCmd, stId;
 
-    auto editCommonRegVal = [&](uint32_t reg_val, uint32_t reg_nr) {
+    auto displayRegName = [](const char* name) {
+        ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
+        ImGui::Text("%s", name);
+        ImGui::PopStyleColor();
+    };
+
+    auto editRegisterValue = [&](uint32_t reg_val, const char* reg_name) {
         stVal.sprintf("%08X", reg_val);
-        stId.assign("##") += reg_nr;
+        stId.assign("##") += reg_name;
         ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
         ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegValue));
         if (ImGui::InputText(stId.c_str(), &stVal, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            stCmd.sprintf("r %s %s", s_regLookup[reg_nr], stVal.c_str());
+            stCmd.sprintf("r %s %s", reg_name, stVal.c_str());
             dbg->execConsoleCmd(stCmd.c_str());
         }
         ImGui::PopStyleColor();
     };
 
+    auto editFlagValue = [&](const char* flag_name, uint32_t flag_val) {
+        stVal.sprintf("%01X", flag_val);
+        stId.assign("##") += flag_name;
+        ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
+        if (ImGui::InputText(stId.c_str(), &stVal, ImGuiInputTextFlags_EnterReturnsTrue)) {
+            stCmd.sprintf("r %s %s", flag_name, stVal.c_str());
+            dbg->execConsoleCmd(stCmd.c_str());
+        }
+    };
+
     int flags =
         ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_ScrollY;
     if (ImGui::BeginTable("##registers", 4, flags, ImVec2(0, 0))) {
+        // Draw A and D registers side by side
         for (int i = 0; i < 8; ++i) {
             ImGui::TableNextRow();
-            ImGui::TableNextColumn();
 
-            // Ax col
-            ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
-            ImGui::Text("A%d", i);
-            ImGui::PopStyleColor();
+            // A registers
             ImGui::TableNextColumn();
-            editCommonRegVal(cpu->getRegA(i), REG_A + 8);
+            displayRegName(s_regLookup[REG_A + i]);
             ImGui::TableNextColumn();
+            editRegisterValue(cpu->getRegA(i), s_regLookup[REG_A + i]);
 
-            // Dx col
-            ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
-            ImGui::Text("D%d", i);
-            ImGui::PopStyleColor();
+            // D registers
             ImGui::TableNextColumn();
-            editCommonRegVal(cpu->getRegD(i), REG_D + i);
-            // ImGui::TableNextColumn();
+            displayRegName(s_regLookup[REG_D + i]);
+            ImGui::TableNextColumn();
+            editRegisterValue(cpu->getRegD(i), s_regLookup[REG_D + i]);
         }
 
-        {
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
-
-            // PC
-            ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
-            ImGui::Text("##PC");
-            ImGui::PopStyleColor();
-            ImGui::TableNextColumn();
-            editCommonRegVal(cpu->getPC(), REG_PC);
-            ImGui::TableNextColumn();
-
-            ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
-            ImGui::Text("IMASK");
-            ImGui::PopStyleColor();
-            ImGui::TableNextColumn();
-            ImGui::Text("%i", cpu->getIntMask());
-            ImGui::TableNextColumn();
-        }
-
-        //
+        // PC and IMASK row
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
+        displayRegName("PC");
+        ImGui::TableNextColumn();
+        editRegisterValue(cpu->getPC(), s_regLookup[REG_PC]);
+        ImGui::TableNextColumn();
+        displayRegName("IMASK");
+        ImGui::TableNextColumn();
+        ImGui::Text("%i", cpu->getIntMask());
 
-        auto editFlagsRegVal = [&](const char* flg_name, uint32_t reg_val) {
-            stVal.sprintf("%01X", reg_val);
-            stId.assign("##") += flg_name;
-            ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
-            if (ImGui::InputText(stId.c_str(), &stVal, ImGuiInputTextFlags_EnterReturnsTrue)) {
-                stCmd.sprintf("r %s %s", flg_name, stVal.c_str());
-                dbg->execConsoleCmd(stCmd.c_str());
+        // CPU flags
+        const int flagCount = sizeof(s_flagDefs) / sizeof(s_flagDefs[0]);
+        for (int i = 0; i < flagCount; i++) {
+            // Create a new row for every even index (0, 2, 4...)
+            if (i % 2 == 0) {
+                ImGui::TableNextRow();
             }
-        };
 
-        ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
-        ImGui::Text("Z:");
-        ImGui::PopStyleColor();
-        ImGui::TableNextColumn();
-        editFlagsRegVal("Z", cpu->getFlg(CpuFlg_Z));
-        ImGui::TableNextColumn();
-
-        ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
-        ImGui::Text("C:");
-        ImGui::PopStyleColor();
-        ImGui::TableNextColumn();
-        editFlagsRegVal("C", cpu->getFlg(CpuFlg_C));
-        ImGui::TableNextColumn();
-
-        ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
-        ImGui::Text("N:");
-        ImGui::PopStyleColor();
-        ImGui::TableNextColumn();
-        editFlagsRegVal("N", cpu->getFlg(CpuFlg_N));
-        ImGui::TableNextColumn();
-
-        ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
-        ImGui::Text("V:");
-        ImGui::PopStyleColor();
-        ImGui::TableNextColumn();
-        editFlagsRegVal("V", cpu->getFlg(CpuFlg_V));
-        ImGui::TableNextColumn();
-
-        ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
-        ImGui::Text("X:");
-        ImGui::PopStyleColor();
-        ImGui::TableNextColumn();
-        editFlagsRegVal("X", cpu->getFlg(CpuFlg_X));
-        ImGui::TableNextColumn();
+            ImGui::TableNextColumn();
+            displayRegName(s_flagDefs[i].displayName);
+            ImGui::TableNextColumn();
+            editFlagValue(s_flagDefs[i].name, cpu->getFlg(s_flagDefs[i].flagType));
+        }
 
         ImGui::EndTable();
     }
