@@ -25,6 +25,7 @@ struct FlagDef {
     CpuFlg_ flagType;
 };
 
+// clang-format off
 static const FlagDef s_flagDefs[] = {
     {"Z", "Z:", CpuFlg_Z},
     {"C", "C:", CpuFlg_C},
@@ -32,6 +33,7 @@ static const FlagDef s_flagDefs[] = {
     {"V", "V:", CpuFlg_V},
     {"X", "X:", CpuFlg_X}
 };
+// clang-format on
 
 void RegistersView::drawContent() {
     Debugger* dbg = getDbg();
