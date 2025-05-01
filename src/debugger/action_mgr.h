@@ -61,7 +61,7 @@ public:
     bool mCompDone = false;
 
 public:
-    Base(action::ActionCreator* /*cp*/, uint32_t comp_id) : mCompId(comp_id) {};
+    Base(action::ActionCreator* /*cp*/, uint32_t comp_id) : mCompId(comp_id){};
     virtual EFlow applyMsgProc(action::msg::Base* /*msg*/) {
         return EFlow::NO_RESULT;
     }
