@@ -182,7 +182,7 @@ struct AutoRegistrator {
         metaInfo.classId = class_id != 0 ? class_id : ++qdbActionAutoClassId;
         metaInfo.createCallback = (void*)&createClassCb;
         metaInfo.rtti = &typeid(TClass);
-        ActionClassRegistry::get()->registerClass(eastl::move(metaInfo));
+        metaInfo.registerClass();
     }
 
     static Action* createClassCb(const ActionClassRegistry::MetaInfo& meta, ActionCreator* cp) {

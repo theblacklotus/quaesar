@@ -2,6 +2,7 @@
 #include <debugger/action/comps.h>
 #include <debugger/action_mgr.h>
 #include <debugger/msg_list.h>
+#include <generic/thread.h>
 #include <src/generic/base.h>
 
 
@@ -24,6 +25,11 @@ eastl::string Shortcut::toString() const {
     }
     return result;
 }
+
+
+Shortcut::~Shortcut() {
+}
+
 
 ImGuiKeyChord Shortcut::getChord() const {
     ImGuiKeyChord nChord = 0;
@@ -74,7 +80,13 @@ bool ShortcutsMgr::triggerShortcut(qd::shortcut::EId id) {
 }
 
 
+ShortcutsMgr::~ShortcutsMgr() {
+    done();
+}
+
+
 void ShortcutsMgr::init() {
+    assert(qd::thread::isMainThread());
     done();
     for (int id = 0; id < (int)shortcut::EId::MAX_COUNT; ++id) {
         Shortcut* curShortcut = shortcut::makeInstance((shortcut::EId)id);
@@ -91,6 +103,7 @@ void ShortcutsMgr::init() {
 
 
 void ShortcutsMgr::done() {
+    assert(qd::thread::isMainThread());
     while (!mShortcuts.empty()) {
         auto& p = mShortcuts.back();
         delete p.second;

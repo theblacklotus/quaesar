@@ -1308,3 +1308,13 @@ int main (int argc, TCHAR **argv)
 uae_u8 singlefile_config[50000] = { "_CONFIG_STARTS_HERE" };
 uae_u8 singlefile_data[1500000] = { "_DATA_STARTS_HERE" };
 #endif
+
+
+//////////////////////////////////////////////////////////////////////////
+namespace qd {
+void quae_parse_cmdline(int argc, TCHAR** argv)
+{
+    ::parse_cmdline(argc, argv);
+}
+};  // namespace qd
+//////////////////////////////////////////////////////////////////////////

@@ -86,7 +86,7 @@ void MemoryGraphWnd::drawContent() {
                 pCurBank = vm->mem->getBankByInd(mCurBank);
                 mBankOffset = bplPtr - pCurBank->startAddr;
                 CustReg modReg = (nb & 1) == 0 ? CustReg::BPL1MOD : CustReg::BPL2MOD;
-                mTextureMod = (short)vm->custom->getRegVal(modReg) * 2;
+                mTextureMod = (short)vm->custom->getRegVal(modReg);
                 // FIXME: How to calculate real bitplane width from ddfstart/ddfstop
                 // int res = 161 / 2 - ddfstrt;
                 int bpWidth = ((ddfstop - ddfstrt) + 8) * 2;

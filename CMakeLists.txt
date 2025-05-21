@@ -1,5 +1,7 @@
 # Minimum CMake version requirement
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.10)
+
+#set(CMAKE_GENERATOR_TOOLSET "ClangCl") # test compilation on clang-c
 
 option(ENABLE_CODE_GENERATION "Enable code generation" OFF)
 
@@ -25,8 +27,10 @@ if (APPLE OR LINUX OR UNIX)
     find_package(SDL2 REQUIRED)
 endif()
 
+if(NOT DEFINED SDL2_INCLUDE_DIRS)
+    set(SDL2_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/sdl2/include")
+endif()
 
-add_definitions(-DEASTL_EASTDC_VSNPRINTF=0)
 
 if (WIN32)
   add_definitions(-D_HAS_STD_BYTE=0)
@@ -35,6 +39,10 @@ if (WIN32)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
     add_link_options("/INCREMENTAL")
     add_compile_options("/MP") # multiprocessor build
+	
+	if(NOT CMAKE_GENERATOR_PLATFORM)
+		set(CMAKE_GENERATOR_PLATFORM "Win32") # add Win32 platform to solution
+	endif()
   endif()
 endif()
 
@@ -209,6 +217,10 @@ set(UAE_SOURCE_LIST
     uae_src/blit.h
 )
 add_executable(quaesar ${UAE_SOURCE_LIST})
+if (WIN32)
+    add_dependencies(quaesar quaesar-clang-format)
+endif()
+
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${UAE_SOURCE_LIST})
 
 # Recursively glob for all .cpp files in the src directory
@@ -220,16 +232,15 @@ target_sources(quaesar PRIVATE ${CROSS_FILES} ${QUAE_HEADERS})
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${QUAE_HEADERS} ${CROSS_FILES} ${SDL2_INCLUDE_DIRS})
 
+target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS})
+
 if (APPLE OR LINUX OR UNIX)
-	target_compile_options(quaesar PRIVATE -DUAE=1 -D_cdecl= -DFILEFLAG_WRITE=1 -DOS_NAME=\"linux\")
-	target_compile_options(quaesar PRIVATE -DUSHORT=uint16_t -DHWND=uint32_t -DHRESULT=uint32_t -DWPARAM=uint16_t -DLPARAM=uint32_t)
+	target_compile_options(quaesar PRIVATE -DUAE=1 -D_cdecl= -DOS_NAME=\"linux\")
     target_compile_definitions(quaesar PRIVATE FSUAE)
-    target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS})
     target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES})
 endif()
 
 if (WIN32)
-    target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/include")
     if (CMAKE_SIZEOF_VOID_P EQUAL 8)
        target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/x64/sdl2.lib")
        target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/x64/SDL2main.lib")
@@ -243,19 +254,15 @@ if (WIN32)
 endif()
 
 if (APPLE)
-    target_compile_options(quaesar PRIVATE -Wno-macro-redefined -Wno-deprecated-declarations -DFILEFLAG_DIR=1 -DFILEFLAG_DIR=1 -D_ftelli64=ftell -D_fseeki64=fseek -D_fseeko64=fseeko -Dfseeko64=fseeko -Dftello64=ftell)
+    target_compile_options(quaesar PRIVATE -Wno-macro-redefined -Wno-deprecated-declarations)
 endif()
 
 if (LINUX OR UNIX)
-    target_compile_options(quaesar PRIVATE -DFILEFLAG_DIR=1 -D_ftelli64=ftello64 -D_fseeki64=fseeko64)
     target_link_libraries(quaesar PRIVATE dl)
 endif()
 
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/ADFlib/src")
-target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/dear_imgui")
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external")
-target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/capstone/include")
-target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/EASTL/include")
 target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic adf imgui capstone EASTL)
 
 
@@ -263,3 +270,35 @@ if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")
     file(COPY_FILE "${CMAKE_CURRENT_LIST_DIR}/bin/install/default_layout.ini" "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")
 endif()
 
+
+# Format source code with clang-format
+if(WIN32)
+    set(CLANG_FORMAT_EXE "${CMAKE_SOURCE_DIR}/bin/windows/bin/clang-format.exe")
+else()
+    find_program(CLANG_FORMAT_EXE NAMES clang-format)
+endif()
+
+if(CLANG_FORMAT_EXE)
+    file(GLOB_RECURSE QUAE_FORMAT_SRC_FILES
+        "${CMAKE_SOURCE_DIR}/src/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/*.h"
+    )
+
+    # Create a stamp file to track formatting
+    set(CLANG_FORMAT_STAMP "${CMAKE_BINARY_DIR}/.clang_format.stamp")
+
+    add_custom_command(
+        OUTPUT ${CLANG_FORMAT_STAMP}
+        COMMAND ${CMAKE_COMMAND} -E echo "Format sources with clang-format: ${CLANG_FORMAT_EXE}"
+        COMMAND ${CLANG_FORMAT_EXE} -i --style=file ${QUAE_FORMAT_SRC_FILES}
+        COMMAND ${CMAKE_COMMAND} -E touch ${CLANG_FORMAT_STAMP}
+        DEPENDS ${QUAE_FORMAT_SRC_FILES}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running clang-format on changed files"
+    )
+
+    add_custom_target(
+        quaesar-clang-format
+        DEPENDS ${CLANG_FORMAT_STAMP}
+    )
+endif()

@@ -49,6 +49,7 @@ public:
 
 public:
     Shortcut() = default;
+    ~Shortcut();
     qd::shortcut::EId getId() const {
         return mId;
     }
@@ -93,9 +94,7 @@ public:
         return triggerShortcut(shortcut->getId());
     }
 
-    ~ShortcutsMgr() {
-        done();
-    }
+    ~ShortcutsMgr();
 
 private:
     ShortcutsMgr() {

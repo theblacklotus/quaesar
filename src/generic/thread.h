@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL_log.h>
 #include <SDL_mutex.h>
+#include <SDL_thread.h>
 
 namespace qd {
 namespace thread {
@@ -76,6 +77,11 @@ public:
 
 };  // class thread::Event
 //////////////////////////////////////////////////////////////////////////
+
+
+inline bool isMainThread() {
+    return SDL_ThreadID() == SDL_GetThreadID(nullptr);
+}
 
 };  // namespace thread
 };  // namespace qd

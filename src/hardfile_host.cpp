@@ -104,7 +104,7 @@ static void rdbdump(FILE* h, uae_u64 offset, uae_u8* buf, int blocksize) {
             break;
         size_t outlen = fread(buf, 1, blocksize, h);
         if (outlen != blocksize) {
-            write_log("rdbdump: warning: read %d bytes (not blocksize %d)\n", outlen, blocksize);
+            write_log("rdbdump: warning: read %u bytes (not blocksize %u)\n", (uint32_t)outlen, (uint32_t)blocksize);
         }
         fwrite(buf, 1, blocksize, f);
         offset += blocksize;
@@ -623,7 +623,7 @@ static int hdf_write_2(struct hardfiledata* hfd, void* buffer, uae_u64 offset, i
         outlen = fwrite(hfd->cache, 1, len, hfd->handle->h);
         // fflush(hfd->handle->h);
         if (g_debug) {
-            write_log("wrote %u bytes (wanted %d) at offset %llx\n", outlen, len, offset);
+            write_log("wrote %u bytes (wanted %d) at offset %llx\n", (uint32_t)outlen, len, offset);
         }
         const TCHAR* name = hfd->emptyname == NULL ? _T("<unknown>") : hfd->emptyname;
         if (offset == 0) {
@@ -649,7 +649,8 @@ int hdf_write_target(struct hardfiledata* hfd, void* buffer, uae_u64 offset, int
     uae_u8* p = (uae_u8*)buffer;
 
     if (g_debug) {
-        write_log("hdf_write_target off %llx len %d virtual size %lld\n", offset, len, hfd->virtual_size);
+        write_log("hdf_write_target off %llx len %d virtual size %lld\n", (int64_t)offset, len,
+                  (int64_t)hfd->virtual_size);
     }
     if (hfd->drive_empty) {
         if (g_debug) {
@@ -690,10 +691,10 @@ int hdf_resize_target(struct hardfiledata* hfd, uae_u64 newsize) {
         uae_log(
             "hdf_resize_target: failed to write byte at position "
             "%lld errno %d\n",
-            newsize - 1, errno);
+            (uae_s64)newsize - 1, (int)errno);
         return 0;
     }
-    uae_log("hdf_resize_target: %lld -> %lld\n", hfd->physsize, newsize);
+    uae_log("hdf_resize_target: %lld -> %lld\n", (int64_t)hfd->physsize, (int64_t)newsize);
     hfd->physsize = newsize;
     return 1;
 }

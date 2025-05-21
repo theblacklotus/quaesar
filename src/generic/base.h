@@ -1,5 +1,5 @@
 #pragma once
-#include <EASTL/string.h>
+#include <stdint.h>
 
 
 #define SAFE_DELETE(p) \

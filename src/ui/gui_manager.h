@@ -1,13 +1,16 @@
 #pragma once
 #include <EASTL/vector.h>
 #include <debugger/debugger.h>
+#include <generic/base.h>
 #include <src/ui/ui_view.h>
 
+
+FORWARD_DECLARATION_2(qd, UiView);
+FORWARD_DECLARATION_3(qd, action, Action);
+
+
 namespace qd {
-class UiView;
-namespace action {
-class Action;
-};
+
 
 class GuiManager {
     eastl::vector<UiView*> windows;

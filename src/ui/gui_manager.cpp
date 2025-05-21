@@ -1,5 +1,5 @@
 #include "gui_manager.h"
-#include <../../external/dear_imgui/imgui_internal.h>
+#include <dear_imgui/imgui_internal.h>
 #include <debugger/action_mgr.h>
 #include <src/shortcut/shortcut_mgr.h>
 
@@ -13,7 +13,7 @@ GuiManager::GuiManager(Debugger* in_dbg) : dbg(in_dbg) {
     // create all windows
     UiViewCreate cv(this);
     auto viewMgr = UiViewClassRegistry::get();
-    for (auto it : viewMgr->m_classInfoMap) {
+    for (auto it : viewMgr->mClassInfoMap) {
         UiView* curView = viewMgr->makeInstance(it.first, &cv);
         addView(curView);
     }
@@ -29,13 +29,10 @@ void GuiManager::drawImGuiMainFrame() {
     ImGui::SetNextWindowPos(viewport->WorkPos);
     ImGui::SetNextWindowSize(viewport->WorkSize);
     ImGui::SetNextWindowViewport(viewport->ID);
-    // ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-    // ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGuiWindowFlags wndFlags = 0;
     wndFlags |= ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
     wndFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-    // wndFlags |= ImGuiWindowFlags_MenuBar;
 
     bool open = true;
     if (ImGui::Begin("Quaesar debugger", &open, wndFlags)) {
@@ -43,7 +40,6 @@ void GuiManager::drawImGuiMainFrame() {
         _drawMainToolBar();
         _drawDebuggerWindows();
     }
-    // ImGui::PopStyleVar(0);
     ImGui::End();
 }
 
@@ -52,12 +48,10 @@ void GuiManager::_drawMainToolBar() {
     ImGuiIO& io = ImGui::GetIO();
     ImGuiWindowFlags wndFlags = 0;
     wndFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar;
-    // wndFlags |= ImGuiWindowFlags_MenuBar;
     ImVec2 rgn = ImGui::GetContentRegionAvail();
     if (ImGui::BeginChild("ToolBar", ImVec2(rgn.x, 20.f), ImGuiChildFlags_None, wndFlags)) {
         ImGuiWindow* window = ImGui::GetCurrentWindow();
 
-        // ImGui::BeginMenuBar();
         window->DC.LayoutType = ImGuiLayoutType_Horizontal;
 
         Debugger* dbg = getDbg();
@@ -80,11 +74,12 @@ void GuiManager::_drawMainToolBar() {
         uv0 = ImVec2(0.0f, 0.0f);  // TODO ICONS
         uv1 = ImVec2(uv0.x + size.x / my_tex_w, uv1.x + size.y / my_tex_h);
 
-        pCurShortcut = shMgr->getShortcut(shortcut::EId::DebugTraceStepInto);
-        if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1))) {
-            shMgr->triggerShortcut(pCurShortcut);
+        if (pCurShortcut = shMgr->getShortcut(shortcut::EId::DebugTraceStepInto)) {
+            if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1))) {
+                shMgr->triggerShortcut(pCurShortcut);
+            }
+            ImGui::SetItemTooltipV(pCurShortcut->toString().c_str(), nullptr);
         }
-        ImGui::SetItemTooltipV(pCurShortcut->toString().c_str(), nullptr);
         //
         ImGui::Separator();
         //
@@ -105,8 +100,6 @@ void GuiManager::_drawMainToolBar() {
         if (ImGui::Button("Wait Scanlines")) {
             shMgr->triggerShortcut(pCurShortcut);
         }
-
-        // ImGui::EndMenuBar();
     }
     ImGui::EndChild();
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);

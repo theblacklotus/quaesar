@@ -8,7 +8,6 @@
 
 namespace qd {
 
-class VM;
 struct CustomFlagsDesc;
 
 

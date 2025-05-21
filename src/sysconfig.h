@@ -1,12 +1,21 @@
 #ifndef WINUAE_SYSCONFIG_H
 #define WINUAE_SYSCONFIG_H
 
-// #include <intrin.h>
 
 #ifdef _WIN32
 #define ftello64 _ftelli64
 #define fseeko64 _fseeki64
+#elif defined(__APPLE__)
+#define _ftelli64 ftell
+#define _fseeki64 fseek
+#define _fseeko64 fseeko
+#define fseeko64 fseeko
+#define ftello64 ftell
+#else  // (LINUX OR UNIX)
+#define _ftelli64 ftello64
+#define _fseeki64 fseeko64
 #endif
+
 
 #ifndef _WIN32
 #include "winuae_compat.h"
@@ -608,13 +617,33 @@ typedef long uae_atomic;
 #define FSDB_DIR_SEPARATOR '\\'
 #define FSDB_DIR_SEPARATOR_S _T("\\")
 
+
+#if !defined(_MSC_VER) && !defined(__MINGW32__)
+#define FILEFLAG_DIR 0x1
+#define FILEFLAG_ARCHIVE 0x2
+#define FILEFLAG_WRITE 0x4
+#define FILEFLAG_READ 0x8
+#define FILEFLAG_EXECUTE 0x10
+#define FILEFLAG_SCRIPT 0x20
+#define FILEFLAG_PURE 0x40
+
+#define HWND uint32_t
+#define HRESULT uint32_t
+#define WPARAM uint16_t
+#define LPARAM uint32_t
+#define BOOL int;
+#define USHORT uint16_t
+#endif
+
+
 /* Define to 1 if `S_un' is a member of `struct in_addr'. */
 // #define HAVE_STRUCT_IN_ADDR_S_UN 1
 
-#define UNIMPLEMENTED()                                                            \
-    do {                                                                           \
-        fprintf(stderr, "Function '%s' is unimplemented. Exiting...\n", __func__); \
-        exit(EXIT_FAILURE);                                                        \
+#define UNIMPLEMENTED()                                                                  \
+    do {                                                                                 \
+        fprintf(stderr, "ERROR: Function '%s' NOT IMPLEMENTED. Exiting...\n", __func__); \
+        assert(0 && "FUNCTION NOT IMPLEMENTED");                                         \
+        exit(EXIT_FAILURE);                                                              \
     } while (0)
 
 // #define TRACE() do { printf("%s\n", __func__); } while (0)

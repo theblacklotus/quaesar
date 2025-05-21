@@ -53,7 +53,7 @@ void ActionManager::create(GuiManager* pGuiMgr, Debugger* pDbg) {
     // create all actions
     action::ActionCreator ca = {pGuiMgr, pDbg};
     auto actionClassMgr = qd::action::details::ActionClassRegistry::get();
-    for (auto it : actionClassMgr->m_classInfoMap) {
+    for (auto it : actionClassMgr->mClassInfoMap) {
         action::Action* curAction = actionClassMgr->makeInstance(it.first, &ca);
         mActions.push_back(curAction);
         const qd::action::details::ActionClassRegistry::MetaInfo& meta = it.second;

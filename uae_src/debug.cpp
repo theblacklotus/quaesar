@@ -52,7 +52,6 @@
 #include "readcpu.h"
 #include "cputbl.h"
 #include "keybuf.h"
-#include <debugger/debugger.h>
 
 static int trace_mode;
 static uae_u32 trace_param[3];

@@ -110,6 +110,9 @@ uaecptr find_trap (const TCHAR *name)
 */
 unsigned int define_trap (TrapHandler handler_func, int flags, const TCHAR *name)
 {
+    // DART
+    write_log("UAE traps:'%s'", name);
+
 	if (trap_count == MAX_TRAPS) {
 		write_log (_T("Ran out of emulator traps\n"));
 		abort ();

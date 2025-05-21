@@ -73,7 +73,7 @@
 #endif
 
 #define TRACING_ENABLED 1
-int log_filesys = 0;
+int log_filesys = 1; // debug
 
 #define TRAPMD 1
 

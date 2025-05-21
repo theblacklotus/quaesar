@@ -3,7 +3,7 @@
 
   avioutput.h
 
-  Copyright(c) 2001 - 2002 §ane
+  Copyright(c) 2001 - 2002 $ane
 */
 
 extern int avioutput_video, avioutput_audio, avioutput_enabled, avioutput_requested;

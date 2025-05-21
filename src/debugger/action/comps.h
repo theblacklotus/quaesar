@@ -16,6 +16,8 @@ public:
 public:
     ShortcutComp(action::ActionCreator* cp) : comp::Base(cp, CLASSID) {
     }
+    virtual ~ShortcutComp() {
+    }
 
     eastl::span<const Shortcut* const> getShortcuts() const {
         const Shortcut* const* ptrBeg = mShortcuts.data();
